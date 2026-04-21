@@ -6,15 +6,12 @@ Linux Stream Deck setup — config-file driven, live-reloading, scriptable.
 
 **Elgato Stream Deck MK.2** (15 keys, 5×3 grid) connected via USB on Linux.
 
----
-
 ## What's in Here
 
 deckblaster is built on a fork of [muesli/deckmaster](https://github.com/muesli/deckmaster) — a lightweight, config-file-driven Stream Deck daemon for Linux. The fork adds a live HTTP API for pushing key updates at runtime, an `icon_command` widget field for dynamic per-key icon rendering, a file-watcher for instant config reload, and a plugin folder layout so each feature lives in its own self-contained directory with its deck config, scripts, and assets.
 
 Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
 
----
 
 ## Quick Start
 
@@ -135,7 +132,7 @@ Single button on the Apps page. Records the Stream Deck's own button display at 
 Displays the next calendar event from GNOME Evolution Data Server (Outlook/O365 via Evolution):
 
 - **Countdown** — shows time remaining (`3h`, `45m`, `now`) or time left in current meeting
-- **Title** — truncated event name on the second line
+- **Title** — event name on the second line
 - **Live colour** — white when counting down to a future event, blue when the meeting is in progress
 - **Alerts** — pushes a red flash to the calendar key at −3 min, −2 min and −1 min (deduplicated)
 - **Open URL** — press the key to open the meeting link from the event's location field (`xdg-open`)
@@ -143,6 +140,16 @@ Displays the next calendar event from GNOME Evolution Data Server (Outlook/O365 
 - **Outlook timezones** — handles Windows-style TZID values (e.g. `W. Europe Standard Time`) that libical silently misreads as UTC
 
 **Language:** Python (stdlib + `python3-gi`) · **Requires:** `python3-gi`, `gir1.2-ecal-2.0`, `gir1.2-edataserver-1.2`
+
+---
+
+### Virtual Desktops
+
+<img src="docs/screenshots/vdesktop.png" width="400"/>
+
+Bottom row of the main deck. Each button shows the apps open on that virtual desktop using GTK icon theme lookup. The active desktop gets a blue underline. Press to switch. Icons are re-rendered every 3 seconds by a background poller.
+
+**Language:** Python (stdlib + `python3-gi`) · **Requires:** X11, `xdotool`, `python3-gi`, `gir1.2-gtk-3.0`
 
 ---
 
@@ -166,15 +173,6 @@ LCD-style calculator. Supports chained operations, 12-digit input, division-by-z
 
 ---
 
-### Virtual Desktops
-
-<img src="docs/screenshots/vdesktop.png" width="400"/>
-
-Bottom row of the main deck. Each button shows the apps open on that virtual desktop using GTK icon theme lookup. The active desktop gets a blue underline. Press to switch. Icons are re-rendered every 3 seconds by a background poller.
-
-**Language:** Python (stdlib + `python3-gi`) · **Requires:** X11, `xdotool`, `python3-gi`, `gir1.2-gtk-3.0`
-
----
 
 ## Documentation
 
