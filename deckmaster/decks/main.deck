@@ -89,12 +89,12 @@
     id = "command"
     interval = 30000
     [keys.widget.config]
-      command = "decks/calendar/next-event-countdown.sh;decks/calendar/next-event-title.sh"
+      command = "python3 decks/calendar/next-event.py countdown;python3 decks/calendar/next-event.py title"
       font = "bold;regular"
       color = "#ffffff;#ffffff"
-      color_command = "decks/calendar/next-event-color.sh"
+      color_command = "python3 decks/calendar/next-event.py color"
   [keys.action]
-    exec = "decks/calendar/next-event-open.sh"
+    exec = "python3 decks/calendar/next-event.py open"
 
 [[keys]]
   index = 10

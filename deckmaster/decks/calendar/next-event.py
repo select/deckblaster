@@ -16,8 +16,10 @@ State file: /tmp/streamdeck-next-event-alerts.json
 """
 import sys
 import os
+import re
 import json
 import time
+import subprocess
 import urllib.request
 import gi
 gi.require_version('ECal', '2.0')
@@ -278,6 +280,12 @@ def main():
             print("#5599ff;#ffffff")  # blue countdown during event
         else:
             print("#ffffff;#ffffff")  # white when counting down to future event
+    elif mode == "open":
+        loc = data.get("location", "")
+        m = re.search(r'https?://\S+', loc)
+        if m:
+            subprocess.Popen(["xdg-open", m.group(0)],
+                             env={**os.environ, "DISPLAY": os.environ.get("DISPLAY", ":1")})
 
 if __name__ == "__main__":
     main()
