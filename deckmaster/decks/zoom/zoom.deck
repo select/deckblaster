@@ -7,10 +7,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/zoom/zoom-mic-icon.sh"
+      icon_command = "python3 decks/zoom/zoom.py icon mic"
       command = ""
   [keys.action]
-    exec = "decks/zoom/zoom-toggle-mute.sh"
+    exec = "python3 decks/zoom/zoom.py toggle mute"
 
 # 1 — Start / Stop video
 [[keys]]
@@ -19,10 +19,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/zoom/zoom-video-icon.sh"
+      icon_command = "python3 decks/zoom/zoom.py icon video"
       command = ""
   [keys.action]
-    exec = "decks/zoom/zoom-toggle-video.sh"
+    exec = "python3 decks/zoom/zoom.py toggle video"
 
 # 2 — Raise / Lower hand
 [[keys]]
@@ -31,10 +31,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/zoom/zoom-hand-icon.sh"
+      icon_command = "python3 decks/zoom/zoom.py icon hand"
       command = ""
   [keys.action]
-    exec = "decks/zoom/zoom-raise-hand.sh"
+    exec = "python3 decks/zoom/zoom.py toggle hand"
 
 # 3 — empty
 [[keys]]
@@ -49,10 +49,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/zoom/zoom-leave-icon.sh"
+      icon_command = "python3 decks/zoom/zoom.py icon leave"
       command = ""
   [keys.action]
-    exec = "decks/zoom/zoom-leave.sh"
+    exec = "python3 decks/zoom/zoom.py leave"
 
 # 5–13 — empty
 [[keys]]
