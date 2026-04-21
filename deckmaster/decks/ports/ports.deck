@@ -45,7 +45,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/prev.png"
   [keys.action]
-    exec = "decks/ports/ports-page.sh prev"
+    exec = "bun decks/ports/ports-render.js page prev"
 
 [[keys]]
   index = 9
@@ -54,7 +54,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/next.png"
   [keys.action]
-    exec = "decks/ports/ports-page.sh next"
+    exec = "bun decks/ports/ports-render.js page next"
 
 [[keys]]
   index = 10
@@ -73,7 +73,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 0"
+      icon_command = "bun decks/ports/ports-render.js 0"
       command = ""
 
 [[keys]]
@@ -82,7 +82,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 1"
+      icon_command = "bun decks/ports/ports-render.js 1"
       command = ""
 
 [[keys]]
@@ -91,7 +91,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 2"
+      icon_command = "bun decks/ports/ports-render.js 2"
       command = ""
 
 [[keys]]
@@ -100,7 +100,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 3"
+      icon_command = "bun decks/ports/ports-render.js 3"
       command = ""
 
 [[keys]]
@@ -109,7 +109,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 4"
+      icon_command = "bun decks/ports/ports-render.js 4"
       command = ""
 
 [[keys]]
@@ -118,7 +118,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 5"
+      icon_command = "bun decks/ports/ports-render.js 5"
       command = ""
 
 [[keys]]
@@ -127,7 +127,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 6"
+      icon_command = "bun decks/ports/ports-render.js 6"
       command = ""
 
 [[keys]]
@@ -136,7 +136,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 7"
+      icon_command = "bun decks/ports/ports-render.js 7"
       command = ""
 
 [[keys]]
@@ -145,5 +145,5 @@ parent = "../apps.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-icon.sh 8"
+      icon_command = "bun decks/ports/ports-render.js 8"
       command = ""

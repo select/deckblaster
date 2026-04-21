@@ -78,7 +78,7 @@
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ports/ports-main-icon.sh"
+      icon_command = "bun decks/ports/ports-render.js badge"
       command = ""
   [keys.action]
     deck = "ports/ports.deck"
