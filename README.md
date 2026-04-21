@@ -101,12 +101,44 @@ Just save the `.deck` file — the `--watch` flag auto-reloads within 200 ms. No
 
 | Page | File | Description |
 |---|---|---|
-| Main | `deckmaster/decks/test.deck` | Clock, memory gauge, calendar event, virtual desktops |
-| HA Lights | `deckmaster/decks/ha.deck` | Home Assistant room light toggles |
-| Zoom | `deckmaster/decks/zoom.deck` | Mute, video, hand-raise, leave |
-| Slot Machine | `deckmaster/decks/slots.deck` | Fully animated slot machine game |
-| Mouse Highlighter | `deckmaster/decks/highlight.deck` | Control X11 cursor highlight overlay |
-| Calculator | `deckmaster/decks/calc.deck` | LCD-style calculator with chained ops |
+| Main | `deckmaster/decks/main.deck` | Clock, memory gauge, calendar event, virtual desktops |
+| HA Lights | `deckmaster/decks/ha/ha.deck` | Home Assistant room light toggles |
+| Zoom | `deckmaster/decks/zoom/zoom.deck` | Mute, video, hand-raise, leave |
+| Slot Machine | `deckmaster/decks/slots/slots.deck` | Fully animated slot machine game |
+| Mouse Highlighter | `deckmaster/decks/highlight/highlight.deck` | Control X11 cursor highlight overlay |
+| Calculator | `deckmaster/decks/calc/calc.deck` | LCD-style calculator with chained ops |
+| Polymarket | `deckmaster/decks/polymarket/polymarket.deck` | Trending prediction market bets |
+| Docker | `deckmaster/decks/docker/docker.deck` | Container status + start/stop |
+| Ports | `deckmaster/decks/ports/ports.deck` | Listening dev-server ports |
+
+## Screenshots
+
+### Main
+![Main deck](docs/screenshots/main.png)
+
+### Home Assistant
+![HA deck](docs/screenshots/ha.png)
+
+### Zoom
+![Zoom deck](docs/screenshots/zoom.png)
+
+### Slot Machine
+![Slots deck](docs/screenshots/slots.png)
+
+### Calculator
+![Calc deck](docs/screenshots/calc.png)
+
+### Mouse Highlighter
+![Highlight deck](docs/screenshots/highlight.png)
+
+### Polymarket
+![Polymarket deck](docs/screenshots/polymarket.png)
+
+### Docker
+![Docker deck](docs/screenshots/docker.png)
+
+### Ports
+![Ports deck](docs/screenshots/ports.png)
 
 ---
 
