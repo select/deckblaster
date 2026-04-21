@@ -10,11 +10,9 @@ Linux Stream Deck setup — config-file driven, live-reloading, scriptable.
 
 ## What's in Here
 
-| Directory | Purpose |
-|---|---------|
-| `deckmaster/` | Forked & extended Stream Deck daemon (the active solution) |
-| `deckmaster/decks/<plugin>/` | Each plugin: `.deck` config + scripts + `assets/` |
-| `docs/` | Research notes and design decisions |
+deckblaster is built on a fork of [muesli/deckmaster](https://github.com/muesli/deckmaster) — a lightweight, config-file-driven Stream Deck daemon for Linux. The fork adds a live HTTP API for pushing key updates at runtime, an `icon_command` widget field for dynamic per-key icon rendering, a file-watcher for instant config reload, and a plugin folder layout so each feature lives in its own self-contained directory with its deck config, scripts, and assets.
+
+Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
 
 ---
 
