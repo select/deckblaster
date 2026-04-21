@@ -102,10 +102,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/vdesktop/vdesktop-icon.sh 0"
+      icon_command = "echo /tmp/streamdeck-vdesktop/desk-0.png"
       command = ""
   [keys.action]
-    exec = "decks/vdesktop/vdesktop-switch.sh 0"
+    exec = "python3 decks/vdesktop/vdesktop-render.py switch 0"
 
 [[keys]]
   index = 11
@@ -113,10 +113,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/vdesktop/vdesktop-icon.sh 1"
+      icon_command = "echo /tmp/streamdeck-vdesktop/desk-1.png"
       command = ""
   [keys.action]
-    exec = "decks/vdesktop/vdesktop-switch.sh 1"
+    exec = "python3 decks/vdesktop/vdesktop-render.py switch 1"
 
 [[keys]]
   index = 12
@@ -124,10 +124,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/vdesktop/vdesktop-icon.sh 2"
+      icon_command = "echo /tmp/streamdeck-vdesktop/desk-2.png"
       command = ""
   [keys.action]
-    exec = "decks/vdesktop/vdesktop-switch.sh 2"
+    exec = "python3 decks/vdesktop/vdesktop-render.py switch 2"
 
 [[keys]]
   index = 13
@@ -135,10 +135,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/vdesktop/vdesktop-icon.sh 3"
+      icon_command = "echo /tmp/streamdeck-vdesktop/desk-3.png"
       command = ""
   [keys.action]
-    exec = "decks/vdesktop/vdesktop-switch.sh 3"
+    exec = "python3 decks/vdesktop/vdesktop-render.py switch 3"
 
 [[keys]]
   index = 14
@@ -146,7 +146,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "decks/vdesktop/vdesktop-icon.sh 4"
+      icon_command = "echo /tmp/streamdeck-vdesktop/desk-4.png"
       command = ""
   [keys.action]
-    exec = "decks/vdesktop/vdesktop-switch.sh 4"
+    exec = "python3 decks/vdesktop/vdesktop-render.py switch 4"

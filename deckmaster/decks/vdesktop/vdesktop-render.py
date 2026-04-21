@@ -286,6 +286,31 @@ def render_desktop(desk_num, apps, current):
 
 
 def main():
+    import sys
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "render"
+
+    if cmd == "switch":
+        # Switch to virtual desktop N
+        n = sys.argv[2] if len(sys.argv) > 2 else "0"
+        subprocess.run(["xdotool", "set_desktop", n])
+        return
+
+    if cmd == "poll":
+        # Daemon loop: re-render every 3 seconds (replaces vdesktop-poll.sh)
+        import time
+        while True:
+            try:
+                _render_all()
+            except Exception:
+                pass
+            time.sleep(3)
+        return
+
+    # Default: render once
+    _render_all()
+
+
+def _render_all():
     n_str = run("xdotool get_num_desktops")
     if not n_str.isdigit():
         return

@@ -14,7 +14,7 @@ export HA_TOKEN HA_URL DECK_API
 export PATH="${HOME}/.bun/bin:${PATH}"
 
 # Virtual desktop icon poller (renders desk-N.png every 3s)
-decks/vdesktop/vdesktop-poll.sh &
+python3 decks/vdesktop/vdesktop-render.py poll &
 
 # Door sensor poller (fires 20s HTTP API alert on key 7 when a door opens)
 decks/ha/ha-door-poll.sh &
