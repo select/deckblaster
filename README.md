@@ -96,48 +96,105 @@ Just save the `.deck` file — the `--watch` flag auto-reloads within 200 ms. No
 
 ---
 
-## Deck Pages
-
-| Page | File | Description |
-|---|---|---|
-| Main | `deckmaster/decks/main.deck` | Clock, memory gauge, calendar event, virtual desktops |
-| HA Lights | `deckmaster/decks/ha/ha.deck` | Home Assistant room light toggles |
-| Zoom | `deckmaster/decks/zoom/zoom.deck` | Mute, video, hand-raise, leave |
-| Slot Machine | `deckmaster/decks/slots/slots.deck` | Fully animated slot machine game |
-| Mouse Highlighter | `deckmaster/decks/highlight/highlight.deck` | Control X11 cursor highlight overlay |
-| Calculator | `deckmaster/decks/calc/calc.deck` | LCD-style calculator with chained ops |
-| Polymarket | `deckmaster/decks/polymarket/polymarket.deck` | Trending prediction market bets |
-| Docker | `deckmaster/decks/docker/docker.deck` | Container status + start/stop |
-| Ports | `deckmaster/decks/ports/ports.deck` | Listening dev-server ports |
-
-## Screenshots
+## Plugins
 
 ### Main
-![Main deck](docs/screenshots/main.png)
+
+<img src="docs/screenshots/main.png" width="400"/>
+
+Home screen. Shows clock, RAM gauge, next calendar event countdown, and a virtual desktop switcher (bottom row). Navigation buttons reach all other plugins.
+
+**Language:** Python (vdesktop renderer) · `xdotool` · `python3-gi` (GNOME EDS for calendar)
+
+---
 
 ### Home Assistant
-![HA deck](docs/screenshots/ha.png)
+
+<img src="docs/screenshots/ha.png" width="400"/>
+
+Controls lights and switches in multiple rooms. Monitors door sensors (last opened / currently open) and soil moisture sensors. Room icons show live on/off state with a coloured dot.
+
+**Language:** Python (`uv`) · **Requires:** `imagemagick`, HA token + URL in `~/.config/streamdeck.env`
+
+---
 
 ### Zoom
-![Zoom deck](docs/screenshots/zoom.png)
+
+<img src="docs/screenshots/zoom.png" width="400"/>
+
+Meeting controls: mute/unmute, video on/off, raise/lower hand, leave. All buttons show grey no-meeting icons when Zoom is not running and switch to coloured icons when a meeting is active.
+
+**Language:** Python (stdlib only) · **Requires:** `xdotool`
+
+---
 
 ### Slot Machine
-![Slots deck](docs/screenshots/slots.png)
+
+<img src="docs/screenshots/slots.png" width="400"/>
+
+Fully animated slot machine with 7 symbols, 5 pay lines, bet cycling, win detection, glitter animations and a credits display. State persists across restarts; resets to 100 credits when broke.
+
+**Language:** Python (`uv`)
+
+---
 
 ### Calculator
-![Calc deck](docs/screenshots/calc.png)
+
+<img src="docs/screenshots/calc.png" width="400"/>
+
+LCD-style calculator. Supports chained operations, 12-digit input, division-by-zero error handling. Long-press `+` for `−`, `×` for `÷`, `=` for clear.
+
+**Language:** Python (`uv`)
+
+---
 
 ### Mouse Highlighter
-![Highlight deck](docs/screenshots/highlight.png)
+
+<img src="docs/screenshots/highlight.png" width="400"/>
+
+Controls a cursor highlight circle (X11). Adjust radius, colour (uses pywal palette), and opacity live. Each parameter button shows a preview of the *next* value before you press it.
+
+**Language:** Python (`uv`) · **Requires:** X11, bundled `highlight-pointer` binary
+
+---
 
 ### Polymarket
-![Polymarket deck](docs/screenshots/polymarket.png)
+
+<img src="docs/screenshots/polymarket.png" width="400"/>
+
+Browse trending prediction market bets. Shows YES/NO percentages for three markets per page with pagination, category filtering, and auto-refresh. Press a text key to scroll long titles.
+
+**Language:** Python (`uv`) · **Requires:** internet access
+
+---
 
 ### Docker
-![Docker deck](docs/screenshots/docker.png)
+
+<img src="docs/screenshots/docker.png" width="400"/>
+
+Shows all containers (running/stopped/paused) with image name, mapped port and uptime. Press a container to start/stop it. Paginates when you have more than 9 containers.
+
+**Language:** Bun / JS · **Requires:** `bun`, `docker`
+
+---
 
 ### Ports
-![Ports deck](docs/screenshots/ports.png)
+
+<img src="docs/screenshots/ports.png" width="400"/>
+
+Lists all listening dev-server ports — filters out system processes and shows port, process name, project directory and framework (Next.js, Vite, Django, …). No external package needed; scanner is inlined.
+
+**Language:** Bun / JS · **Requires:** `bun`, `ss` (iproute2)
+
+---
+
+### Apps
+
+<img src="docs/screenshots/apps.png" width="400"/>
+
+Secondary navigation hub. Quick-launch for Zoom, Calculator, and the screen recorder.
+
+**Language:** —
 
 ---
 
