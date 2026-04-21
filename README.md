@@ -1,6 +1,6 @@
-# Stream Deck Setup
+# deckblaster
 
-Personal Stream Deck integration for Linux — config-file driven, live-reloading, scriptable.
+Linux Stream Deck setup — config-file driven, live-reloading, scriptable — config-file driven, live-reloading, scriptable.
 
 ## Hardware
 
