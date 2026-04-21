@@ -199,9 +199,11 @@ Bottom row of the main deck. Each button shows the apps open on that virtual des
 
 ---
 
-### Screen Recorder
+### Stream Deck Recorder
 
-Single button on the Apps page. Press to start recording the Stream Deck at 5 fps; press again to stop and encode to `~/Videos/`. Each frame is composited onto the Stream Deck photo template.
+<img src="docs/screenshots/recorder.png" width="400"/>
+
+Single button on the Apps page. Records the Stream Deck's own button display at 5 fps and encodes to `~/Videos/` on stop. Each frame is composited onto the Stream Deck photo template.
 
 **Language:** Python (stdlib only)
 
