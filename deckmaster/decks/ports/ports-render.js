@@ -14,11 +14,9 @@
 
 import sharp from "sharp";
 import { mkdir, writeFile, readFile } from "fs/promises";
-import { existsSync } from "fs";
-import {
-  getListeningPorts,
-  isDevProcess,
-} from "port-whisperer/src/scanner.js";
+import { existsSync, readFileSync, readlinkSync } from "fs";
+import { execSync } from "child_process";
+import { basename, join, dirname } from "path";
 
 // ── config ────────────────────────────────────────────────────────────────────
 
@@ -28,8 +26,227 @@ const ICON_PATH  = import.meta.dir + "/assets/ports.png";
 const CACHE_TTL  = 5_000; // ms
 const SLOTS      = 9;     // 3×3 middle grid, column-major (slots 0-8)
 
-const SCANNER_PATH =
-  "port-whisperer/src/scanner.js";
+// ── port scanner (inlined from port-whisperer, Linux only) ───────────────────
+
+function _getListeningPortsRaw() {
+  const entries = [];
+  const portMap = new Map();
+  try {
+    const raw = execSync("ss -tlnp 2>/dev/null", { encoding: "utf8", timeout: 10000 });
+    for (const line of raw.trim().split("\n").slice(1)) {
+      const parts = line.split(/\s+/);
+      if (parts.length < 5) continue;
+      const portMatch = parts[3].match(/:([\d]+)$/);
+      if (!portMatch) continue;
+      const port = parseInt(portMatch[1], 10);
+      if (portMap.has(port)) continue;
+      const usersField = parts.slice(5).join(" ");
+      const pidMatch  = usersField.match(/pid=(\d+)/);
+      const nameMatch = usersField.match(/\("([^"]+)"/);
+      if (pidMatch) {
+        const pid = parseInt(pidMatch[1], 10);
+        const processName = nameMatch ? nameMatch[1] : (() => {
+          try { return readFileSync(`/proc/${pid}/comm`, "utf8").trim(); } catch { return "unknown"; }
+        })();
+        portMap.set(port, true);
+        entries.push({ port, pid, processName });
+      }
+    }
+  } catch {}
+  return entries;
+}
+
+function _batchProcessInfo(pids) {
+  const map = new Map();
+  if (!pids.length) return map;
+  try {
+    const raw = execSync(`ps -p ${pids.join(",")} -o pid=,ppid=,stat=,rss=,lstart=,command= 2>/dev/null`,
+      { encoding: "utf8", timeout: 5000 }).trim();
+    for (const line of raw.split("\n")) {
+      const m = line.trim().match(/^(\d+)\s+(\d+)\s+(\S+)\s+(\d+)\s+\w+\s+(\w+\s+\d+\s+[\d:]+\s+\d+)\s+(.*)$/);
+      if (!m) continue;
+      map.set(parseInt(m[1], 10), { ppid: parseInt(m[2], 10), stat: m[3], rss: parseInt(m[4], 10), lstart: m[5], command: m[6] });
+    }
+  } catch {}
+  return map;
+}
+
+function _batchCwd(pids) {
+  const map = new Map();
+  for (const pid of pids) {
+    try {
+      const cwd = readlinkSync(`/proc/${pid}/cwd`);
+      if (cwd?.startsWith("/")) map.set(pid, cwd);
+    } catch {}
+  }
+  return map;
+}
+
+function _batchDockerInfo() {
+  const map = new Map();
+  try {
+    const raw = execSync('docker ps --format "{{.Ports}}\t{{.Names}}\t{{.Image}}" 2>/dev/null',
+      { encoding: "utf8", timeout: 5000 }).trim();
+    for (const line of raw.split("\n")) {
+      if (!line.trim()) continue;
+      const [portsStr, name, image] = line.split("\t");
+      if (!portsStr || !name) continue;
+      const seen = new Set();
+      for (const m of portsStr.matchAll(/(?:\d+\.\d+\.\d+\.\d+|::):(\d+)->/g)) {
+        const port = parseInt(m[1], 10);
+        if (!seen.has(port)) { seen.add(port); map.set(port, { name, image }); }
+      }
+    }
+  } catch {}
+  return map;
+}
+
+function _findProjectRoot(dir) {
+  const markers = ["package.json", "Cargo.toml", "go.mod", "pyproject.toml", "Gemfile", "pom.xml"];
+  let cur = dir, depth = 0;
+  while (cur !== "/" && cur !== dirname(cur) && depth < 15) {
+    if (markers.some(m => existsSync(join(cur, m)))) return cur;
+    cur = dirname(cur); depth++;
+  }
+  return dir;
+}
+
+function _detectFramework(root) {
+  const pkgPath = join(root, "package.json");
+  if (existsSync(pkgPath)) {
+    try {
+      const { dependencies: d = {}, devDependencies: dd = {} } = JSON.parse(readFileSync(pkgPath, "utf8"));
+      const all = { ...d, ...dd };
+      if (all["next"]) return "Next.js";
+      if (all["nuxt"] || all["nuxt3"]) return "Nuxt";
+      if (all["@sveltejs/kit"]) return "SvelteKit";
+      if (all["svelte"]) return "Svelte";
+      if (all["@remix-run/react"] || all["remix"]) return "Remix";
+      if (all["astro"]) return "Astro";
+      if (all["vite"]) return "Vite";
+      if (all["@angular/core"]) return "Angular";
+      if (all["vue"]) return "Vue";
+      if (all["react"]) return "React";
+      if (all["express"]) return "Express";
+      if (all["fastify"]) return "Fastify";
+      if (all["hono"]) return "Hono";
+      if (all["@nestjs/core"]) return "NestJS";
+    } catch {}
+  }
+  if (existsSync(join(root, "vite.config.ts")) || existsSync(join(root, "vite.config.js"))) return "Vite";
+  if (existsSync(join(root, "next.config.js")) || existsSync(join(root, "next.config.mjs"))) return "Next.js";
+  if (existsSync(join(root, "Cargo.toml"))) return "Rust";
+  if (existsSync(join(root, "go.mod"))) return "Go";
+  if (existsSync(join(root, "manage.py"))) return "Django";
+  return null;
+}
+
+function _detectFrameworkFromCommand(command, processName) {
+  const cmd = (command || "").toLowerCase();
+  if (cmd.includes("next")) return "Next.js";
+  if (cmd.includes("vite")) return "Vite";
+  if (cmd.includes("nuxt")) return "Nuxt";
+  if (cmd.includes("webpack")) return "Webpack";
+  if (cmd.includes("remix")) return "Remix";
+  if (cmd.includes("astro")) return "Astro";
+  if (cmd.includes("flask")) return "Flask";
+  if (cmd.includes("django") || cmd.includes("manage.py")) return "Django";
+  if (cmd.includes("uvicorn")) return "FastAPI";
+  if (cmd.includes("rails")) return "Rails";
+  const name = (processName || "").toLowerCase();
+  if (name === "node") return "Node.js";
+  if (name === "python" || name === "python3") return "Python";
+  if (name === "ruby") return "Ruby";
+  if (name === "java") return "Java";
+  if (name === "go") return "Go";
+  return null;
+}
+
+function _detectFrameworkFromImage(image) {
+  if (!image) return "Docker";
+  const img = image.toLowerCase();
+  if (img.includes("postgres")) return "PostgreSQL";
+  if (img.includes("redis")) return "Redis";
+  if (img.includes("mysql") || img.includes("mariadb")) return "MySQL";
+  if (img.includes("mongo")) return "MongoDB";
+  if (img.includes("nginx")) return "nginx";
+  if (img.includes("rabbitmq")) return "RabbitMQ";
+  return "Docker";
+}
+
+function _formatUptime(ms) {
+  const s = Math.floor(ms / 1000), m = Math.floor(s / 60), h = Math.floor(m / 60), d = Math.floor(h / 24);
+  if (d > 0) return `${d}d ${h % 24}h`;
+  if (h > 0) return `${h}h ${m % 60}m`;
+  if (m > 0) return `${m}m ${s % 60}s`;
+  return `${s}s`;
+}
+
+function _formatMemory(rssKB) {
+  if (rssKB > 1048576) return `${(rssKB / 1048576).toFixed(1)} GB`;
+  if (rssKB > 1024)    return `${(rssKB / 1024).toFixed(1)} MB`;
+  return `${rssKB} KB`;
+}
+
+async function getListeningPorts() {
+  const entries   = _getListeningPortsRaw();
+  const pids      = [...new Set(entries.map(e => e.pid))];
+  const psMap     = _batchProcessInfo(pids);
+  const cwdMap    = _batchCwd(pids);
+  const hasDocker = entries.some(e => e.processName.startsWith("com.docke") || e.processName === "docker");
+  const dockerMap = hasDocker ? _batchDockerInfo() : new Map();
+
+  return entries.map(({ port, pid, processName }) => {
+    const ps  = psMap.get(pid);
+    const cwd = cwdMap.get(pid);
+    const info = {
+      port, pid, processName,
+      command: ps?.command ?? "",
+      cwd: null, projectName: null, framework: null,
+      uptime: null, startTime: null, status: "healthy", memory: null,
+    };
+    if (ps) {
+      if (ps.stat.includes("Z")) info.status = "zombie";
+      else if (ps.ppid === 1 && isDevProcess(processName, ps.command)) info.status = "orphaned";
+      if (ps.rss > 0) info.memory = _formatMemory(ps.rss);
+      if (ps.lstart) {
+        const t = new Date(ps.lstart);
+        if (!isNaN(t.getTime())) info.uptime = _formatUptime(Date.now() - t.getTime());
+      }
+      info.framework = _detectFrameworkFromCommand(ps.command, processName);
+    }
+    const docker = dockerMap.get(port);
+    if (docker) {
+      info.projectName = docker.name;
+      info.framework   = _detectFrameworkFromImage(docker.image);
+      info.processName = "docker";
+    } else if (cwd) {
+      const root = _findProjectRoot(cwd);
+      info.cwd         = root;
+      info.projectName = basename(root);
+      info.framework   = info.framework || _detectFramework(root);
+    }
+    return info;
+  }).sort((a, b) => a.port - b.port);
+}
+
+function isDevProcess(processName, command) {
+  const name = (processName || "").toLowerCase();
+  const cmd  = (command || "").toLowerCase();
+  const systemApps = ["spotify","slack","discord","firefox","chrome","google","safari","figma",
+    "notion","zoom","teams","iterm2","systemd","snapd","networkmanager","gdm","sshd",
+    "cron","dbus-daemon","polkitd","rsyslogd","thermald","accounts-daemon"];
+  if (systemApps.some(a => name.startsWith(a))) return false;
+  const devNames = new Set(["node","python","python3","ruby","java","go","cargo","deno",
+    "bun","php","uvicorn","gunicorn","flask","rails","npm","npx","yarn","pnpm",
+    "tsc","tsx","esbuild","rollup","turbo","nx","jest","vitest","mocha",
+    "pytest","cypress","playwright","rustc","dotnet","gradle","mvn","mix","elixir"]);
+  if (devNames.has(name)) return true;
+  if (name.startsWith("com.docke") || name === "docker") return true;
+  const cmdIndicators = [/\bnode\b/,/\bnext[\s-]/,/\bvite\b/,/\bnuxt\b/,/\bwebpack\b/,
+    /\bremix\b/,/\bastro\b/,/\bgulp\b/,/\bflask\b/,/\bdjango\b|manage\.py/,/\buvicorn\b/,/\brails\b/];
+  return cmdIndicators.some(re => re.test(cmd));
+}
 
 // ── colors ────────────────────────────────────────────────────────────────────
 
