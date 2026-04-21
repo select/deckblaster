@@ -49,7 +49,7 @@ col_xs     = [X0 + int(col * (GRID_RIGHT - X0 - KEY_DST) / 4) for col in range(C
 
 # Decks to screenshot: (output_name, deck_path_relative_to_DECKMASTER, wait_seconds)
 DECKS_TO_SHOOT = [
-    ("main",            "decks/main.deck",                     5),
+    ("main",            "decks/main.deck",                     12),
     ("ha",              "decks/ha/ha.deck",                    6),
     ("zoom",            "decks/zoom/zoom.deck",                4),
     ("slots",           "decks/slots/slots.deck",              6),
@@ -95,6 +95,9 @@ def composite(shot: Image.Image) -> Image.Image:
             comp.paste(key, (col_xs[col], Y0 + row * (KEY_DST + V_GAP)))
 
     return comp
+
+# Crop box that removes the transparent whitespace around the device (2× template)
+CROP_BOX = (298, 226, 870, 634)
 
 def stop_service():
     subprocess.run(["systemctl", "--user", "stop", "streamdeck.service"],
@@ -159,7 +162,7 @@ def main():
 
             try:
                 shot = screenshot()
-                img  = composite(shot)
+                img  = composite(shot).crop(CROP_BOX)
                 out  = OUT_DIR / f"{name}.png"
                 img.save(out)
                 print(f" saved → docs/screenshots/{name}.png")
