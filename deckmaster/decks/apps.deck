@@ -1,0 +1,124 @@
+parent = "main.deck"
+
+# ── Apps ──────────────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [ZOOM ] [CALC ] [empty] [empty] [empty]
+#   [empty] [empty] [empty] [empty] [empty]
+#   [empty] [empty] [empty] [empty] [BACK ]
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "zoom/assets/zoom.png"
+  [keys.action]
+    deck = "zoom/zoom.deck"
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "calc/assets/calc-icon.png"
+  [keys.action]
+    deck = "calc/calc.deck"
+
+# Record / screencast button
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "decks/recorder/deck-record-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/recorder/deck-record-toggle.py"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/empty.png"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/back.png"
+  [keys.action]
+    deck = "main.deck"

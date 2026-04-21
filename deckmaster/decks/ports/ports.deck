@@ -1,0 +1,149 @@
+parent = "../apps.deck"
+
+# ── Ports ─────────────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [    ] [s0 ] [s3 ] [s6 ] [    ]
+#   [PREV] [s1 ] [s4 ] [s7 ] [NEXT]
+#   [EXIT] [s2 ] [s5 ] [s8 ] [    ]
+#
+# Middle 3×3 (keys 1,2,3, 6,7,8, 11,12,13): port slots, column-major
+# Key  5 : PREV page
+# Key  9 : NEXT page
+# Key 10 : EXIT → apps.deck
+# Keys 0,4,14 : empty
+
+# ── Empty corners ─────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Navigation ────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/prev.png"
+  [keys.action]
+    exec = "decks/ports/ports-page.sh prev"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/next.png"
+  [keys.action]
+    exec = "decks/ports/ports-page.sh next"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../main.deck"
+
+# ── Middle 3×3 — port slots (column-major: col0→col1→col2) ───────────────────
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 0"
+      command = ""
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 1"
+      command = ""
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 2"
+      command = ""
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 3"
+      command = ""
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 4"
+      command = ""
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 5"
+      command = ""
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 6"
+      command = ""
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 7"
+      command = ""
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-icon.sh 8"
+      command = ""

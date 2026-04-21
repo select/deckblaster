@@ -1,0 +1,113 @@
+parent = "../apps.deck"
+
+# 0 — Mute / Unmute
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/zoom/zoom-mic-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "decks/zoom/zoom-toggle-mute.sh"
+
+# 1 — Start / Stop video
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/zoom/zoom-video-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "decks/zoom/zoom-toggle-video.sh"
+
+# 2 — Raise / Lower hand
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/zoom/zoom-hand-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "decks/zoom/zoom-raise-hand.sh"
+
+# 3 — empty
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "button"
+
+# 4 — Leave meeting
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/zoom/zoom-leave-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "decks/zoom/zoom-leave.sh"
+
+# 5–13 — empty
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "button"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "button"
+
+# 14 — Back
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/back.png"
+      label = "Back"
+      fontsize = 8
+  [keys.action]
+    deck = "../main.deck"

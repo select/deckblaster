@@ -1,0 +1,167 @@
+parent = "../main.deck"
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [    ] [c0 ] [c3 ] [c6 ] [    ]
+#   [PREV] [c1 ] [c4 ] [c7 ] [NEXT]
+#   [EXIT] [c2 ] [c5 ] [c8 ] [    ]
+#
+# Middle 3×3 (keys 1,6,11, 2,7,12, 3,8,13): container slots, column-major
+# Key  5 : PREV page
+# Key  9 : NEXT page
+# Key 10 : EXIT → apps.deck
+# Keys 0,4,14 : empty
+
+# ── Empty corners ─────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Navigation ────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/prev.png"
+  [keys.action]
+    exec = "decks/docker/docker-action.sh page prev"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/next.png"
+  [keys.action]
+    exec = "decks/docker/docker-action.sh page next"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../main.deck"
+
+# ── Middle 3×3 — container slots (column-major: col0→col1→col2) ───────────────
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 0"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 0"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 1"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 1"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 2"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 2"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 3"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 3"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 4"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 4"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 5"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 5"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 6"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 6"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 7"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 7"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-icon.sh 8"
+      command = ""
+  [keys.action]
+    exec = "decks/docker/docker-action.sh toggle 8"

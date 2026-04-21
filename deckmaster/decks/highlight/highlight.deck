@@ -1,0 +1,158 @@
+parent = "../main.deck"
+
+# ── Mouse Highlighter ───────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [STATUS] [SIZ ▲] [COLOR] [ALP ▲] [     ]
+#   [ON/OFF] [SIZ ▼] [     ] [ALP ▼] [     ]
+#   [ EXIT ] [     ] [     ] [     ] [     ]
+#
+# Dynamic buttons poll icon_command every 2s for live previews.
+# Only key 0 (status) is updated via HTTP API.
+# All unused keys set to ../assets/empty.png.
+
+# ── Row 0 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-ctrl.py init >/dev/null 2>&1; echo decks/highlight/assets/status-init.png"
+      command = ""
+
+# Size UP — large dot preview
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py size-up"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py size-up"
+
+# Color cycle — prev/current/next stacked, press=next hold=prev
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py color-next"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py color-next"
+
+# Alpha UP — brighter dot + percentage
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py alpha-up"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py opacity-up"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Row 1 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/toggle.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py toggle"
+
+# Size DOWN — small dot preview
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py size-down"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py size-down"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py color-prev"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py color-prev"
+
+# Alpha DOWN — fainter dot + percentage
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 2000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/highlight/highlight-btn-icon.py alpha-down"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/highlight/highlight-ctrl.py opacity-down"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Row 2 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../main.deck"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"

@@ -1,0 +1,167 @@
+parent = "../main.deck"
+
+# ── Polymarket Trending Bets ────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [INFO  ] [YES 1 ] [YES 2 ] [YES 3 ] [RELOAD]
+#   [ ◀    ] [TXT 1 ] [TXT 2 ] [TXT 3 ] [  ▶   ]
+#   [EXIT  ] [NO  1 ] [NO  2 ] [NO  3 ] [      ]
+#
+# Press middle text keys to cycle through long question text.
+# YES/NO/INFO keys updated via API. Text keys use icon_command (safe with actions).
+# All 15 keys defined.
+
+# ── Row 0 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/info.png"
+      command = ""
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/yes-0.png"
+      command = ""
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/yes-1.png"
+      command = ""
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/yes-2.png"
+      command = ""
+
+# Reload
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/reload.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py reload"
+
+# ── Row 1 ──────────────────────────────────────────────────────────────────────
+
+# Prev (left)
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/prev.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py prev"
+
+# Text 1 — icon_command renders, action cycles text frame
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/polymarket/polymarket-render-text.py 0"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py more 0"
+
+# Text 2
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/polymarket/polymarket-render-text.py 1"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py more 1"
+
+# Text 3
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/polymarket/polymarket-render-text.py 2"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py more 2"
+
+# Next (right)
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/next.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py next"
+
+# ── Row 2 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../main.deck"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/no-0.png"
+      command = ""
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/no-1.png"
+      command = ""
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/no-2.png"
+      command = ""
+
+# Category filter — navigates to category selection page
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/category.png"
+  [keys.action]
+    exec = "/usr/bin/python3 -c \"import json,os; p=os.path.expanduser('~/.local/share/streamdeck-polymarket/state.json'); s=json.load(open(p)); s['cat_page']=0; json.dump(s,open(p,'w'))\""
+    deck = "polymarket-cats.deck"

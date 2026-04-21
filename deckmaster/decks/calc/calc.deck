@@ -1,0 +1,165 @@
+parent = "../apps.deck"
+
+# ── Calculator ──────────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [DISP] [ 7 ] [ 8 ] [ 9 ] [ +/− ]
+#   [  0 ] [ 4 ] [ 5 ] [ 6 ] [ ×/÷ ]
+#   [EXIT] [ 1 ] [ 2 ] [ 3 ] [ =/C ]
+#
+# Short press +  → add       Long press +  → subtract
+# Short press ×  → multiply  Long press ×  → divide
+# Short press =  → equals    Long press =  → clear
+#
+# Only key 0 (display) is updated via HTTP API. All other keys are static.
+
+# ── Row 0 ──────────────────────────────────────────────────────────────────────
+
+# Display — init pushes rendered display via API
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/calc/calc-game.py init >/dev/null 2>&1; echo decks/calc/assets/display-init.png"
+      command = ""
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-7.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 7"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-8.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 8"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-9.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 9"
+
+# + (short press) / − (long press)
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/op-plus.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py op +"
+  [keys.action_hold]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py op -"
+
+# ── Row 1 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-0.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 0"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-4.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 4"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-5.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 5"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-6.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 6"
+
+# × (short press) / ÷ (long press)
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/op-multiply.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py op *"
+  [keys.action_hold]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py op /"
+
+# ── Row 2 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../apps.deck"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-1.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 1"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-2.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 2"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/digit-3.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 3"
+
+# = (short press) / C (long press)
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/op-equals.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py equals"
+  [keys.action_hold]
+    exec = "/usr/bin/python3 decks/calc/calc-game.py clear"

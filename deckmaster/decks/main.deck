@@ -1,0 +1,152 @@
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "polymarket/assets/polymarket-icon.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py init"
+    deck = "polymarket/polymarket.deck"
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "highlight/assets/highlight-icon.png"
+  [keys.action]
+    deck = "highlight/highlight.deck"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "slots/assets/slots-icon.png"
+  [keys.action]
+    deck = "slots/slots.deck"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/apps.png"
+  [keys.action]
+    deck = "apps.deck"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "time"
+    [keys.widget.config]
+      format = "%H:%i;%d %M"
+      font = "bold;regular"
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "top"
+    [keys.widget.config]
+      mode = "memory"
+      fillColor = "#d497de"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "ha/assets/ha.png"
+  [keys.action]
+    deck = "ha/ha.deck"
+
+# Docker button
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/docker/docker-main-icon.sh"
+      command = ""
+  [keys.action]
+    deck = "docker/docker.deck"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "decks/ports/ports-main-icon.sh"
+      command = ""
+  [keys.action]
+    deck = "ports/ports.deck"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      command = "decks/calendar/next-event-countdown.sh;decks/calendar/next-event-title.sh"
+      font = "bold;regular"
+      color = "#ffffff;#ffffff"
+      color_command = "decks/calendar/next-event-color.sh"
+  [keys.action]
+    exec = "decks/calendar/next-event-open.sh"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/vdesktop/vdesktop-icon.sh 0"
+      command = ""
+  [keys.action]
+    exec = "decks/vdesktop/vdesktop-switch.sh 0"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/vdesktop/vdesktop-icon.sh 1"
+      command = ""
+  [keys.action]
+    exec = "decks/vdesktop/vdesktop-switch.sh 1"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/vdesktop/vdesktop-icon.sh 2"
+      command = ""
+  [keys.action]
+    exec = "decks/vdesktop/vdesktop-switch.sh 2"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/vdesktop/vdesktop-icon.sh 3"
+      command = ""
+  [keys.action]
+    exec = "decks/vdesktop/vdesktop-switch.sh 3"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/vdesktop/vdesktop-icon.sh 4"
+      command = ""
+  [keys.action]
+    exec = "decks/vdesktop/vdesktop-switch.sh 4"

@@ -1,0 +1,24 @@
+# Secrets / local config — never commit
+.env
+*.env
+streamdeck.env
+
+# Go build output
+deckmaster/deckmaster
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node / Bun
+node_modules/
+bun.lock
+
+# Generated assets & runtime state
+/tmp/
+*.png.bak
+
+# Editor
+.vscode/
+.idea/

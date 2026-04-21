@@ -1,0 +1,166 @@
+parent = "../main.deck"
+
+# ── Slot Machine ────────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [CREDIT] [reel ] [reel ] [reel ] [BET↑ ]
+#   [ SPIN ] [reel ] [reel ] [reel ] [BET↓ ]
+#   [ EXIT ] [reel ] [reel ] [reel ] [LINES]
+#
+# On entry, slots-game.py init pushes reel + info key images via HTTP API.
+# IMPORTANT: action keys (SPIN=5, EXIT=10, BET=4,9) must NEVER be updated
+# via the HTTP API — that replaces the widget and destroys the action binding.
+
+# ── Row 0 ──────────────────────────────────────────────────────────────────────
+
+# Credits display — init triggers full game setup via API on deck load
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/slots/slots-game.py init >/dev/null 2>&1; echo decks/slots/assets/credits-bg.png"
+      command = ""
+
+# Reel top row (driven by API during spin)
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+# Bet Up button — shows current bet via icon_command (polled)
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "command"
+    interval = 3000
+    [keys.widget.config]
+      icon_command = "decks/slots/slots-bet-icon.sh"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/slots/slots-game.py bet-up"
+
+# ── Row 1 ──────────────────────────────────────────────────────────────────────
+
+# SPIN button — static icon from deck config (never touched by API)
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/spin-btn.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/slots/slots-game.py spin"
+
+# Reel middle row
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+# Bet Down button
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      label = "BET ▼"
+      fontsize = 10
+      color = "#ff9955"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/slots/slots-game.py bet-down"
+
+# ── Row 2 ──────────────────────────────────────────────────────────────────────
+
+# EXIT (back to main)
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit-btn.png"
+  [keys.action]
+    deck = "../main.deck"
+
+# Reel bottom row
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "echo decks/slots/assets/cell-empty.png"
+      command = ""
+
+# Lines display (static)
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      label = "5 Lines"
+      fontsize = 9
+      color = "#8888cc"

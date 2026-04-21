@@ -1,0 +1,186 @@
+parent = "polymarket.deck"
+
+# ── Polymarket Category Selection ───────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [     ] [CAT 1 ] [CAT 2 ] [CAT 3 ] [      ]
+#   [ ◀   ] [CAT 4 ] [CAT 5 ] [CAT 6 ] [  ▶   ]
+#   [     ] [CAT 7 ] [CAT 8 ] [CAT 9 ] [BACK  ]
+#
+# Press a category → selects it AND navigates back to polymarket.deck.
+# exec runs synchronously before deck switch (patched deckmaster).
+# All 15 keys defined.
+
+# ── Row 0 ──────────────────────────────────────────────────────────────────────
+
+# Page indicator (top-left) — polls the pre-rendered page image
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-page.png"
+      command = ""
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-0.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 0"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-1.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 1"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-2.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 2"
+    deck = "polymarket.deck"
+
+# Cat init — runs once on deck load
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "command"
+    interval = 0
+    [keys.widget.config]
+      icon_command = "/usr/bin/python3 decks/polymarket/polymarket.py cat-init >/dev/null 2>&1; echo decks/assets/empty.png"
+      command = ""
+
+# ── Row 1 ──────────────────────────────────────────────────────────────────────
+
+# Prev (left)
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/prev.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py cat-prev"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-3.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 3"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-4.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 4"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-5.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 5"
+    deck = "polymarket.deck"
+
+# Next (right)
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/next.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py cat-next"
+
+# ── Row 2 ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/home.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py cat-home"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-6.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 6"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-7.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 7"
+    deck = "polymarket.deck"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "echo /tmp/streamdeck-polymarket/cat-8.png"
+      command = ""
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py select-cat 8"
+    deck = "polymarket.deck"
+
+# Back (bottom-right)
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    exec = "/usr/bin/python3 decks/polymarket/polymarket.py init"
+    deck = "polymarket.deck"
