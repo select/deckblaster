@@ -14,7 +14,6 @@ Personal Stream Deck integration for Linux — config-file driven, live-reloadin
 |---|---------|
 | `deckmaster/` | Forked & extended Stream Deck daemon (the active solution) |
 | `deckmaster/decks/<plugin>/` | Each plugin: `.deck` config + scripts + `assets/` |
-| `deckmaster/decks/assets/` | Shared icons: `back.png`, `empty.png`, `apps.png` |
 | `docs/` | Research notes and design decisions |
 
 ---
