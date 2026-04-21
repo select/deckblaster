@@ -21,7 +21,7 @@ It is intended for AI agents and humans picking up this project.
 | Deck configs + scripts + assets | `deckmaster/decks/<plugin>/` |
 | Shared assets (back, empty, …) | `deckmaster/decks/assets/` |
 | Systemd units | `~/.config/systemd/user/` |
-| Environment | `~/.config/streamdeck.env` |}
+| Environment | `~/.config/deckblaster.env` |}
 
 ### deckmaster modifications (vs upstream)
 
@@ -36,8 +36,8 @@ It is intended for AI agents and humans picking up this project.
 ### Units
 
 ```
-~/.config/systemd/user/streamdeck.path     — triggers service when /dev/streamdeck appears
-~/.config/systemd/user/streamdeck.service  — runs start.sh (deckmaster + subprocesses in one cgroup)
+~/.config/systemd/user/deckblaster.path     — triggers service when /dev/streamdeck appears
+~/.config/systemd/user/deckblaster.service  — runs start.sh (deckmaster + subprocesses in one cgroup)
 ```
 
 `start.sh` launches subprocesses (vdesktop poller, calendar alert) in the background then
@@ -47,21 +47,21 @@ systemd kills them all together on stop.
 ### Managing the service
 
 ```bash
-systemctl --user status streamdeck.service   # check status + process tree
-systemctl --user restart streamdeck.service  # restart everything
-systemctl --user stop streamdeck.service     # stop everything
-journalctl --user -u streamdeck.service -f   # live logs
+systemctl --user status deckblaster.service   # check status + process tree
+systemctl --user restart deckblaster.service  # restart everything
+systemctl --user stop deckblaster.service     # stop everything
+journalctl --user -u deckblaster.service -f   # live logs
 ```
 
 ### Enabling autostart (already done)
 
 ```bash
-systemctl --user enable streamdeck.path
+systemctl --user enable deckblaster.path
 ```
 
 ### Environment file
 
-`~/.config/streamdeck.env` contains:
+`~/.config/deckblaster.env` contains:
 ```
 HA_TOKEN=<long-lived Home Assistant access token>
 ```
@@ -251,8 +251,8 @@ curl localhost:9990/health
 
 ## Home Assistant
 
-- **URL**: set via `HA_URL` in `~/.config/streamdeck.env`
-- **Auth**: Bearer token in `~/.config/streamdeck.env` (`HA_TOKEN`)
+- **URL**: set via `HA_URL` in `~/.config/deckblaster.env`
+- **Auth**: Bearer token in `~/.config/deckblaster.env` (`HA_TOKEN`)
 - Room → entity mapping:
 
 | Room | Entity | Domain |
@@ -284,7 +284,7 @@ curl localhost:9990/health
   5. Downloaded fallback icons in `vdesktop/assets/app-*.png`
 - Icon cache: `/tmp/streamdeck-icon-cache/` — invalidated if source icon mtime is newer
 - Rendered images: `/tmp/streamdeck-vdesktop/desk-N.png`
-- Poller runs as `streamdeck-vdesktop.service`, bound to `streamdeck.service` (stops/starts together)
+- Poller runs as `streamdeck-vdesktop.service`, bound to `deckblaster.service` (stops/starts together)
 
 ---
 
@@ -301,7 +301,7 @@ curl localhost:9990/health
 ```bash
 cd /path/to/streamdeck/deckmaster
 go build ./...
-systemctl --user restart streamdeck.service
+systemctl --user restart deckblaster.service
 ```
 
 ## Config-only Changes
