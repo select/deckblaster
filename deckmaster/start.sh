@@ -17,7 +17,7 @@ export PATH="${HOME}/.bun/bin:${PATH}"
 python3 decks/vdesktop/vdesktop-render.py poll &
 
 # Door sensor poller (fires 20s HTTP API alert on key 7 when a door opens)
-decks/ha/ha-door-poll.sh &
+python3 decks/ha/ha.py poll-doors &
 
 # Deckmaster — foreground, this is what systemd tracks
 # Calendar alerts are handled inside next-event.py on each 30s widget poll

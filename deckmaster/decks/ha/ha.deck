@@ -1,88 +1,88 @@
-parent = "../main.deck"
+parent ="../main.deck"
 
 # ── Row 0: Lights ──────────────────────────────────────────────────────────────
 
 [[keys]]
   index = 0
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-icon-update.sh switch.blaues_zimmer_schrank desk && echo /tmp/streamdeck-ha/desk.png"
-      command = "echo Buero"
-      font = "regular"
-      color = "#3399ff"
+      icon_command = "python3 decks/ha/ha.py icon-light switch.blaues_zimmer_schrank desk"
+      command ="echo Buero"
+      font ="regular"
+      color ="#3399ff"
   [keys.action]
-    exec = "decks/ha/ha-switch-toggle.sh switch.blaues_zimmer_schrank"
+    exec = "python3 decks/ha/ha.py toggle-switch switch.blaues_zimmer_schrank"
 
 [[keys]]
   index = 1
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-icon-update.sh light.esstisch sofa && echo /tmp/streamdeck-ha/sofa.png"
-      command = "echo Esstisch"
-      font = "regular"
-      color = "#ff9900"
+      icon_command = "python3 decks/ha/ha.py icon-light light.esstisch sofa"
+      command ="echo Esstisch"
+      font ="regular"
+      color ="#ff9900"
   [keys.action]
-    exec = "decks/ha/ha-light-toggle.sh light.esstisch"
+    exec = "python3 decks/ha/ha.py toggle-light light.esstisch"
 
 [[keys]]
   index = 2
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-icon-update.sh light.schlafzimmer_decke bed && echo /tmp/streamdeck-ha/bed.png"
-      command = "echo Schlafz."
-      font = "regular"
-      color = "#cc66ff"
+      icon_command = "python3 decks/ha/ha.py icon-light light.schlafzimmer_decke bed"
+      command ="echo Schlafz."
+      font ="regular"
+      color ="#cc66ff"
   [keys.action]
-    exec = "decks/ha/ha-light-toggle.sh light.schlafzimmer_decke"
+    exec = "python3 decks/ha/ha.py toggle-light light.schlafzimmer_decke"
 
 # ── Row 1: Door sensors (keys 3–6) ─────────────────────────────────────────────
-# Shows "last opened" time (e.g. "4h ago") or "OPEN!" when currently open.
+# Shows"last opened" time (e.g."4h ago") or"OPEN!" when currently open.
 # ha-door-poll.sh (started by start.sh) pushes a 20s red flash to key 7 on
 # the main deck whenever any door opens.
 
 [[keys]]
   index = 3
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-door-icon.sh binary_sensor.haustur_contact haustur Haustür"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.haustur_contact haustur Haustür"
+      command =""
 
 [[keys]]
   index = 4
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-door-icon.sh binary_sensor.terrassentur_contact terrasse Terrasse"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.terrassentur_contact terrasse Terrasse"
+      command =""
 
 [[keys]]
   index = 5
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-door-icon.sh binary_sensor.kuchentur_contact kueche Küche"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.kuchentur_contact kueche Küche"
+      command =""
 
 [[keys]]
   index = 6
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-door-icon.sh binary_sensor.fahrrad_box_contact fahrrad Fahrrad"
-      command = ""
-      font = "bold;regular"
-      color = "#dddddd;#ffffff"
+      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.fahrrad_box_contact fahrrad Fahrrad"
+      command =""
+      font ="bold;regular"
+      color ="#dddddd;#ffffff"
 
 # ── Row 2: Plant moisture sensors (keys 7–9) ───────────────────────────────────
 # Icon colour: orange < 25 % (dry) → green 25–65 % (ok) → blue > 65 % (wet).
@@ -91,61 +91,61 @@ parent = "../main.deck"
 [[keys]]
   index = 7
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-moisture-icon.sh sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Pflanze 1"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Pflanze 1"
+      command =""
 
 [[keys]]
   index = 8
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-moisture-icon.sh sensor.3rd_soilmoisture_2_soil_moisture soil2 Pflanze 2"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_2_soil_moisture soil2 Pflanze 2"
+      command =""
 
 [[keys]]
   index = 9
   [keys.widget]
-    id = "command"
+    id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "decks/ha/ha-moisture-icon.sh sensor.soilmoisture_nila_soil_moisture nila Nila"
-      command = ""
+      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.soilmoisture_nila_soil_moisture nila Nila"
+      command =""
 
 # ── Remaining keys empty ───────────────────────────────────────────────────────
 
 [[keys]]
   index = 10
   [keys.widget]
-    id = "button"
+    id ="button"
 
 [[keys]]
   index = 11
   [keys.widget]
-    id = "button"
+    id ="button"
 
 [[keys]]
   index = 12
   [keys.widget]
-    id = "button"
+    id ="button"
 
 [[keys]]
   index = 13
   [keys.widget]
-    id = "button"
+    id ="button"
 
 # ── Back ───────────────────────────────────────────────────────────────────────
 
 [[keys]]
   index = 14
   [keys.widget]
-    id = "button"
+    id ="button"
     [keys.widget.config]
-      icon = "../assets/back.png"
-      label = "Back"
+      icon ="../assets/back.png"
+      label ="Back"
       fontsize = 8
   [keys.action]
-    deck = "../main.deck"
+    deck ="../main.deck"
