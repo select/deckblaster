@@ -91,7 +91,7 @@ Controls lights and switches in multiple rooms. Monitors door sensors (last open
 
 Controls a cursor highlight circle (X11). Adjust radius, colour (uses pywal palette), and opacity live. Each parameter button shows a preview of the *next* value before you press it.
 
-**Language:** Python (`uv`) · **Requires:** X11, bundled `highlight-pointer` binary
+**Language:** Python (`uv`) · **Requires:** X11, bundled `highlight-pointer` binary (built from [swillner/highlight-pointer](https://github.com/swillner/highlight-pointer))
 
 ---
 
