@@ -100,11 +100,12 @@ Just save the `.deck` file — the `--watch` flag auto-reloads within 200 ms. No
 
 ### Main
 
-<img src="docs/screenshots/main.png" width="400"/>
+<img src="docs/screenshots/main.png" width="400"/> <img src="docs/screenshots/apps.png" width="400"/>
+
 
 Home screen. Shows clock, RAM gauge, next calendar event countdown, and a virtual desktop switcher (bottom row). Navigation buttons reach all other plugins.
 
-**Language:** Python (vdesktop renderer) · `xdotool` · `python3-gi` (GNOME EDS for calendar)
+Secondary screen navigation hub. Quick-launch for Zoom, Calculator, and the screen recorder.
 
 ---
 
@@ -188,13 +189,21 @@ Lists all listening dev-server ports — filters out system processes and shows 
 
 ---
 
-### Apps
+### Virtual Desktops
 
-<img src="docs/screenshots/apps.png" width="400"/>
+<img src="docs/screenshots/vdesktop.png" width="400"/>
 
-Secondary navigation hub. Quick-launch for Zoom, Calculator, and the screen recorder.
+Bottom row of the main deck. Each button shows the apps open on that virtual desktop using GTK icon theme lookup. The active desktop gets a blue underline. Press to switch. Icons are re-rendered every 3 seconds by a background poller.
 
-**Language:** —
+**Language:** Python (stdlib + `python3-gi`) · **Requires:** X11, `xdotool`, `python3-gi`, `gir1.2-gtk-3.0`
+
+---
+
+### Screen Recorder
+
+Single button on the Apps page. Press to start recording the Stream Deck at 5 fps; press again to stop and encode to `~/Videos/`. Each frame is composited onto the Stream Deck photo template.
+
+**Language:** Python (stdlib only)
 
 ---
 
