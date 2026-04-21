@@ -56,13 +56,16 @@ deckmaster is the only project that meets all three:
 
 ## Our Additions to deckmaster
 
-| Feature | Description |
-|---|---|
-| `--watch` flag | `fsnotify`-based auto-reload on `.deck` file change |
-| `--api :9990` flag | HTTP API: push live updates to individual keys |
-| `icon` / `icon_command` fields | Static and dynamic icon support in the command widget |
-| Solid-color background fill | HTTP API accepts `background` hex color to fill a key before rendering text |
-| Error resilience | Widget update errors log to stderr instead of killing the process |
+| Feature | File | Description |
+|---|---|---|
+| `--watch` flag | `main.go` | `fsnotify`-based auto-reload on any `.deck` file change, including plugin subdirectories |
+| `--api :PORT` flag | `main.go` | HTTP API: push live label / icon / background-color updates to individual keys at runtime |
+| `icon` config field | `widget_command.go` | Static icon path on a `command` widget — renders a PNG instead of (or alongside) text |
+| `icon_command` config field | `widget_command.go` | Dynamic icon: runs a shell command on each interval; the command prints a PNG path which is rendered as the key image. This is how all live-updating plugin buttons work (Docker badge, HA light state, ports count, …) |
+| `color_command` config field | `widget_command.go` | Runs a shell command to determine text colour dynamically (used by the calendar countdown) |
+| Solid-color background fill | `main.go` | HTTP API `/key/<n>` accepts a `background` hex field to flood-fill the key before rendering text |
+| Plugin subdir path resolution | `config.go` | `parent =` and `deck =` references now resolve relative to each deck file's own directory, enabling the one-folder-per-plugin layout |
+| Error resilience | `deck.go` | Widget update errors are logged to stderr instead of killing the process |
 
 ---
 
