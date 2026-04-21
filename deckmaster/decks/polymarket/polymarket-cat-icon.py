@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """
 Render category button icon for polymarket category selection page.
 Dynamically fetches categories from state/cache.

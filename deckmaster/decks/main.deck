@@ -5,7 +5,7 @@
     [keys.widget.config]
       icon = "polymarket/assets/polymarket-icon.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/polymarket/polymarket.py init"
+    exec = "uv run decks/polymarket/polymarket.py init"
     deck = "polymarket/polymarket.deck"
 
 [[keys]]

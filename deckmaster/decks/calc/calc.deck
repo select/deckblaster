@@ -22,7 +22,7 @@ parent = "../apps.deck"
     id = "command"
     interval = 0
     [keys.widget.config]
-      icon_command = "/usr/bin/python3 decks/calc/calc-game.py init >/dev/null 2>&1; echo decks/calc/assets/display-init.png"
+      icon_command = "uv run decks/calc/calc-game.py init >/dev/null 2>&1; echo decks/calc/assets/display-init.png"
       command = ""
 
 [[keys]]
@@ -32,7 +32,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-7.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 7"
+    exec = "uv run decks/calc/calc-game.py digit 7"
 
 [[keys]]
   index = 2
@@ -41,7 +41,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-8.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 8"
+    exec = "uv run decks/calc/calc-game.py digit 8"
 
 [[keys]]
   index = 3
@@ -50,7 +50,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-9.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 9"
+    exec = "uv run decks/calc/calc-game.py digit 9"
 
 # + (short press) / − (long press)
 [[keys]]
@@ -60,9 +60,9 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/op-plus.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py op +"
+    exec = "uv run decks/calc/calc-game.py op +"
   [keys.action_hold]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py op -"
+    exec = "uv run decks/calc/calc-game.py op -"
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
 
@@ -73,7 +73,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-0.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 0"
+    exec = "uv run decks/calc/calc-game.py digit 0"
 
 [[keys]]
   index = 6
@@ -82,7 +82,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-4.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 4"
+    exec = "uv run decks/calc/calc-game.py digit 4"
 
 [[keys]]
   index = 7
@@ -91,7 +91,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-5.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 5"
+    exec = "uv run decks/calc/calc-game.py digit 5"
 
 [[keys]]
   index = 8
@@ -100,7 +100,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-6.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 6"
+    exec = "uv run decks/calc/calc-game.py digit 6"
 
 # × (short press) / ÷ (long press)
 [[keys]]
@@ -110,9 +110,9 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/op-multiply.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py op *"
+    exec = "uv run decks/calc/calc-game.py op *"
   [keys.action_hold]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py op /"
+    exec = "uv run decks/calc/calc-game.py op /"
 
 # ── Row 2 ──────────────────────────────────────────────────────────────────────
 
@@ -132,7 +132,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-1.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 1"
+    exec = "uv run decks/calc/calc-game.py digit 1"
 
 [[keys]]
   index = 12
@@ -141,7 +141,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-2.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 2"
+    exec = "uv run decks/calc/calc-game.py digit 2"
 
 [[keys]]
   index = 13
@@ -150,7 +150,7 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/digit-3.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py digit 3"
+    exec = "uv run decks/calc/calc-game.py digit 3"
 
 # = (short press) / C (long press)
 [[keys]]
@@ -160,6 +160,6 @@ parent = "../apps.deck"
     [keys.widget.config]
       icon = "assets/op-equals.png"
   [keys.action]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py equals"
+    exec = "uv run decks/calc/calc-game.py equals"
   [keys.action_hold]
-    exec = "/usr/bin/python3 decks/calc/calc-game.py clear"
+    exec = "uv run decks/calc/calc-game.py clear"

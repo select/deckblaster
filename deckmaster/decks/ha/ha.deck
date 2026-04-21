@@ -8,12 +8,12 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-light switch.blaues_zimmer_schrank desk"
+      icon_command = "uv run decks/ha/ha.py icon-light switch.blaues_zimmer_schrank desk"
       command ="echo Buero"
       font ="regular"
       color ="#3399ff"
   [keys.action]
-    exec = "python3 decks/ha/ha.py toggle-switch switch.blaues_zimmer_schrank"
+    exec = "uv run decks/ha/ha.py toggle-switch switch.blaues_zimmer_schrank"
 
 [[keys]]
   index = 1
@@ -21,12 +21,12 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-light light.esstisch sofa"
+      icon_command = "uv run decks/ha/ha.py icon-light light.esstisch sofa"
       command ="echo Esstisch"
       font ="regular"
       color ="#ff9900"
   [keys.action]
-    exec = "python3 decks/ha/ha.py toggle-light light.esstisch"
+    exec = "uv run decks/ha/ha.py toggle-light light.esstisch"
 
 [[keys]]
   index = 2
@@ -34,12 +34,12 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-light light.schlafzimmer_decke bed"
+      icon_command = "uv run decks/ha/ha.py icon-light light.schlafzimmer_decke bed"
       command ="echo Schlafz."
       font ="regular"
       color ="#cc66ff"
   [keys.action]
-    exec = "python3 decks/ha/ha.py toggle-light light.schlafzimmer_decke"
+    exec = "uv run decks/ha/ha.py toggle-light light.schlafzimmer_decke"
 
 # ── Row 1: Door sensors (keys 3–6) ─────────────────────────────────────────────
 # Shows"last opened" time (e.g."4h ago") or"OPEN!" when currently open.
@@ -52,7 +52,7 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.haustur_contact haustur Haustür"
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.haustur_contact haustur Haustür"
       command =""
 
 [[keys]]
@@ -61,7 +61,7 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.terrassentur_contact terrasse Terrasse"
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.terrassentur_contact terrasse Terrasse"
       command =""
 
 [[keys]]
@@ -70,7 +70,7 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.kuchentur_contact kueche Küche"
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.kuchentur_contact kueche Küche"
       command =""
 
 [[keys]]
@@ -79,7 +79,7 @@ parent ="../main.deck"
     id ="command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-door binary_sensor.fahrrad_box_contact fahrrad Fahrrad"
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.fahrrad_box_contact fahrrad Fahrrad"
       command =""
       font ="bold;regular"
       color ="#dddddd;#ffffff"
@@ -94,7 +94,7 @@ parent ="../main.deck"
     id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Pflanze 1"
+      icon_command = "uv run decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Pflanze 1"
       command =""
 
 [[keys]]
@@ -103,7 +103,7 @@ parent ="../main.deck"
     id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_2_soil_moisture soil2 Pflanze 2"
+      icon_command = "uv run decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_2_soil_moisture soil2 Pflanze 2"
       command =""
 
 [[keys]]
@@ -112,7 +112,7 @@ parent ="../main.deck"
     id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "python3 decks/ha/ha.py icon-moisture sensor.soilmoisture_nila_soil_moisture nila Nila"
+      icon_command = "uv run decks/ha/ha.py icon-moisture sensor.soilmoisture_nila_soil_moisture nila Nila"
       command =""
 
 # ── Remaining keys empty ───────────────────────────────────────────────────────

@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """Generate colorful slot machine symbol images (72x72 PNG) for Stream Deck."""
 
 import math

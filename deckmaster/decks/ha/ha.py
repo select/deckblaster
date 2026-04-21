@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """Home Assistant Stream Deck controls.
 
 Usage:
@@ -10,7 +14,7 @@ Usage:
   ha.py poll-doors                                  — daemon: push alert on door open
 
 Config (from environment, set by start.sh loading ~/.config/streamdeck.env):
-  HA_URL      e.g. http://192.168.1.142:8123
+  HA_URL      e.g. http://homeassistant.local:8123
   HA_TOKEN    long-lived access token
   DECK_API    e.g. http://localhost:9990
 """

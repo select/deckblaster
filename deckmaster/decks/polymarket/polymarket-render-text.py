@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """Render a single text key for polymarket. Called by icon_command.
 Uses monospace font on a fixed 10x5 character grid for predictable wrapping."""
 

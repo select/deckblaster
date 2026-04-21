@@ -16,7 +16,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
-DISPLAY = ":1"
+DISPLAY = os.environ.get("DISPLAY", "")
 ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 OUT_DIR = "/tmp/streamdeck-vdesktop"
 ICON_CACHE_DIR = "/tmp/streamdeck-icon-cache"
@@ -25,7 +25,7 @@ BUTTON_SIZE = 72
 
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(ICON_CACHE_DIR, exist_ok=True)
-os.environ["DISPLAY"] = DISPLAY
+# Pass DISPLAY through from environment — set in .env or inherited from user session
 
 
 def run(cmd, timeout=5):

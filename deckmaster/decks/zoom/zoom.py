@@ -16,7 +16,7 @@ import subprocess
 import re
 from pathlib import Path
 
-DISPLAY    = os.environ.get("DISPLAY", ":1")
+DISPLAY    = os.environ.get("DISPLAY", "")
 STATE_FILE = Path("/tmp/streamdeck-zoom-state")
 ASSETS     = Path(__file__).parent / "assets"
 
@@ -27,7 +27,7 @@ DEFAULT_STATE = {"muted": "0", "video_off": "0", "hand_raised": "0"}
 def in_meeting():
     r = subprocess.run(
         ["xdotool", "search", "--limit", "1", "--class", "zoom"],
-        capture_output=True, env={**os.environ, "DISPLAY": DISPLAY},
+        capture_output=True, env=os.environ,
     )
     return r.returncode == 0
 
@@ -47,7 +47,7 @@ def save_state(state):
 def send_key(key):
     subprocess.run(
         ["xdotool", "key", key],
-        env={**os.environ, "DISPLAY": DISPLAY},
+        env=os.environ,
     )
 
 # ── subcommands ───────────────────────────────────────────────────────────────

@@ -35,7 +35,7 @@ parent = "main.deck"
       icon_command = "decks/recorder/deck-record-icon.sh"
       command = ""
   [keys.action]
-    exec = "/usr/bin/python3 decks/recorder/deck-record-toggle.py"
+    exec = "python3 decks/recorder/deck-record-toggle.py"
 
 [[keys]]
   index = 3

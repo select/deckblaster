@@ -10,14 +10,14 @@ cd "$(dirname "$0")"
 source "${HOME}/.config/streamdeck.env" || true
 export HA_TOKEN HA_URL DECK_API
 
-# Ensure bun is on PATH (installed to ~/.bun/bin by default)
-export PATH="${HOME}/.bun/bin:${PATH}"
+# Ensure bun and uv are on PATH
+export PATH="${HOME}/.bun/bin:${HOME}/.local/bin:${PATH}"
 
 # Virtual desktop icon poller (renders desk-N.png every 3s)
 python3 decks/vdesktop/vdesktop-render.py poll &
 
 # Door sensor poller (fires 20s HTTP API alert on key 7 when a door opens)
-python3 decks/ha/ha.py poll-doors &
+uv run decks/ha/ha.py poll-doors &
 
 # Deckmaster — foreground, this is what systemd tracks
 # Calendar alerts are handled inside next-event.py on each 30s widget poll

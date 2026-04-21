@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """
 Render dynamic button icons for the mouse highlighter deck.
 Reads state + pywal colors fresh on every call.

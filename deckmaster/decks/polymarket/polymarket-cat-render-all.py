@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["Pillow"]
+# ///
 """
 Render ALL 9 category slot icons in one process (fast).
 Called by cat-init, cat-prev, cat-next.
