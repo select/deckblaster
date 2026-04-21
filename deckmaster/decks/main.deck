@@ -67,7 +67,7 @@
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-main-icon.sh"
+      icon_command = "bun decks/docker/docker-render.js badge"
       command = ""
   [keys.action]
     deck = "docker/docker.deck"

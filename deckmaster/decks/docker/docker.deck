@@ -45,7 +45,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/prev.png"
   [keys.action]
-    exec = "decks/docker/docker-action.sh page prev"
+    exec = "bun decks/docker/docker-render.js page prev"
 
 [[keys]]
   index = 9
@@ -54,7 +54,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/next.png"
   [keys.action]
-    exec = "decks/docker/docker-action.sh page next"
+    exec = "bun decks/docker/docker-render.js page next"
 
 [[keys]]
   index = 10
@@ -73,10 +73,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 0"
+      icon_command = "bun decks/docker/docker-render.js slot 0"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 0"
+    exec = "bun decks/docker/docker-render.js toggle 0"
 
 [[keys]]
   index = 6
@@ -84,10 +84,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 1"
+      icon_command = "bun decks/docker/docker-render.js slot 1"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 1"
+    exec = "bun decks/docker/docker-render.js toggle 1"
 
 [[keys]]
   index = 11
@@ -95,10 +95,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 2"
+      icon_command = "bun decks/docker/docker-render.js slot 2"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 2"
+    exec = "bun decks/docker/docker-render.js toggle 2"
 
 [[keys]]
   index = 2
@@ -106,10 +106,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 3"
+      icon_command = "bun decks/docker/docker-render.js slot 3"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 3"
+    exec = "bun decks/docker/docker-render.js toggle 3"
 
 [[keys]]
   index = 7
@@ -117,10 +117,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 4"
+      icon_command = "bun decks/docker/docker-render.js slot 4"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 4"
+    exec = "bun decks/docker/docker-render.js toggle 4"
 
 [[keys]]
   index = 12
@@ -128,10 +128,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 5"
+      icon_command = "bun decks/docker/docker-render.js slot 5"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 5"
+    exec = "bun decks/docker/docker-render.js toggle 5"
 
 [[keys]]
   index = 3
@@ -139,10 +139,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 6"
+      icon_command = "bun decks/docker/docker-render.js slot 6"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 6"
+    exec = "bun decks/docker/docker-render.js toggle 6"
 
 [[keys]]
   index = 8
@@ -150,10 +150,10 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 7"
+      icon_command = "bun decks/docker/docker-render.js slot 7"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 7"
+    exec = "bun decks/docker/docker-render.js toggle 7"
 
 [[keys]]
   index = 13
@@ -161,7 +161,7 @@ parent = "../main.deck"
     id = "command"
     interval = 5000
     [keys.widget.config]
-      icon_command = "decks/docker/docker-icon.sh 8"
+      icon_command = "bun decks/docker/docker-render.js slot 8"
       command = ""
   [keys.action]
-    exec = "decks/docker/docker-action.sh toggle 8"
+    exec = "bun decks/docker/docker-render.js toggle 8"
