@@ -140,26 +140,26 @@ keys.append(_back_card)
 
 assert len(keys) == 15, f"Expected 15 keys, got {len(keys)}"
 
-# ── Composite onto Stream Deck template (same as make-screenshots.py) ─────────
-KEY_DST    = 84
-V_GAP      = 9
-X0, Y0     = 358, 309
-GRID_RIGHT = 812
+# ── Composite onto Stream Deck template (4× for crisp output) ─────────────────
+SCALE      = 4
+KEY_DST    = 84  * SCALE // 2   # 168
+V_GAP      = 9   * SCALE // 2   # 18
+X0         = 358 * SCALE // 2   # 716
+Y0         = 309 * SCALE // 2   # 618
+GRID_RIGHT = 812 * SCALE // 2   # 1624
 COLS, ROWS = 5, 3
-CROP_BOX   = (298, 226, 870, 634)
+CROP_BOX   = tuple(c * SCALE // 2 for c in (298, 226, 870, 634))  # 596,452,1740,1268
 
 col_xs = [X0 + int(col * (GRID_RIGHT - X0 - KEY_DST) / 4) for col in range(COLS)]
 
 tmpl = Image.open(TEMPLATE).convert("RGBA")
-tmpl = tmpl.resize((tmpl.width * 2, tmpl.height * 2), Image.LANCZOS)
+tmpl = tmpl.resize((tmpl.width * SCALE, tmpl.height * SCALE), Image.LANCZOS)
 comp = tmpl.copy()
 
 for row in range(ROWS):
     for col in range(COLS):
         key = keys[row * COLS + col]
-        # Supersample: 72 → 144 NEAREST (preserve pixel edges) → 84 LANCZOS (anti-alias down)
-        key_up   = key.resize((144, 144), Image.NEAREST)
-        key_final = key_up.resize((KEY_DST, KEY_DST), Image.LANCZOS)
+        key_final = key.resize((KEY_DST, KEY_DST), Image.LANCZOS)
         comp.paste(key_final, (col_xs[col], Y0 + row * (KEY_DST + V_GAP)))
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
