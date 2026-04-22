@@ -10,7 +10,7 @@ Linux Stream Deck setup — config-file driven, live-reloading, scriptable.
 
 deckblaster is built on a fork of [muesli/deckmaster](https://github.com/muesli/deckmaster) — a lightweight, config-file-driven Stream Deck daemon for Linux. The fork adds a live HTTP API for pushing key updates at runtime, an `icon_command` widget field for dynamic per-key icon rendering, a file-watcher for instant config reload, and a plugin folder layout so each feature lives in its own self-contained directory with its deck config, scripts, and assets.
 
-Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [GitHub PRs](#github-prs) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
+Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [GitHub PRs](#github-prs) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Calendar Day View](#calendar-day-view) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
 
 
 ## Quick Start
@@ -143,19 +143,26 @@ Single button on the Apps page. Records the Stream Deck's own button display at 
 
 ### Calendar
 
-<img src="docs/screenshots/calendar.png" width="400"/>
+<img src="docs/screenshots/calendar-widget.png" width="100"/>
 
-Displays the next calendar event from GNOME Evolution Data Server (Outlook/O365 via Evolution):
-
-- **Countdown** — shows time remaining (`3h`, `45m`, `now`) or time left in current meeting
-- **Title** — event name on the second line
-- **Live colour** — white when counting down to a future event, blue when the meeting is in progress
-- **Alerts** — pushes a red flash to the calendar key at −3 min, −2 min and −1 min (deduplicated)
-- **Open URL** — press the key to open the meeting link from the event's location field (`xdg-open`)
-- **Cache** — GNOME EDS is queried at most once every 2 minutes; all subcommands share the cache
-- **Outlook timezones** — handles Windows-style TZID values (e.g. `W. Europe Standard Time`) that libical silently misreads as UTC
+Next calendar event from GNOME Evolution Data Server (Outlook/O365) on the main deck. Colour-coded countdown, event title, −3/−2/−1 min alert flashes, press to open meeting URL.
 
 **Language:** Python (stdlib + `python3-gi`) · **Requires:** `python3-gi`, `gir1.2-ecal-2.0`, `gir1.2-edataserver-1.2`
+
+### Calendar Day View
+
+<img src="docs/screenshots/calendar.png" width="400"/>
+
+Day-view calendar with 9 event slots (3×3 grid), paginated by day. Events come from GNOME Evolution Data Server (Outlook/O365 via Evolution).
+
+- **Colour-coded time bars** — 🟥 now · 🟧 ≤20 min · 🟨 ≤1 h · 🟦 ≤4 h · 🟩 >4 h · grey = past
+- **Day navigation** — PREV / NEXT buttons to page through days; header shows day label, date and event count
+- **Open URL** — press an event to open its meeting link (`xdg-open`)
+- **Background fetcher** — daemon polls GNOME EDS every 5 min, pre-fetches 7 days (today ±3); renderer only reads JSON, never blocks on EDS
+- **Deduplication** — filters duplicate events from shared / personal calendar copies
+- **Outlook timezones** — handles Windows-style TZID values (e.g. `W. Europe Standard Time`) that libical silently misreads as UTC
+
+**Language:** Bun/JS (sharp for SVG→PNG) + Python fetcher (GObject/EDS) · **Requires:** `bun`, `python3-gi`, `gir1.2-ecal-2.0`, `gir1.2-edataserver-1.2`
 
 ---
 

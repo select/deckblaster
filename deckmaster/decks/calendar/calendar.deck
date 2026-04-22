@@ -1,0 +1,171 @@
+parent = "../main.deck"
+
+# ── Calendar Day View ─────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [HEAD] [s0 ] [s3 ] [s6 ] [    ]
+#   [PREV] [s1 ] [s4 ] [s7 ] [NEXT]
+#   [EXIT] [s2 ] [s5 ] [s8 ] [    ]
+#
+# Key  0 : Header (day label + event count) — also triggers init (reset to today)
+# Middle 3×3 (keys 1,2,3, 6,7,8, 11,12,13): event slots, column-major
+# Key  5 : PREV day
+# Key  9 : NEXT day
+# Key 10 : EXIT → main.deck
+# Keys 4,14 : empty
+
+# ── Header ────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js header"
+
+# ── Empty corners ─────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Navigation ────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/prev.png"
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js page prev"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/next.png"
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js page next"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "assets/exit.png"
+  [keys.action]
+    deck = "../main.deck"
+
+# ── Middle 3×3 — event slots (column-major) ──────────────────────────────────
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 0"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 0"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 1"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 1"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 2"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 2"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 3"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 3"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 4"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 4"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 5"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 5"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 6"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 6"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 7"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 7"
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 1000
+    [keys.widget.config]
+      icon_command = "bun decks/calendar/calendar-day.js slot 8"
+      command = ""
+  [keys.action]
+    exec = "bun decks/calendar/calendar-day.js open 8"

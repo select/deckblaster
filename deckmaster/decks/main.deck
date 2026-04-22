@@ -42,6 +42,8 @@
     [keys.widget.config]
       format = "%H:%i;%d %M"
       font = "bold;regular"
+  [keys.action]
+    deck = "calendar/calendar.deck"
 
 [[keys]]
   index = 5
@@ -89,14 +91,12 @@
   index = 9
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 5000
     [keys.widget.config]
-      command = "python3 decks/calendar/next-event.py countdown;python3 decks/calendar/next-event.py title"
-      font = "bold;regular"
-      color = "#ffffff;#ffffff"
-      color_command = "python3 decks/calendar/next-event.py color"
+      icon_command = "bun decks/calendar/next-event.js icon"
+      command = ""
   [keys.action]
-    exec = "python3 decks/calendar/next-event.py open"
+    exec = "bun decks/calendar/next-event.js open"
 
 [[keys]]
   index = 10

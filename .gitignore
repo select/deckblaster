@@ -22,3 +22,5 @@ bun.lock
 # Editor
 .vscode/
 .idea/
+docs/official-plugins/
+.obsidian/

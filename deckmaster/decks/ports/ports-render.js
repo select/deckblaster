@@ -331,34 +331,50 @@ function makePortSvg(e) {
   const port     = esc(`:${e.port}`);
   const proc     = esc((e.processName || "?").slice(0, 11));
   const project  = esc((e.projectName || "").slice(0, 9));
-  const fw       = esc((e.framework   || "").slice(0, 8));
+  const fw       = esc((e.framework   || "").slice(0, 9));
   const uptime   = esc(e.uptime || "");
-  const dot      = project && fw ? " · " : "";
 
-  // Status dot — tiny circle top-right corner
-  const statusDot = `<circle cx="66" cy="6" r="4" fill="${dotColor}"/>`;
+  // Card layout: top color badge (port number), then content below
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
+  const badgeX = cx + 3, badgeY = cy + 3, badgeH = 14, badgeW = cw - 6, badgeR = 4;
+  const textX = cx + 5;
+
+  // Status dot inside badge (right side)
+  const statusDot = `<circle cx="${badgeX + badgeW - 6}" cy="${badgeY + badgeH / 2}" r="3" fill="${dotColor}"/>`;
 
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="card"><rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}"/></clipPath></defs>
   <rect width="72" height="72" fill="${BG}"/>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
+  <rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="${badgeR}" fill="${fwColor}"/>
+  <text x="${badgeX + 4}" y="${badgeY + badgeH - 4}" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#000000">${port}</text>
   ${statusDot}
-  <text x="33" y="18" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="18" fill="white" text-anchor="middle">${port}</text>
-  <text x="36" y="33" font-family="DejaVu Sans,sans-serif" font-size="12" fill="#7dd3fc" text-anchor="middle">${proc}</text>
-  <text x="36" y="48" font-family="DejaVu Sans,sans-serif" font-size="10" text-anchor="middle"><tspan fill="#94a3b8">${project}</tspan><tspan fill="#4b5563">${dot}</tspan><tspan fill="${fwColor}">${fw}</tspan></text>
-  <text x="36" y="62" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">${uptime}</text>
+  <text x="${textX}" y="32" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="10" fill="#e6edf3">${proc}</text>
+  <text x="${textX}" y="44" font-family="DejaVu Sans,sans-serif" font-size="9" fill="#8b949e">${project}</text>
+  <text x="${textX}" y="55" font-family="DejaVu Sans,sans-serif" font-size="9" fill="${fwColor}">${fw}</text>
+  <text x="${textX}" y="66" font-family="DejaVu Sans,sans-serif" font-size="8" fill="#8b949e">${uptime}</text>
 </svg>`;
 }
 
 function makeEmptySvg() {
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
-  <rect width="72" height="72" fill="black"/>
+  <rect width="72" height="72" fill="${BG}"/>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
 </svg>`;
 }
 
 function makeNoPortsSvg() {
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
   <rect width="72" height="72" fill="${BG}"/>
-  <text x="36" y="32" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">no dev</text>
-  <text x="36" y="46" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">ports</text>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
+  <rect x="${cx + 3}" y="${cy + 3}" width="${cw - 6}" height="14" rx="4" fill="#30363d"/>
+  <text x="36" y="42" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">no dev</text>
+  <text x="36" y="54" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">ports</text>
 </svg>`;
 }
 

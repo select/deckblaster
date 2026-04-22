@@ -124,42 +124,64 @@ function makeContainerSvg(c) {
   const img      = esc(shortImage(c.Image));
   const uptime   = esc(shortStatus(c.Status));
   const port     = esc(shortPorts(c.Ports));
-  const statusDot = `<circle cx="66" cy="6" r="4" fill="${dotColor}"/>`;
-
   const nameLines = wrapName(c.Names);
-  const nameFontSize = nameLines.length > 1 ? 11 : 13;
 
-  let nameSvg, imageY, portY, uptimeY;
+  // Card layout: top color badge (container name), then content below
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
+  const badgeX = cx + 3, badgeY = cy + 3, badgeH = 14, badgeW = cw - 6, badgeR = 4;
+  const textX = cx + 5;
+
+  // Status dot inside badge (right side)
+  const statusDot = `<circle cx="${badgeX + badgeW - 6}" cy="${badgeY + badgeH / 2}" r="3" fill="${dotColor}"/>`;
+
+  // Name in badge
+  let badgeText;
   if (nameLines.length === 1) {
-    nameSvg  = `<text x="4" y="19" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${nameFontSize}" fill="white">${esc(nameLines[0])}</text>`;
-    imageY   = 34; portY = 49; uptimeY = 63;
+    badgeText = `<text x="${badgeX + 4}" y="${badgeY + badgeH - 4}" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#000000">${port || esc(nameLines[0])}</text>`;
   } else {
-    nameSvg  = `<text x="4" y="13" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${nameFontSize}" fill="white">${esc(nameLines[0])}</text>
-  <text x="4" y="25" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${nameFontSize}" fill="white">${esc(nameLines[1])}</text>`;
-    imageY   = 39; portY = 52; uptimeY = 64;
+    badgeText = `<text x="${badgeX + 4}" y="${badgeY + badgeH - 4}" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#000000">${port || esc(nameLines[0])}</text>`;
   }
+
+  // Container name lines
+  const name1 = esc(nameLines[0]);
+  const name2 = nameLines.length > 1 ? esc(nameLines[1]) : "";
+  const nameSvg = name2
+    ? `<text x="${textX}" y="32" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#e6edf3">${name1}</text>
+  <text x="${textX}" y="42" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#e6edf3">${name2}</text>`
+    : `<text x="${textX}" y="32" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="10" fill="#e6edf3">${name1}</text>`;
+  const afterNameY = name2 ? 53 : 44;
 
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
   <rect width="72" height="72" fill="${BG}"/>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
+  <rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="${badgeR}" fill="${imgColor}"/>
+  ${badgeText}
   ${statusDot}
   ${nameSvg}
-  <text x="4" y="${imageY}" font-family="DejaVu Sans,sans-serif" font-size="11" fill="${imgColor}">${img}</text>
-  <text x="4" y="${portY}" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#94a3b8">${port}</text>
-  <text x="4" y="${uptimeY}" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#94a3b8">${uptime}</text>
+  <text x="${textX}" y="${afterNameY}" font-family="DejaVu Sans,sans-serif" font-size="9" fill="${imgColor}">${img}</text>
+  <text x="${textX}" y="${afterNameY + 11}" font-family="DejaVu Sans,sans-serif" font-size="8" fill="#8b949e">${uptime}</text>
 </svg>`;
 }
 
 function makeEmptySvg() {
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
-  <rect width="72" height="72" fill="black"/>
+  <rect width="72" height="72" fill="${BG}"/>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
 </svg>`;
 }
 
 function makeNoContainersSvg() {
+  const PAD = 2, R = 6, CARD_BG = "#161b22";
+  const cx = PAD, cy = PAD, cw = 72 - PAD * 2, ch = 72 - PAD * 2;
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
   <rect width="72" height="72" fill="${BG}"/>
-  <text x="36" y="32" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">no</text>
-  <text x="36" y="46" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">containers</text>
+  <rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="${R}" fill="${CARD_BG}"/>
+  <rect x="${cx + 3}" y="${cy + 3}" width="${cw - 6}" height="14" rx="4" fill="#30363d"/>
+  <text x="36" y="42" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">no</text>
+  <text x="36" y="54" font-family="DejaVu Sans,sans-serif" font-size="10" fill="#4b5563" text-anchor="middle">containers</text>
 </svg>`;
 }
 

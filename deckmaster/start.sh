@@ -19,6 +19,12 @@ python3 decks/vdesktop/vdesktop-render.py poll &
 # Door sensor poller (fires 20s HTTP API alert on key 7 when a door opens)
 uv run decks/ha/ha.py poll-doors &
 
+# Pre-generate GitHub badge so key 6 isn't blank on startup
+uv run decks/github/github-prs.py badge &
+
+# Calendar event fetcher (refreshes 7 days of events every 5 min)
+python3 decks/calendar/calendar-fetch.py poll &
+
 # Deckmaster — foreground, this is what systemd tracks
-# Calendar alerts are handled inside next-event.py on each 30s widget poll
+# Calendar alerts are handled inside next-event.js on each 5s widget poll
 exec ./deckmaster -deck decks/main.deck -brightness 60 -watch -api :9990
