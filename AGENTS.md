@@ -74,10 +74,15 @@ HA_TOKEN=<long-lived Home Assistant access token>
 
 | Index | Widget | Description |
 |---|---|---|
-| 3 | `time` | Clock — `HH:mm` bold / `DD Mon` regular |
+| 0 | `button` | → navigates to `polymarket.deck` |
+| 1 | `button` | → navigates to `highlight.deck` |
+| 2 | `button` | → navigates to `ha.deck` (lights page) |
+| 3 | `button` | → navigates to `apps.deck` |
+| 4 | `time` | Clock — `HH:mm` bold / `DD Mon` regular |
 | 5 | `top` | Memory usage gauge (purple) |
-| 7 | `button` | → navigates to `ha.deck` (lights page) |
-| 8 | `button` | → navigates to `zoom.deck` (Zoom controls) |
+| 6 | `command` | GitHub PR badge (live) — → navigates to `github.deck` |
+| 7 | `command` | Docker badge — → navigates to `docker.deck` |
+| 8 | `command` | Ports badge — → navigates to `ports.deck` |
 | 9 | `command` | Next calendar event — countdown + title, refreshes every 30s |
 | 10–14 | `command` | Virtual desktop row (bottom row) — app icons, refreshes every 3s |
 
@@ -93,6 +98,35 @@ Parent: `test.deck` (back button returns here)
 | 14 | Back | navigates to `test.deck` |
 
 Each button uses `icon_command` to show a room icon with a green (ON) or red (OFF) dot, polling HA every 5s.
+
+### GitHub PRs page (`decks/github/github.deck`)
+
+Parent: `main.deck` (back button returns here)
+
+| Index | Widget | Description |
+|---|---|---|
+| 0 | `command` | Header — GitHub logo, open PR count, CI/review summary |
+| 1–12 | `command` | PR cards (PRs 0–11) — title, repo, CI status, comment count, review state |
+| 13 | empty | |
+| 14 | Back | navigates to `main.deck` |
+
+Each PR card shows:
+- **Top colour strip**: green (CI pass) / red (CI fail) / yellow (CI pending) / grey (no CI)
+- **Repo name** (short) + **PR number**
+- **Title** (up to 3 lines)
+- **Status bar**: CI+/CI!/CI~ label · comment count (if > 0) · review state (APR/REQ/WAIT/DRFT)
+
+**Review states**: APR = approved (green) · REQ = changes requested — *you need to respond* (red) · WAIT = waiting for review (yellow) · DRFT = draft (grey)
+
+**Smart polling TTL** — deck interval is always 30 s, but the GitHub API is only called:
+- every **30 s** when any PR has pending/running CI
+- every **30 min** when all CIs are resolved
+
+All slot images are pre-rendered in one atomic batch when the cache expires (serialised via lock file).
+
+**Script**: `github/github-prs.py` — uses `gh api graphql` for a single cross-repo query
+**State/cache**: `/tmp/streamdeck-github-prs.json` · images in `/tmp/streamdeck-github/`
+**Lock**: `/tmp/streamdeck-github.lock`
 
 ### Slot Machine page (`decks/slots.deck`)
 
@@ -200,6 +234,7 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 | `ha/` | `ha.deck`, HA toggle/indicator/icon/door/moisture scripts, room assets |
 | `zoom/` | `zoom.deck`, mic/video/hand/leave icon + action scripts, zoom icon assets |
 | `slots/` | `slots.deck`, `slots-game.py`, bet/spin/generate scripts, all slot symbol assets |
+| `github/` | `github.deck`, `github-prs.py`, assets/ |
 | `calc/` | `calc.deck`, `calc-game.py`, `calc-generate-assets.py`, digit/op icon assets |
 | `highlight/` | `highlight.deck`, `highlight-ctrl.py`, `highlight-btn-icon.py`, binary, `wal_colors.py`, assets |
 | `polymarket/` | `polymarket.deck`, `polymarket-cats.deck`, all polymarket scripts, assets |

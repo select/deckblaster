@@ -10,7 +10,7 @@ Linux Stream Deck setup — config-file driven, live-reloading, scriptable.
 
 deckblaster is built on a fork of [muesli/deckmaster](https://github.com/muesli/deckmaster) — a lightweight, config-file-driven Stream Deck daemon for Linux. The fork adds a live HTTP API for pushing key updates at runtime, an `icon_command` widget field for dynamic per-key icon rendering, a file-watcher for instant config reload, and a plugin folder layout so each feature lives in its own self-contained directory with its deck config, scripts, and assets.
 
-Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
+Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [GitHub PRs](#github-prs) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
 
 
 ## Quick Start
@@ -67,7 +67,7 @@ Fully animated slot machine with 7 symbols, 5 pay lines, bet cycling, win detect
 
 ### Polymarket
 
-<img src="docs/screenshots/polymarket.png" width="400"/>
+<img src="docs/screenshots/polymarket.png" width="400"/> <img src="docs/screenshots/polymarket-cats.png" width="400"/>
 
 Browse trending prediction market bets. Shows YES/NO percentages for three markets per page with pagination, category filtering, and auto-refresh. Press a text key to scroll long titles.
 
@@ -92,6 +92,22 @@ Controls lights and switches in multiple rooms. Monitors door sensors (last open
 Controls a cursor highlight circle (X11). Adjust radius, colour (uses pywal palette), and opacity live. Each parameter button shows a preview of the *next* value before you press it.
 
 **Language:** Python (`uv`) · **Requires:** X11, bundled `highlight-pointer` binary (built from [swillner/highlight-pointer](https://github.com/swillner/highlight-pointer))
+
+---
+
+### GitHub PRs
+
+<img src="docs/screenshots/github.png" width="400"/>
+
+Shows all your open pull requests across repos (up to 12). Each card displays the PR title, repo name, CI status, review state and comment count.
+
+- **Top bar** — CI progress bar while running (yellow → orange when past average → red on failure); solid colour when resolved
+- **Footer** — CI± label · average CI time (while running) or comment count with `mdi:message-outline` · review state (APR / WAIT / REQ / DRFT)
+- **Header key** — official GitHub mark, open PR count, summary of failures/changes/running CIs
+- **Main-deck badge** — PR count top-left, CI failure or running count top-right
+- **Press any PR card** — opens the PR in the browser via `xdg-open`
+
+Smart polling: 30 s while any CI is running, 1 min for 1 h after pressing a card, 30 min otherwise. CI average is sampled from the last 20 merged PRs via GraphQL and cached for 24 h in `/tmp`.
 
 ---
 

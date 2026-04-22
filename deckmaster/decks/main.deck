@@ -22,9 +22,9 @@
   [keys.widget]
     id = "button"
     [keys.widget.config]
-      icon = "slots/assets/slots-icon.png"
+      icon = "ha/assets/ha.png"
   [keys.action]
-    deck = "slots/slots.deck"
+    deck = "ha/ha.deck"
 
 [[keys]]
   index = 3
@@ -54,11 +54,13 @@
 [[keys]]
   index = 6
   [keys.widget]
-    id = "button"
+    id = "command"
+    interval = 30000
     [keys.widget.config]
-      icon = "ha/assets/ha.png"
+      icon_command = "uv run decks/github/github-prs.py badge"
+      command = ""
   [keys.action]
-    deck = "ha/ha.deck"
+    deck = "github/github.deck"
 
 # Docker button
 [[keys]]

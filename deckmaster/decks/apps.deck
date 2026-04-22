@@ -42,7 +42,9 @@ parent = "main.deck"
   [keys.widget]
     id = "button"
     [keys.widget.config]
-      icon = "assets/empty.png"
+      icon = "slots/assets/slots-icon.png"
+  [keys.action]
+    deck = "slots/slots.deck"
 
 [[keys]]
   index = 4

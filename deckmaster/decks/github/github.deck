@@ -1,0 +1,179 @@
+parent = "../main.deck"
+
+# ── GitHub open PRs ────────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [HEAD ] [PR 0 ] [PR 1 ] [PR 2 ] [PR 3 ]
+#   [PR 4 ] [PR 5 ] [PR 6 ] [PR 7 ] [PR 8 ]
+#   [PR 9 ] [PR 10] [PR 11] [empty] [BACK ]
+#
+# Polling: deck interval = 30 s on all keys.
+# The script uses a smart TTL:
+#   - any PR has pending CI  → GitHub API called every 30 s
+#   - all CIs resolved       → GitHub API called every 30 min
+# All slot images are pre-rendered in one shot when the cache expires.
+# IMPORTANT: none of these keys have [keys.action] — safe to push via HTTP API.
+
+# ── Header ─────────────────────────────────────────────────────────────────────
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py header"
+      command = ""
+
+# ── PR slots ───────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 0"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 0"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 1"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 1"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 2"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 2"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 3"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 3"
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 4"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 4"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 5"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 5"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 6"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 6"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 7"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 7"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 8"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 8"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 9"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 9"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 10"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 10"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 30000
+    [keys.widget.config]
+      icon_command = "uv run decks/github/github-prs.py icon 11"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/github/github-prs.py url 11"
+
+# ── Empty ──────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
+
+# ── Back ───────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/back.png"
+  [keys.action]
+    deck = "../main.deck"
