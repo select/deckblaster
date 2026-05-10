@@ -309,17 +309,15 @@ curl localhost:9990/health
 
 ## Virtual Desktops
 
-- Desktop environment: GNOME on X11 (`DISPLAY=:1`)
-- Tool: `xdotool` — `get_num_desktops`, `get_desktop`, `get_desktop_for_window`, `set_desktop`
-- Icon resolution priority:
-  1. Manual overrides (chromium snap, zed local, firefox/kitty system paths)
-  2. GTK icon theme via `gir1.2-gtk-3.0` + `.desktop` file lookup using 4 keys per app: `StartupWMClass`, file stem, `Exec` basename, `Name` — builds 507-entry map
-  3. Substring / token fallback across the full map
-  4. Direct GTK theme lookup by WM_CLASS as icon name
-  5. Downloaded fallback icons in `vdesktop/assets/app-*.png`
-- Icon cache: `/tmp/streamdeck-icon-cache/` — invalidated if source icon mtime is newer
+- Desktop environment: GNOME (X11 and Wayland, auto-detected via `XDG_SESSION_TYPE`)
+- **X11:** `xdotool` for workspace/window queries
+- **Wayland:** GNOME Shell extension `deckblaster-wm@local` writes `/tmp/streamdeck-wm.json` every 2s; `start.sh` auto-discovers XWayland auth from `/run/user/<uid>/.mutter-Xwaylandauth.*`
+- If extension is missing on Wayland, first desktop key shows ⚠ INSTALL — pressing it runs `install-extension.sh` (requires logout/login to activate)
+- Extension source: `decks/vdesktop/gnome-extension/` (extension.js + metadata.json)
+- Icon resolution: manual overrides → GTK theme + .desktop lookup → substring match → fallback assets
+- Icon cache: `/tmp/streamdeck-icon-cache/`
 - Rendered images: `/tmp/streamdeck-vdesktop/desk-N.png`
-- Poller runs as `streamdeck-vdesktop.service`, bound to `deckblaster.service` (stops/starts together)
+- Poller runs as background process in `start.sh`
 
 ---
 

@@ -16,7 +16,7 @@ Showcases every feature:
 Usage (from repo root):
     uv run deckmaster/decks/github/make-screenshot.py
 """
-import importlib.util, json, sys, time, shutil
+import json, sys, time, shutil
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from PIL import Image
@@ -107,15 +107,30 @@ Path("/tmp/streamdeck-github-ci-history.json").write_text(json.dumps(CI_HISTORY)
 for p in list(TMP.glob("pr-*.png")) + [TMP / "header.png", TMP / "badge.png"]:
     p.unlink(missing_ok=True)
 
-# ── Import renderer ───────────────────────────────────────────────────────────
-spec = importlib.util.spec_from_file_location("gpr", SCRIPT_DIR / "github-prs.py")
-mod  = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(mod)
+# ── Render via JS ────────────────────────────────────────────────────────────
+import subprocess
 
-prs = mod.get_prs()
-assert prs[0]["number"] == 42, f"Cache not fresh — got real data: {prs[0]}"
-print(f"Rendering {len(prs)} mock PRs…")
-mod._render_all(prs)   # force render even when cache is fresh
+# Clear stale rendered images so the JS script re-renders from mock data
+for p in list(TMP.glob("pr-*.png")) + [TMP / "header.png", TMP / "badge.png"]:
+    p.unlink(missing_ok=True)
+
+# icon 0 triggers getPrs() → renderAll() which writes all 12 PR slots +
+# header + badge in one shot.  Subsequent calls just read cached files.
+result = subprocess.run(
+    ["bun", str(SCRIPT_DIR / "github-prs.js"), "icon", "0"],
+    cwd=str(SCRIPT_DIR), capture_output=True, text=True,
+)
+if result.returncode != 0:
+    print("JS render failed:", result.stderr, file=sys.stderr)
+    sys.exit(1)
+
+# Also render header explicitly (renderAll already wrote it, but let's be sure)
+subprocess.run(
+    ["bun", str(SCRIPT_DIR / "github-prs.js"), "header"],
+    cwd=str(SCRIPT_DIR), capture_output=True,
+)
+
+print(f"Rendering {len(MOCK_PRS)} mock PRs…")
 
 # ── Collect the 15 key images ─────────────────────────────────────────────────
 keys: list[Image.Image] = []

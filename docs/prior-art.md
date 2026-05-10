@@ -1,10 +1,30 @@
-- [Stream Deck](moz-extension://bd773b60-2ba5-4458-83d0-f7c47e6aea73/sidebery/group.html#Stream%20Deck)
-  - [muesli/deckmaster: An application to control your Elgato Stream Deck on Linux](https://github.com/muesli/deckmaster)
-  - [muesli/streamdeck: An application and Go library to control your Elgato Stream Deck on Linux](https://github.com/muesli/streamdeck?tab=readme-ov-file)
-  - [dh1tw/streamdeck: Golang API for the Corsair / Elgato StreamDeck](https://github.com/dh1tw/streamdeck)
-  - [nekename/OpenDeck: Linux software for the Stream Deck with support for original Elgato Stream Deck plugins](https://github.com/nekename/OpenDeck)
-  - [Install StreamController on Linux | Flathub](https://flathub.org/en/apps/com.core447.StreamController)
-  - [timothycrosley/streamdeck-ui: A Linux compatible UI for the Elgato Stream Deck.](https://github.com/timothycrosley/streamdeck-ui)
-  - [goglesquirmintontheiii/streamdeck-plus-software: Unofficial streamdeck+ software, made using Python (GUI made using Python's Tkinter)](https://github.com/goglesquirmintontheiii/streamdeck-plus-software)
-  - [StreamController/StreamController: An elegant Linux app for the Elgato Stream Deck with support for plugins](https://github.com/StreamController/StreamController)
-  - [lornajane/streamdeck-tricks: Code to use streamdeck lib and tie in obs/mqtt/other things](https://github.com/lornajane/streamdeck-tricks)
+# Stream Deck — Linux Libraries & Software (Prior Art)
+
+A collection of open-source libraries and applications for controlling the Elgato Stream Deck on Linux.
+
+---
+
+## Python Libraries
+
+| Project | Description |
+|---|---|
+| [abcminiuser/python-elgato-streamdeck](https://github.com/abcminiuser/python-elgato-streamdeck) | Python library to control the Elgato Stream Deck directly via HIDAPI — low-level, well-maintained, supports all models |
+| [lornajane/streamdeck-tricks](https://github.com/lornajane/streamdeck-tricks) | Code using the streamdeck lib and tying in OBS/MQTT/other integrations |
+
+## Go Libraries
+
+| Project | Description |
+|---|---|
+| [muesli/streamdeck](https://github.com/muesli/streamdeck) | Go library (and app) to control the Elgato Stream Deck on Linux |
+| [dh1tw/streamdeck](https://github.com/dh1tw/streamdeck) | Golang API for the Corsair/Elgato Stream Deck |
+
+## Applications / Full Software
+
+| Project | Description |
+|---|---|
+| [muesli/deckmaster](https://github.com/muesli/deckmaster) | Config-file-driven Stream Deck manager for Linux (base of this project) |
+| [StreamController/StreamController](https://github.com/StreamController/StreamController) | Elegant Linux GTK app for the Stream Deck with plugin support |
+| [nekename/OpenDeck](https://github.com/nekename/OpenDeck) | Linux software with support for original Elgato Stream Deck plugins |
+| [timothycrosley/streamdeck-ui](https://github.com/timothycrosley/streamdeck-ui) | Linux-compatible UI for the Elgato Stream Deck (Python/Qt) |
+| [StreamController on Flathub](https://flathub.org/en/apps/com.core447.StreamController) | Flatpak install of StreamController |
+| [goglesquirmintontheiii/streamdeck-plus-software](https://github.com/goglesquirmintontheiii/streamdeck-plus-software) | Unofficial Stream Deck+ software (Python/Tkinter) |

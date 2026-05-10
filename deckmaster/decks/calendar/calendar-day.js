@@ -19,7 +19,7 @@
  */
 
 import sharp from "sharp";
-import { mkdir, writeFile, readFile } from "fs/promises";
+import { mkdir, writeFile, readFile, stat } from "fs/promises";
 import { existsSync } from "fs";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -107,6 +107,21 @@ function dayLabel(off) {
 function dateStr(off) {
   const d = new Date(); d.setDate(d.getDate() + off);
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+// ── cache helpers ────────────────────────────────────────────────────────────
+
+/** Returns true if path doesn't exist or was last modified on a different calendar day. */
+async function isStale(filePath) {
+  if (!existsSync(filePath)) return true;
+  try {
+    const { mtimeMs } = await stat(filePath);
+    const fileDay  = new Date(mtimeMs).toDateString();
+    const todayDay = new Date().toDateString();
+    return fileDay !== todayDay;
+  } catch {
+    return true;
+  }
 }
 
 // ── state ─────────────────────────────────────────────────────────────────────
@@ -232,7 +247,7 @@ if (arg === "generate-assets") {
 
 } else if (arg === "header") {
   const path = join(IMG_DIR, "header.png");
-  if (!existsSync(path)) {
+  if (await isStale(path)) {
     const state = await loadState();
     const eventsData = await loadEvents();
     await renderAll(state, eventsData);
@@ -274,7 +289,7 @@ if (arg === "generate-assets") {
   const slot = parseInt(raw, 10);
   if (isNaN(slot)) process.exit(1);
   const path = join(IMG_DIR, `key-${slot}.png`);
-  if (!existsSync(path)) {
+  if (await isStale(path)) {
     const state = await loadState();
     const eventsData = await loadEvents();
     await renderAll(state, eventsData);

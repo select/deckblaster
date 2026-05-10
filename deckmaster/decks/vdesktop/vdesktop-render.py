@@ -13,10 +13,22 @@ import subprocess
 import json
 import re
 import shutil
+import time
 import tempfile
 from pathlib import Path
 
-DISPLAY = os.environ.get("DISPLAY", "")
+DISPLAY = os.environ.get("DISPLAY", ":0")
+if not DISPLAY:
+    DISPLAY = ":0"
+    os.environ["DISPLAY"] = DISPLAY
+
+# Wayland support: auto-detect XAUTHORITY for XWayland if not already set
+if not os.environ.get("XAUTHORITY"):
+    import glob as _glob
+    _xauth = _glob.glob(f"/run/user/{os.getuid()}/.mutter-Xwaylandauth.*")
+    if _xauth:
+        os.environ["XAUTHORITY"] = _xauth[0]
+
 ASSETS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets")
 OUT_DIR = "/tmp/streamdeck-vdesktop"
 ICON_CACHE_DIR = "/tmp/streamdeck-icon-cache"
@@ -207,10 +219,66 @@ def cached_icon(wm_class, size):
 
 
 # ---------------------------------------------------------------------------
+# Session type detection
+# ---------------------------------------------------------------------------
+
+WM_JSON = "/tmp/streamdeck-wm.json"
+INSTALL_ICON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "install-ext.png")
+
+
+def _is_wayland():
+    """Detect if session is Wayland."""
+    return os.environ.get("XDG_SESSION_TYPE") == "wayland"
+
+
+def _extension_installed():
+    """Check if the GNOME Shell extension is installed and producing data."""
+    if not _is_wayland():
+        return True  # Not needed on X11
+    # Check if the JSON file exists and was updated in the last 10 seconds
+    try:
+        age = time.time() - os.path.getmtime(WM_JSON)
+        return age < 10
+    except OSError:
+        return False
+
+
+# ---------------------------------------------------------------------------
 # Window / desktop info
 # ---------------------------------------------------------------------------
 
-def get_windows():
+def get_windows_wayland():
+    """Read workspace/window data from GNOME Shell extension JSON."""
+    try:
+        with open(WM_JSON) as f:
+            data = json.load(f)
+        desktops = {}
+        for k, apps in data.get("desktops", {}).items():
+            desktops[int(k)] = apps
+        return desktops
+    except Exception:
+        return {}
+
+
+def get_current_desktop_wayland():
+    try:
+        with open(WM_JSON) as f:
+            data = json.load(f)
+        return data.get("active", 0)
+    except Exception:
+        return 0
+
+
+def get_num_desktops_wayland():
+    try:
+        with open(WM_JSON) as f:
+            data = json.load(f)
+        return data.get("n", 0)
+    except Exception:
+        return 0
+
+
+def get_windows_x11():
     desktops = {}
     wids = run("xdotool search --onlyvisible --name ''").split("\n")
     for wid in wids:
@@ -233,9 +301,27 @@ def get_windows():
     return desktops
 
 
-def get_current_desktop():
+def get_current_desktop_x11():
     d = run("xdotool get_desktop")
     return int(d) if d.isdigit() else 0
+
+
+def get_num_desktops_x11():
+    n_str = run("xdotool get_num_desktops")
+    return int(n_str) if n_str.isdigit() else 0
+
+
+# Unified interface
+def get_windows():
+    return get_windows_wayland() if _is_wayland() else get_windows_x11()
+
+
+def get_current_desktop():
+    return get_current_desktop_wayland() if _is_wayland() else get_current_desktop_x11()
+
+
+def get_num_desktops():
+    return get_num_desktops_wayland() if _is_wayland() else get_num_desktops_x11()
 
 
 # ---------------------------------------------------------------------------
@@ -292,7 +378,18 @@ def main():
     if cmd == "switch":
         # Switch to virtual desktop N
         n = sys.argv[2] if len(sys.argv) > 2 else "0"
-        subprocess.run(["xdotool", "set_desktop", n])
+        if _is_wayland() and not _extension_installed():
+            # Extension not installed — run installer
+            install_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "install-extension.sh")
+            subprocess.run(["bash", install_script])
+            return
+        if _is_wayland():
+            # Use gdbus to switch workspace on GNOME Wayland
+            run(f"gdbus call --session --dest org.gnome.Shell "
+                f"--object-path /org/gnome/Shell/Extensions/DeckblasterWM "
+                f"--method org.gnome.Shell.Extensions.DeckblasterWM.SwitchWorkspace {n}")
+        else:
+            subprocess.run(["xdotool", "set_desktop", n])
         return
 
     if cmd == "poll":
@@ -311,11 +408,24 @@ def main():
 
 
 def _render_all():
-    n_str = run("xdotool get_num_desktops")
-    if not n_str.isdigit():
+    # On Wayland, show install icon if extension is not running
+    if _is_wayland() and not _extension_installed():
+        # Copy install icon to desk-0 slot so it shows on the deck
+        out_path = f"{OUT_DIR}/desk-0.png"
+        shutil.copy2(INSTALL_ICON, out_path)
+        # Clear other slots
+        for i in range(1, 5):
+            p = f"{OUT_DIR}/desk-{i}.png"
+            if os.path.exists(p):
+                os.remove(p)
+        result = {0: {"image": out_path, "apps": [], "current": False}}
+        print(json.dumps(result))
         return
 
-    num_desktops = int(n_str)
+    num_desktops = get_num_desktops()
+    if num_desktops == 0:
+        return
+
     current = get_current_desktop()
     windows = get_windows()
 

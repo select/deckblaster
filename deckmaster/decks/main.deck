@@ -59,7 +59,7 @@
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py badge"
+      icon_command = "bun decks/github/github-prs.js badge"
       command = ""
   [keys.action]
     deck = "github/github.deck"

@@ -13,6 +13,14 @@ export HA_TOKEN HA_URL DECK_API
 # Ensure bun and uv are on PATH
 export PATH="${HOME}/.bun/bin:${HOME}/.local/bin:${PATH}"
 
+# Wayland support: auto-detect XAUTHORITY for XWayland access
+if [ -z "$XAUTHORITY" ]; then
+    xauth_file=$(find /run/user/$(id -u) -name '.mutter-Xwaylandauth.*' 2>/dev/null | head -1)
+    if [ -n "$xauth_file" ]; then
+        export XAUTHORITY="$xauth_file"
+    fi
+fi
+
 # Virtual desktop icon poller (renders desk-N.png every 3s)
 python3 decks/vdesktop/vdesktop-render.py poll &
 
@@ -20,7 +28,7 @@ python3 decks/vdesktop/vdesktop-render.py poll &
 uv run decks/ha/ha.py poll-doors &
 
 # Pre-generate GitHub badge so key 6 isn't blank on startup
-uv run decks/github/github-prs.py badge &
+bun decks/github/github-prs.js badge &
 
 # Calendar event fetcher (refreshes 7 days of events every 5 min)
 python3 decks/calendar/calendar-fetch.py poll &

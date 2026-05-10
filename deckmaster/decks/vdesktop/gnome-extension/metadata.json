@@ -1,0 +1,7 @@
+{
+  "uuid": "deckblaster-wm@local",
+  "name": "Deckblaster WM Info",
+  "description": "Writes workspace/window state to /tmp/streamdeck-wm.json for Stream Deck",
+  "shell-version": ["45", "46", "47"],
+  "version": 1
+}

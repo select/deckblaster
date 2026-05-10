@@ -21,7 +21,7 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py header"
+      icon_command = "bun decks/github/github-prs.js header"
       command = ""
 
 # ── PR slots ───────────────────────────────────────────────────────────────────
@@ -32,10 +32,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 0"
+      icon_command = "bun decks/github/github-prs.js icon 0"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 0"
+    exec = "bun decks/github/github-prs.js url 0"
 
 [[keys]]
   index = 2
@@ -43,10 +43,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 1"
+      icon_command = "bun decks/github/github-prs.js icon 1"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 1"
+    exec = "bun decks/github/github-prs.js url 1"
 
 [[keys]]
   index = 3
@@ -54,10 +54,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 2"
+      icon_command = "bun decks/github/github-prs.js icon 2"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 2"
+    exec = "bun decks/github/github-prs.js url 2"
 
 [[keys]]
   index = 4
@@ -65,10 +65,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 3"
+      icon_command = "bun decks/github/github-prs.js icon 3"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 3"
+    exec = "bun decks/github/github-prs.js url 3"
 
 [[keys]]
   index = 5
@@ -76,10 +76,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 4"
+      icon_command = "bun decks/github/github-prs.js icon 4"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 4"
+    exec = "bun decks/github/github-prs.js url 4"
 
 [[keys]]
   index = 6
@@ -87,10 +87,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 5"
+      icon_command = "bun decks/github/github-prs.js icon 5"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 5"
+    exec = "bun decks/github/github-prs.js url 5"
 
 [[keys]]
   index = 7
@@ -98,10 +98,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 6"
+      icon_command = "bun decks/github/github-prs.js icon 6"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 6"
+    exec = "bun decks/github/github-prs.js url 6"
 
 [[keys]]
   index = 8
@@ -109,10 +109,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 7"
+      icon_command = "bun decks/github/github-prs.js icon 7"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 7"
+    exec = "bun decks/github/github-prs.js url 7"
 
 [[keys]]
   index = 9
@@ -120,10 +120,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 8"
+      icon_command = "bun decks/github/github-prs.js icon 8"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 8"
+    exec = "bun decks/github/github-prs.js url 8"
 
 [[keys]]
   index = 10
@@ -131,10 +131,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 9"
+      icon_command = "bun decks/github/github-prs.js icon 9"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 9"
+    exec = "bun decks/github/github-prs.js url 9"
 
 [[keys]]
   index = 11
@@ -142,10 +142,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 10"
+      icon_command = "bun decks/github/github-prs.js icon 10"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 10"
+    exec = "bun decks/github/github-prs.js url 10"
 
 [[keys]]
   index = 12
@@ -153,10 +153,10 @@ parent = "../main.deck"
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/github/github-prs.py icon 11"
+      icon_command = "bun decks/github/github-prs.js icon 11"
       command = ""
   [keys.action]
-    exec = "uv run decks/github/github-prs.py url 11"
+    exec = "bun decks/github/github-prs.js url 11"
 
 # ── Empty ──────────────────────────────────────────────────────────────────────
 

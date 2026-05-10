@@ -172,7 +172,9 @@ Day-view calendar with 9 event slots (3×3 grid), paginated by day. Events come 
 
 Bottom row of the main deck. Each button shows the apps open on that virtual desktop using GTK icon theme lookup. The active desktop gets a blue underline. Press to switch. Icons are re-rendered every 3 seconds by a background poller.
 
-**Language:** Python (stdlib + `python3-gi`) · **Requires:** X11, `xdotool`, `python3-gi`, `gir1.2-gtk-3.0`
+Supports **X11** (xdotool) and **Wayland** (bundled GNOME Shell extension). Session type is auto-detected. On Wayland, if the extension isn't installed yet, the first desktop key shows a ⚠ INSTALL icon — press it to run the installer (requires one logout/login to activate).
+
+**Language:** Python (stdlib + `python3-gi`) · **Requires:** `python3-gi`, `gir1.2-gtk-3.0`, `xdotool` (X11) or bundled extension (Wayland)
 
 ---
 
