@@ -3,7 +3,7 @@ parent = "../main.deck"
 # ── Mouse Highlighter ───────────────────────────────────────────────────────────
 #
 # Layout (5×3):
-#   [STATUS] [SIZ ▲] [COLOR] [ALP ▲] [     ]
+#   [STATUS] [SIZ ▲] [COLOR] [ALP ▲] [MODE ]
 #   [ON/OFF] [SIZ ▼] [     ] [ALP ▼] [     ]
 #   [ EXIT ] [     ] [     ] [     ] [     ]
 #
@@ -58,12 +58,17 @@ parent = "../main.deck"
   [keys.action]
     exec = "uv run decks/highlight/highlight-ctrl.py opacity-up"
 
+# Mode toggle — ring+click vs click-only
 [[keys]]
   index = 4
   [keys.widget]
-    id = "button"
+    id = "command"
+    interval = 2000
     [keys.widget.config]
-      icon = "../assets/empty.png"
+      icon_command = "uv run decks/highlight/highlight-btn-icon.py mode"
+      command = ""
+  [keys.action]
+    exec = "uv run decks/highlight/highlight-ctrl.py mode"
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
 

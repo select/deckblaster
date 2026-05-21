@@ -174,10 +174,12 @@ live previews of the *next* value — circle size, color swatch, or opacity leve
 current highlight color.
 
 **Binary**: `scripts/highlight-pointer` (built from [swillner/highlight-pointer](https://github.com/swillner/highlight-pointer), X11-only)
-**Controller**: `scripts/highlight-ctrl.py` — manages process lifecycle, renders status display
+**Wayland**: [hati](https://github.com/szymonwilczek/hati) GNOME Shell extension (controlled via gsettings)
+**Backend auto-detection**: `XDG_SESSION_TYPE` → X11 uses `highlight-pointer` binary, Wayland uses hati
+**Controller**: `scripts/highlight-ctrl.py` — manages process lifecycle (X11) or gsettings (Wayland), renders status display
 **Button icons**: `scripts/highlight-btn-icon.py` — renders dynamic preview icons per button type
-**State**: `/tmp/streamdeck-highlight.json`
-**PID file**: `/tmp/streamdeck-highlight.pid`
+**State**: `~/.local/share/streamdeck-highlight.json`
+**PID file**: `/tmp/streamdeck-highlight.pid` (X11 only)
 
 ### Calculator page (`decks/calc.deck`)
 

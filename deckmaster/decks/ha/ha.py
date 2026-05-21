@@ -251,10 +251,12 @@ def cmd_toggle(domain, entity):
 # ── poll-doors ────────────────────────────────────────────────────────────────
 
 DOORS = [
-    ("3", "binary_sensor.haustur_contact",     "🚪 HAUSTÜR"),
-    ("4", "binary_sensor.terrassentur_contact", "🚪 TERRASSE"),
-    ("5", "binary_sensor.kuchentur_contact",    "🚪 KÜCHENTÜR"),
-    ("6", "binary_sensor.fahrrad_box_contact",  "🚪 FAHRRAD"),
+    ("3", "binary_sensor.haustur_contact",                    "🚪 HAUSTÜR"),
+    ("4", "binary_sensor.terrassentur_contact",               "🚪 TERRASSE"),
+    ("5", "binary_sensor.kuchentur_contact",                  "🚪 KÜCHENTÜR"),
+    ("6", "binary_sensor.fahrrad_box_contact",               "🚪 FAHRRAD"),
+    ("10", "binary_sensor.schlafzimmer_fenster_contact",      "🪟 SCHLAFZ.FENSTER"),
+    ("klingel", "binary_sensor.0x00158d008c7c34b5_vibration", "🔔 KLINGEL"),
 ]
 HA_BUTTON_KEY = 7
 POLL_INTERVAL = 5

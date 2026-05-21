@@ -211,6 +211,45 @@ def render_alpha_down(state, colors):
     return path
 
 
+def render_mode(state, colors):
+    """Mode button — shows current mode: ring+click or click-only."""
+    img = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 255))
+    draw = ImageDraw.Draw(img)
+
+    mode = state.get("mode", "ring+click")
+    color = hex_to_rgb(colors[state.get("color_idx", 0) % len(colors)][0])
+    opacity = OPACITIES[min(state.get("opacity_idx", 3), len(OPACITIES) - 1)]
+    alpha = int(opacity * 255)
+    cx, cy = 36, 30
+
+    if mode == "ring+click":
+        # Show ring + click dot
+        draw.rounded_rectangle([3, 3, 69, 69], radius=10, outline=(0, 180, 0), width=2)
+        draw.ellipse([cx - 18, cy - 18, cx + 18, cy + 18],
+                     outline=(*color, alpha), width=3)
+        draw.ellipse([cx - 4, cy - 4, cx + 4, cy + 4], fill=(255, 255, 255))
+        label = "RING"
+        label_color = (0, 220, 100)
+    else:
+        # Click-only: just a click dot / ripple icon
+        draw.rounded_rectangle([3, 3, 69, 69], radius=10, outline=(80, 160, 255), width=2)
+        draw.ellipse([cx - 5, cy - 5, cx + 5, cy + 5], fill=(255, 255, 255))
+        # Ripple rings
+        for r in [12, 20]:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r],
+                         outline=(*color, 120), width=1)
+        label = "CLICK"
+        label_color = (100, 200, 255)
+
+    bbox = draw.textbbox((0, 0), label, font=FONT_SM)
+    tw = bbox[2] - bbox[0]
+    draw.text(((SIZE - tw) // 2, 54), label, fill=label_color, font=FONT_SM)
+
+    path = os.path.join(TMP, "btn-mode.png")
+    img.save(path)
+    return path
+
+
 RENDERERS = {
     "size-up": render_size_up,
     "size-down": render_size_down,
@@ -218,6 +257,7 @@ RENDERERS = {
     "color-prev": render_color_prev,
     "alpha-up": render_alpha_up,
     "alpha-down": render_alpha_down,
+    "mode": render_mode,
 }
 
 if __name__ == "__main__":

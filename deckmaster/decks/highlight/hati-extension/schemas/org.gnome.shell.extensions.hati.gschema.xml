@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.hati" path="/org/gnome/shell/extensions/hati/">
+    
+    <key name="enabled" type="b">
+      <default>false</default>
+      <summary>Enable Hati cursor highlighter</summary>
+      <description>Master toggle for cursor highlighting</description>
+    </key>
+    
+    <key name="color" type="s">
+      <default>'rgba(144, 238, 144, 1.0)'</default>
+      <summary>Highlight color</summary>
+      <description>RGBA color value for the cursor highlight ring</description>
+    </key>
+
+    <key name="rgb-enabled" type="b">
+      <default>false</default>
+      <summary>Enable RGB mode</summary>
+      <description>Cycle through colors continuously</description>
+    </key>
+
+    <key name="rgb-speed" type="d">
+      <range min="0.1" max="10.0"/>
+      <default>2.0</default>
+      <summary>RGB cycle speed</summary>
+      <description>Speed of color cycling</description>
+    </key>
+    
+    <key name="size" type="i">
+      <range min="40" max="200"/>
+      <default>125</default>
+      <summary>Highlight size</summary>
+      <description>Diameter of the highlight ring in pixels</description>
+    </key>
+    
+    <key name="opacity" type="d">
+      <range min="0.0" max="1.0"/>
+      <default>0.7</default>
+      <summary>Highlight opacity</summary>
+      <description>Overall transparency of the highlight (0.0 = invisible, 1.0 = opaque)</description>
+    </key>
+    
+    <key name="border-weight" type="i">
+      <range min="2" max="20"/>
+      <default>4</default>
+      <summary>Border thickness</summary>
+      <description>Thickness of the highlight ring border in pixels</description>
+    </key>
+    
+    <key name="gap" type="d">
+      <range min="0.0" max="20.0"/>
+      <default>1.0</default>
+      <summary>Gap between rings</summary>
+      <description>Distance between outer and inner ring in pixels</description>
+    </key>
+    
+    <key name="shape" type="s">
+      <choices>
+        <choice value='circle'/>
+        <choice value='squircle'/>
+        <choice value='square'/>
+      </choices>
+      <default>'squircle'</default>
+      <summary>Highlight shape</summary>
+      <description>Shape of the cursor highlight</description>
+    </key>
+
+    <key name="rotation" type="i">
+      <range min="0" max="360"/>
+      <default>45</default>
+      <summary>Rotation angle</summary>
+      <description>Angle of rotation in degrees (0-360)</description>
+    </key>
+    
+    <key name="glow" type="b">
+      <default>true</default>
+      <summary>Enable glow effect</summary>
+      <description>Add a soft glow around the highlight ring</description>
+    </key>
+
+    <key name="corner-radius" type="i">
+      <range min="0" max="50"/>
+      <default>40</default>
+      <summary>Corner Radius Percentage</summary>
+      <description>0=Square, 25=Squircle, 50=Circle</description>
+    </key>
+
+    <key name="glow-radius" type="i">
+      <range min="0" max="100"/>
+      <default>10</default>
+      <summary>Glow Blur Radius</summary>
+      <description>Blur radius of the glow in pixels</description>
+    </key>
+
+    <key name="glow-spread" type="i">
+      <range min="0" max="50"/>
+      <default>4</default>
+      <summary>Glow Spread Radius</summary>
+      <description>Spread radius of the glow in pixels</description>
+    </key>
+    
+    <key name="additional-deformations" type="b">
+      <default>false</default>
+      <summary>Enable additional shape deformations</summary>
+      <description>If true, adds symmetric indentations to the shape edges.</description>
+    </key>
+    <key name="dashed-border" type="b">
+      <default>true</default>
+      <summary>Enable dashed inner border</summary>
+      <description>If true, the inner ring will be drawn with a dashed line style.</description>
+    </key>
+    <key name="dash-gap-size" type="d">
+      <default>1.5</default>
+      <summary>Size of gap between dashes</summary>
+      <description>Controls the density of the dashes. Smaller value = higher density.</description>
+    </key>
+    <key name="use-system-accent" type="b">
+      <default>false</default>
+      <summary>Use system accent color</summary>
+      <description>If true, overrides the custom color with the system accent color.</description>
+    </key>
+    
+    <key name="click-animations" type="b">
+      <default>true</default>
+      <summary>Enable click animations</summary>
+      <description>Show ripple/directional effect when clicking</description>
+    </key>
+
+    <key name="left-click-color" type="s">
+      <default>'rgba(0, 0, 255, 1)'</default>
+      <summary>Left click animation color</summary>
+      <description>Color validation string (rgba)</description>
+    </key>
+    <key name="right-click-color" type="s">
+      <default>'rgba(255, 0, 0, 1)'</default>
+      <summary>Right click animation color</summary>
+      <description>Color validation string (rgba)</description>
+    </key>
+
+    <key name="magnifier-enabled" type="b">
+      <default>true</default>
+      <summary>Enable magnifier</summary>
+      <description>Master switch for the magnifier feature</description>
+    </key>
+    <key name="magnifier-zoom" type="d">
+      <default>1.5</default>
+      <summary>Magnifier zoom factor</summary>
+      <description>Zoom level (1.0 - 4.0)</description>
+    </key>
+    <key name="magnifier-key" type="s">
+      <choices>
+        <choice value='Shift_L'/>
+        <choice value='Shift_R'/>
+        <choice value='Control_L'/>
+        <choice value='Control_R'/>
+        <choice value='Alt_L'/>
+        <choice value='Alt_R'/>
+        <choice value='Super_L'/>
+        <choice value='Super_R'/>
+      </choices>
+      <default>'Control_L'</default>
+      <summary>Magnifier activation key</summary>
+      <description>Key to hold to activate magnifier</description>
+    </key>
+
+    <key name="click-animation-mode" type="s">
+      <choices>
+        <choice value='directional'/>
+        <choice value='ripple'/>
+        <choice value='pulse'/>
+        <choice value='glow-burst'/>
+        <choice value='ring-expand'/>
+      </choices>
+      <default>'ripple'</default>
+      <summary>Click animation mode</summary>
+      <description>Style of click animation</description>
+    </key>
+    
+    <key name="auto-hide" type="b">
+      <default>true</default>
+      <summary>Auto-hide when stationary</summary>
+      <description>Automatically hide the highlight when the cursor isn't moving</description>
+    </key>
+    
+    <key name="auto-hide-delay" type="i">
+      <range min="1000" max="15000"/>
+      <default>3000</default>
+      <summary>Auto-hide delay</summary>
+      <description>Time in milliseconds before hiding stationary cursor</description>
+    </key>
+
+    <key name="inertia-enabled" type="b">
+      <default>true</default>
+      <summary>Enable inertia physics</summary>
+      <description>If true, cursor uses spring-damper physics. If false, it follows pointer instantly.</description>
+    </key>
+
+    <key name="inertia-stiffness" type="d">
+      <range min="0.01" max="1.0"/>
+      <default>0.65</default>
+      <summary>Inertia Stiffness</summary>
+      <description>Spring stiffness (Higher = Faster/Tighter follow)</description>
+    </key>
+
+    <key name="inertia-smoothness" type="d">
+      <range min="0.1" max="0.99"/>
+      <default>0.40</default>
+      <summary>Inertia Smoothness</summary>
+      <description>Velocity retention factor (Higher = More slippery/gliding, Lower = High friction)</description>
+    </key>
+
+    <key name="spotlight-enabled" type="b">
+      <default>true</default>
+      <summary>Enable Spotlight</summary>
+      <description>Darken screen and highlight cursor when key is held</description>
+    </key>
+
+    <key name="spotlight-key" type="s">
+      <choices>
+        <choice value='Shift_L'/>
+        <choice value='Shift_R'/>
+        <choice value='Control_L'/>
+        <choice value='Control_R'/>
+        <choice value='Alt_L'/>
+        <choice value='Alt_R'/>
+        <choice value='Super_L'/>
+        <choice value='Super_R'/>
+      </choices>
+      <default>'Alt_L'</default>
+      <summary>Spotlight activation key</summary>
+      <description>Key to hold to activate spotlight</description>
+    </key>
+
+    <key name="spotlight-opacity" type="d">
+      <range min="0.1" max="1.0"/>
+      <default>0.65</default>
+      <summary>Spotlight opacity</summary>
+      <description>Darkness of the overlay</description>
+    </key>
+
+    <key name="spotlight-size" type="i">
+      <range min="50" max="500"/>
+      <default>130</default>
+      <summary>Spotlight hole size</summary>
+      <description>Diameter of the spotlight circle</description>
+    </key>
+    
+  </schema>
+</schemalist>

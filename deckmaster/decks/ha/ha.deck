@@ -94,7 +94,7 @@ parent ="../main.deck"
     id ="command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Pflanze 1"
+      icon_command = "uv run decks/ha/ha.py icon-moisture sensor.3rd_soilmoisture_1_soil_moisture_2 soil1 Arbeitszimmer"
       command =""
 
 [[keys]]
@@ -120,7 +120,11 @@ parent ="../main.deck"
 [[keys]]
   index = 10
   [keys.widget]
-    id ="button"
+    id ="command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.schlafzimmer_fenster_contact schlafzfenster Schlafz.Fenst."
+      command =""
 
 [[keys]]
   index = 11
