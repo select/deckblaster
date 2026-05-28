@@ -59,9 +59,9 @@ parent ="../main.deck"
   index = 4
   [keys.widget]
     id ="command"
-    interval = 5000
+    interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.terrassentur_contact terrasse Terrasse"
+      icon_command = "uv run decks/ha/ha.py icon-bell binary_sensor.0x00158d008c7c34b5_vibration klingel Klingel"
       command =""
 
 [[keys]]
@@ -129,7 +129,11 @@ parent ="../main.deck"
 [[keys]]
   index = 11
   [keys.widget]
-    id ="button"
+    id ="command"
+    interval = 5000
+    [keys.widget.config]
+      icon_command = "uv run decks/ha/ha.py icon-door binary_sensor.terrassentur_contact terrasse Terrasse"
+      command =""
 
 [[keys]]
   index = 12

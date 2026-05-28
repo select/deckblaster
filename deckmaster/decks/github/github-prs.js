@@ -36,7 +36,7 @@ const OUT_DIR         = "/tmp/streamdeck-github";
 // ── tuning ─────────────────────────────────────────────────────────────────────
 const MAX_PR_SLOTS    = 12;
 const TTL_FAST        = 30_000;       // ms — any PR has running CI
-const TTL_SLOW        = 300_000;      // ms — 5 min when all CIs resolved
+const TTL_SLOW        = 60_000;       // ms — 1 min when all CIs resolved
 const TTL_SNOOZED     = 60_000;       // ms — 1 min after a PR button press
 const SNOOZE_DURATION = 3_600_000;    // ms — snooze lasts 1 h
 const CI_HISTORY_TTL  = 86_400_000;   // ms — re-sample CI avg once per day
@@ -435,42 +435,45 @@ function makeHeaderSvg(prs) {
 </svg>`;
 }
 
-/** Badge for main.deck nav button */
+/** Badge for main.deck nav button — 4 quadrant circles:
+ *   Top-left:     approved PRs with no CI error (green)
+ *   Top-right:    waiting PRs without CI running (yellow)
+ *   Bottom-left:  PRs with CI running (yellow/pending)
+ *   Bottom-right: PRs with CI fail or changes requested (red)
+ */
 function makeBadgeSvg(prs) {
-  const n       = prs.length;
-  const nPend   = prs.filter(p => p.ciState === "pending").length;
-  const nFail   = prs.filter(p => p.ciState === "failure").length;
-  const nReview = prs.filter(p => p.reviewDecision === "changes_requested").length;
-  const hasWarn = nFail > 0 || nReview > 0;
-  const prColor = hasWarn ? C_RED : n > 0 ? C_GREEN : C_GRAY;
+  // Top-left: approved + CI not failure
+  const nApproved = prs.filter(p => p.reviewDecision === "approved" && p.ciState !== "failure").length;
+  // Top-right: waiting for review + CI not running
+  const nWaiting  = prs.filter(p => p.reviewDecision === "waiting" && p.ciState !== "pending").length;
+  // Bottom-left: CI running/pending
+  const nRunning  = prs.filter(p => p.ciState === "pending").length;
+  // Bottom-right: CI fail OR changes requested
+  const nProblems = prs.filter(p => p.ciState === "failure" || p.reviewDecision === "changes_requested").length;
 
-  const lfs = n >= 10 ? 10 : 13;
-  const leftBadge = `
-  <circle cx="12" cy="12" r="10" fill="${prColor}"/>
-  <text x="12" y="16" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${lfs}" fill="white" text-anchor="middle">${n}</text>`;
-
-  let rightBadge = "";
-  if (nFail > 0) {
-    const fs = nFail >= 10 ? 10 : 13;
-    rightBadge = `
-  <circle cx="60" cy="12" r="10" fill="${C_RED}"/>
-  <text x="60" y="16" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${fs}" fill="white" text-anchor="middle">${nFail}</text>`;
-  } else if (nPend > 0) {
-    const fs = nPend >= 10 ? 10 : 13;
-    rightBadge = `
-  <circle cx="60" cy="12" r="10" fill="${C_YELLOW}"/>
-  <text x="60" y="16" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${fs}" fill="white" text-anchor="middle">${nPend}</text>`;
+  function badge(cx, cy, count, color) {
+    if (count === 0) return `<circle cx="${cx}" cy="${cy}" r="9" fill="${BORDER}" opacity="0.5"/>`;
+    const fs = count >= 10 ? 9 : 12;
+    const ty = cy + (fs === 9 ? 3 : 4);
+    return `<circle cx="${cx}" cy="${cy}" r="9" fill="${color}"/>
+  <text x="${cx}" y="${ty}" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="${fs}" fill="white" text-anchor="middle">${count}</text>`;
   }
 
-  // Official GitHub mark (16×16 viewBox), scaled to 38px centred, below top badges
-  const ghMark = `<g transform="translate(17,18) scale(2.375)"><path fill="#f0f6fc" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></g>`;
+  const tl = badge(12, 12, nApproved, C_GREEN);
+  const tr = badge(60, 12, nWaiting, C_YELLOW);
+  const bl = badge(12, 60, nRunning, C_YELLOW);
+  const br = badge(60, 60, nProblems, C_RED);
+
+  // Official GitHub mark (16×16 viewBox), scaled to 28px centred
+  const ghMark = `<g transform="translate(22,22) scale(1.75)"><path fill="#f0f6fc" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></g>`;
 
   return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
   <rect width="72" height="72" rx="10" fill="${BG}"/>
   ${ghMark}
-  <text x="36" y="68" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="9" fill="#6b7280" text-anchor="middle">GITHUB</text>
-  ${leftBadge}
-  ${rightBadge}
+  ${tl}
+  ${tr}
+  ${bl}
+  ${br}
 </svg>`;
 }
 

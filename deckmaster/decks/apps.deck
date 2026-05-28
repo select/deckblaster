@@ -49,9 +49,10 @@ parent = "main.deck"
 [[keys]]
   index = 4
   [keys.widget]
-    id = "button"
+    id = "top"
     [keys.widget.config]
-      icon = "assets/empty.png"
+      mode = "memory"
+      fillColor = "#d497de"
 
 [[keys]]
   index = 5

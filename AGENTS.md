@@ -236,7 +236,8 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 | `ha/` | `ha.deck`, HA toggle/indicator/icon/door/moisture scripts, room assets |
 | `zoom/` | `zoom.deck`, mic/video/hand/leave icon + action scripts, zoom icon assets |
 | `slots/` | `slots.deck`, `slots-game.py`, bet/spin/generate scripts, all slot symbol assets |
-| `github/` | `github.deck`, `github-prs.py`, assets/ |
+| `jira/` | `jira.deck`, `jira-issues.ts`, Jira SVG asset |
+| `github/` | `github.deck`, `github-prs.js`, assets/ |
 | `calc/` | `calc.deck`, `calc-game.py`, `calc-generate-assets.py`, digit/op icon assets |
 | `highlight/` | `highlight.deck`, `highlight-ctrl.py`, `highlight-btn-icon.py`, binary, `wal_colors.py`, assets |
 | `polymarket/` | `polymarket.deck`, `polymarket-cats.deck`, all polymarket scripts, assets |
@@ -263,6 +264,7 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 | `highlight/highlight-btn-icon.py` | Highlight | Renders live preview icons per button type (size/color/alpha) |
 | `highlight/highlight-pointer` | Highlight | Compiled binary — X11 cursor highlight overlay |
 | `slots/slots-game.py` | Slots | Slot machine engine — spin/bet/win logic, pushes reel images via API |
+| `jira/jira-issues.ts` | Jira | Fetches open issues from EN/AW boards, renders badge/header/card icons |
 | `docker/docker-render.js` | Docker | Renders container status keys (Bun/sharp); called by docker-*.sh |
 | `ports/ports-render.js` | Ports | Renders listening-port keys (Bun/sharp); called by ports-*.sh |
 

@@ -48,10 +48,13 @@
 [[keys]]
   index = 5
   [keys.widget]
-    id = "top"
+    id = "command"
+    interval = 60000
     [keys.widget.config]
-      mode = "memory"
-      fillColor = "#d497de"
+      icon_command = "bun decks/jira/jira-issues.ts badge"
+      command = ""
+  [keys.action]
+    deck = "jira/jira.deck"
 
 [[keys]]
   index = 6

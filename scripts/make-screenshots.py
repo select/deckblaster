@@ -183,6 +183,7 @@ def main():
         # Mock-data screenshots (separate scripts to avoid PII)
         for mock_name, mock_script in [
             ("github",   DECKMASTER / "decks" / "github" / "make-screenshot.py"),
+            ("jira",     DECKMASTER / "decks" / "jira" / "make-screenshot.py"),
             ("calendar", DECKMASTER / "decks" / "calendar" / "make-screenshot.py"),
         ]:
             if selected and mock_name not in selected:

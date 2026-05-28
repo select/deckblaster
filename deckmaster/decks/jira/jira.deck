@@ -1,0 +1,180 @@
+parent = "../main.deck"
+
+# ── Jira open issues ──────────────────────────────────────────────────────────
+#
+# Layout (5×3):
+#   [HEAD ] [ISS 0] [ISS 1] [ISS 2] [ISS 3]
+#   [ISS 4] [ISS 5] [ISS 6] [ISS 7] [ISS 8]
+#   [ISS 9] [ISS10] [ISS11] [empty] [BACK ]
+#
+# Polling: deck interval = 60 s on all keys.
+# The script uses a 2-min TTL for Jira API calls.
+# All slot images are pre-rendered in one shot when the cache expires.
+
+# ── Header ─────────────────────────────────────────────────────────────────────
+[[keys]]
+  index = 0
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts header"
+      command = ""
+
+# ── Issue slots ────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 1
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 0"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 0"
+
+[[keys]]
+  index = 2
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 1"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 1"
+
+[[keys]]
+  index = 3
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 2"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 2"
+
+[[keys]]
+  index = 4
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 3"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 3"
+
+[[keys]]
+  index = 5
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 4"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 4"
+
+[[keys]]
+  index = 6
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 5"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 5"
+
+[[keys]]
+  index = 7
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 6"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 6"
+
+[[keys]]
+  index = 8
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 7"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 7"
+
+[[keys]]
+  index = 9
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 8"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 8"
+
+[[keys]]
+  index = 10
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 9"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 9"
+
+[[keys]]
+  index = 11
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 10"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 10"
+
+[[keys]]
+  index = 12
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts icon 11"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts url 11"
+
+# ── Pagination ─────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 13
+  [keys.widget]
+    id = "command"
+    interval = 60000
+    [keys.widget.config]
+      icon_command = "bun decks/jira/jira-issues.ts page-icon"
+      command = ""
+  [keys.action]
+    exec = "bun decks/jira/jira-issues.ts page-next"
+
+# ── Back ───────────────────────────────────────────────────────────────────────
+
+[[keys]]
+  index = 14
+  [keys.widget]
+    id = "button"
+    [keys.widget.config]
+      icon = "../assets/back.png"
+  [keys.action]
+    deck = "../main.deck"

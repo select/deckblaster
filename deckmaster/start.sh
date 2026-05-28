@@ -30,6 +30,9 @@ uv run decks/ha/ha.py poll-doors &
 # Pre-generate GitHub badge so key 6 isn't blank on startup
 bun decks/github/github-prs.js badge &
 
+# Pre-generate Jira badge so key 5 isn't blank on startup
+bun decks/jira/jira-issues.ts badge &
+
 # Calendar event fetcher (refreshes 7 days of events every 5 min)
 python3 decks/calendar/calendar-fetch.py poll &
 

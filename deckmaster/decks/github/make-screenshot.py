@@ -181,3 +181,10 @@ OUT_DIR.mkdir(parents=True, exist_ok=True)
 out = OUT_DIR / "github.png"
 comp.crop(CROP_BOX).save(out)
 print(f"Saved → {out}")
+
+# Also save badge at 2× for README
+badge_src = Image.open(TMP / "badge.png").convert("RGBA")
+badge_src = badge_src.resize((144, 144), Image.LANCZOS)
+badge_out = OUT_DIR / "github-badge.png"
+badge_src.save(badge_out)
+print(f"Saved → {badge_out}")

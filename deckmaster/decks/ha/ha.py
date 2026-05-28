@@ -9,6 +9,7 @@ Usage:
   ha.py icon-light   <entity> <icon_base>          — copy on/off room icon, print path
   ha.py icon-door    <entity> <cache_name> <label>  — render door status button, print path
   ha.py icon-moisture <entity> <cache_name> <label> — render plant moisture button, print path
+  ha.py icon-bell    <entity> <cache_name> <label>  — render doorbell last-rung button, print path
   ha.py toggle-switch <entity>                      — toggle HA switch via REST
   ha.py toggle-light  <entity>                      — toggle HA light via REST
   ha.py poll-doors                                  — daemon: push alert on door open
@@ -240,6 +241,65 @@ def cmd_icon_moisture(entity, cache_name, label):
     img.save(out)
     print(out)
 
+# ── icon-bell ────────────────────────────────────────────────────────────────────
+
+def cmd_icon_bell(entity, cache_name, label):
+    """Render a doorbell button showing how long ago it last rang."""
+    from PIL import Image, ImageDraw, ImageFont
+    from datetime import datetime, timezone
+
+    out      = CACHE / f"bell-{cache_name}.png"
+    svg_file = CACHE / "mdi-bell.svg"
+    fetch_mdi("bell", svg_file)
+
+    state, time_str = get_state_and_time(entity)
+    is_ringing = state == "on"
+
+    if is_ringing:
+        time_label = "NOW!"
+        icon_color = "#ffdd00"
+        time_color = (255, 220, 0, 255)
+    else:
+        icon_color = "#ffaa33"
+        time_color = (210, 160, 80, 255)
+        try:
+            dt   = datetime.fromisoformat(time_str.replace("Z", "+00:00"))
+            secs = (datetime.now(timezone.utc) - dt).total_seconds()
+            if secs < 60:        time_label = "<1m"
+            elif secs < 3600:    time_label = f"{int(secs//60)}m"
+            elif secs < 86400:   time_label = f"{int(secs//3600)}h"
+            else:                time_label = f"{int(secs//86400)}d"
+        except Exception:
+            time_label = "?"
+
+    icon_img = svg_to_pil(svg_file, 22, icon_color)
+
+    try:    font_big = ImageFont.truetype(FONT_BOLD, 24)
+    except: font_big = ImageFont.load_default()
+    try:    font_sm  = ImageFont.truetype(FONT_REG, 10)
+    except: font_sm  = ImageFont.load_default()
+
+    SIZE = 72
+    img  = Image.new("RGBA", (SIZE, SIZE), (18, 18, 28, 255))
+    draw = ImageDraw.Draw(img)
+
+    if icon_img:
+        iw, ih = icon_img.size
+        img.paste(icon_img, ((SIZE - iw) // 2, 4), icon_img)
+
+    bbox = draw.textbbox((0, 0), time_label, font=font_big)
+    tw   = bbox[2] - bbox[0]
+    draw.text(((SIZE - tw) // 2, 28), time_label, font=font_big, fill=time_color)
+
+    bbox2 = draw.textbbox((0, 0), label, font=font_sm)
+    lw    = bbox2[2] - bbox2[0]
+    draw.text(((SIZE - lw) // 2, SIZE - 13), label, font=font_sm,
+              fill=(160, 160, 180, 255))
+
+    img.save(out)
+    print(out)
+
+
 # ── toggle-switch / toggle-light ──────────────────────────────────────────────
 
 def cmd_toggle(domain, entity):
@@ -296,6 +356,8 @@ def main():
         cmd_icon_door(args[0], args[1], " ".join(args[2:]))
     elif cmd == "icon-moisture" and len(args) >= 3:
         cmd_icon_moisture(args[0], args[1], " ".join(args[2:]))
+    elif cmd == "icon-bell" and len(args) >= 3:
+        cmd_icon_bell(args[0], args[1], " ".join(args[2:]))
     elif cmd == "toggle-switch" and len(args) >= 1:
         cmd_toggle("switch", args[0])
     elif cmd == "toggle-light" and len(args) >= 1:

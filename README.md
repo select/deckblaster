@@ -10,7 +10,7 @@ Linux Stream Deck setup — config-file driven, live-reloading, scriptable.
 
 deckblaster is built on a fork of [muesli/deckmaster](https://github.com/muesli/deckmaster) — a lightweight, config-file-driven Stream Deck daemon for Linux. The fork adds a live HTTP API for pushing key updates at runtime, an `icon_command` widget field for dynamic per-key icon rendering, a file-watcher for instant config reload, and a plugin folder layout so each feature lives in its own self-contained directory with its deck config, scripts, and assets.
 
-Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [GitHub PRs](#github-prs) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Calendar Day View](#calendar-day-view) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
+Plugins: [Slot Machine](#slot-machine) · [Polymarket](#polymarket) · [Home Assistant](#home-assistant) · [Mouse Highlighter](#mouse-highlighter) · [GitHub PRs](#github-prs) · [Jira](#jira) · [Docker](#docker) · [Ports](#ports) · [Stream Deck Recorder](#stream-deck-recorder) · [Calendar](#calendar) · [Calendar Day View](#calendar-day-view) · [Zoom](#zoom) · [Calculator](#calculator) · [Virtual Desktops](#virtual-desktops)
 
 
 ## Quick Start
@@ -99,15 +99,42 @@ Controls a cursor highlight circle (X11). Adjust radius, colour (uses pywal pale
 
 <img src="docs/screenshots/github.png" width="400"/>
 
+**Main-deck badge:**
+
+<img src="docs/screenshots/github-badge.png" width="72"/>
+
 Shows all your open pull requests across repos (up to 12). Each card displays the PR title, repo name, CI status, review state and comment count.
 
 - **Top bar** — CI progress bar while running (yellow → orange when past average → red on failure); solid colour when resolved
 - **Footer** — CI± label · average CI time (while running) or comment count with `mdi:message-outline` · review state (APR / WAIT / REQ / DRFT)
 - **Header key** — official GitHub mark, open PR count, summary of failures/changes/running CIs
-- **Main-deck badge** — PR count top-left, CI failure or running count top-right
+- **Main-deck badge** — 4 corner counts: approved (green, top-left) · waiting for review (yellow, top-right) · CI running (yellow, bottom-left) · problems (red, bottom-right)
 - **Press any PR card** — opens the PR in the browser via `xdg-open`
 
 Smart polling: 30 s while any CI is running, 1 min for 1 h after pressing a card, 30 min otherwise. CI average is sampled from the last 20 merged PRs via GraphQL and cached for 24 h in `/tmp`.
+
+---
+
+### Jira
+
+<img src="docs/screenshots/jira.png" width="400"/>
+
+**Main-deck badge:**
+
+<img src="docs/screenshots/jira-badge.png" width="72"/>
+
+Shows your open Jira issues from EN and AW boards in the current sprint (up to 12 per page). Each card displays the issue title, board + number, priority, type, and status.
+
+- **Top bar** — colour-coded by status: blue (To Do), red (Blocked), yellow (In Progress), purple (In Review)
+- **Footer** — priority dot (red/yellow/green) · issue type · short status label (TODO / BLKD / PROG / REVW)
+- **Header key** — Jira logo, total issue count, status summary
+- **Main-deck badge** — 4 corner counts: open (blue) · blocked (red) · in progress (yellow) · total (green)
+- **Pagination** — cycles through pages when more than 12 issues; wraps around
+- **Press any issue card** — opens the issue in the browser via `xdg-open`
+
+Polling: 2-minute cache TTL. Filters out Done, Closed, Won’t Do, Duplicate, and Epics. Only shows issues from open sprints.
+
+**Language:** TypeScript (Bun) + sharp · **Requires:** `JIRA_URL`, `JIRA_USERNAME`, `JIRA_API_TOKEN` in `~/.config/deckblaster.env`
 
 ---
 
