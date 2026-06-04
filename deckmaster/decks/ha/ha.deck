@@ -138,12 +138,24 @@ parent ="../main.deck"
 [[keys]]
   index = 12
   [keys.widget]
-    id ="button"
+    id ="command"
+    interval = 10000
+    [keys.widget.config]
+      icon_command = "uv run decks/ha/ha.py icon-camera camera.front_door_fluent frontdoor Haustür"
+      command =""
+  [keys.action]
+    exec = "xdg-open http://192.168.1.142:8123/camera-eingang/1"
 
 [[keys]]
   index = 13
   [keys.widget]
-    id ="button"
+    id ="command"
+    interval = 10000
+    [keys.widget.config]
+      icon_command = "uv run decks/ha/ha.py icon-camera camera.driveway_fluent driveway Einfahrt"
+      command =""
+  [keys.action]
+    exec = "xdg-open http://192.168.1.142:8123/camera-eingang/0"
 
 # ── Back ───────────────────────────────────────────────────────────────────────
 

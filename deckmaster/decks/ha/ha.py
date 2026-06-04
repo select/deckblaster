@@ -10,6 +10,7 @@ Usage:
   ha.py icon-door    <entity> <cache_name> <label>  — render door status button, print path
   ha.py icon-moisture <entity> <cache_name> <label> — render plant moisture button, print path
   ha.py icon-bell    <entity> <cache_name> <label>  — render doorbell last-rung button, print path
+  ha.py icon-camera  <entity> <cache_name> <label>  — render camera snapshot button, print path
   ha.py toggle-switch <entity>                      — toggle HA switch via REST
   ha.py toggle-light  <entity>                      — toggle HA light via REST
   ha.py poll-doors                                  — daemon: push alert on door open
@@ -334,6 +335,44 @@ def push_deck_alert(label, duration="20s", bg="#cc2200"):
     except Exception:
         pass
 
+def cmd_icon_camera(entity, cache_name, label):
+    from PIL import Image, ImageDraw, ImageFont
+    import io
+
+    out = CACHE / f"camera-{cache_name}.png"
+
+    SIZE = 72
+    try:
+        req = urllib.request.Request(
+            f"{HA_URL}/api/camera_proxy/{entity}",
+            headers={"Authorization": f"Bearer {HA_TOKEN}"},
+        )
+        with urllib.request.urlopen(req, timeout=5) as r:
+            snapshot = Image.open(io.BytesIO(r.read())).convert("RGB")
+        # crop centre square and resize
+        w, h = snapshot.size
+        crop = min(w, h)
+        left = (w - crop) // 2
+        top  = (h - crop) // 2
+        snapshot = snapshot.crop((left, top, left + crop, top + crop))
+        snapshot = snapshot.resize((SIZE, SIZE), Image.LANCZOS)
+        img = snapshot.convert("RGBA")
+    except Exception:
+        img = Image.new("RGBA", (SIZE, SIZE), (18, 18, 28, 255))
+
+    # label bar at bottom
+    overlay = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    draw.rectangle([(0, SIZE - 18), (SIZE, SIZE)], fill=(0, 0, 0, 160))
+    try:    font = ImageFont.truetype(FONT_REG, 10)
+    except: font = ImageFont.load_default()
+    draw.text((SIZE // 2, SIZE - 9), label, font=font, fill=(220, 220, 220, 255), anchor="mm")
+    img = Image.alpha_composite(img, overlay)
+
+    img.save(out)
+    print(out)
+
+
 def cmd_poll_doors():
     prev = {}
     while True:
@@ -360,6 +399,8 @@ def main():
         cmd_icon_bell(args[0], args[1], " ".join(args[2:]))
     elif cmd == "toggle-switch" and len(args) >= 1:
         cmd_toggle("switch", args[0])
+    elif cmd == "icon-camera" and len(args) >= 3:
+        cmd_icon_camera(args[0], args[1], " ".join(args[2:]))
     elif cmd == "toggle-light" and len(args) >= 1:
         cmd_toggle("light", args[0])
     elif cmd == "poll-doors":
