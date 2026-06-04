@@ -10,6 +10,12 @@ cd "$(dirname "$0")"
 source "${HOME}/.config/streamdeck.env" || true
 export HA_TOKEN HA_URL DECK_API
 
+# Import JIRA_* vars from zsh environment (systemd doesn't source .zshrc)
+if [ -z "$JIRA_URL" ]; then
+    eval "$(zsh -c 'source ~/.zshenv 2>/dev/null; source ~/.zprofile 2>/dev/null; source ~/.zshrc 2>/dev/null; printenv' 2>/dev/null | grep '^JIRA_' | sed 's/^/export /' | sed "s/=/='/" | sed "s/$/'/")"
+fi
+export JIRA_URL JIRA_USERNAME JIRA_API_TOKEN
+
 # Ensure bun and uv are on PATH
 export PATH="${HOME}/.bun/bin:${HOME}/.local/bin:${PATH}"
 

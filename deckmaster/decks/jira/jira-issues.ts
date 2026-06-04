@@ -153,8 +153,26 @@ function wrapText(text: string, maxChars: number, maxLines: number): string[] {
 }
 
 // ── Jira API ───────────────────────────────────────────────────────────────────
+/** Render a red error icon with a message — shown on header/badge when auth fails */
+function makeErrorSvg(msg: string): string {
+  const lines = wrapText(msg, 12, 3);
+  const titleSvg = lines.map((l, i) =>
+    `<text x="36" y="${46 + i * 10}" font-family="DejaVu Sans,sans-serif" font-size="8" fill="${C_WHITE}" text-anchor="middle">${esc(l)}</text>`
+  ).join("\n  ");
+  return `<svg width="72" height="72" xmlns="http://www.w3.org/2000/svg">
+  <rect width="72" height="72" rx="6" fill="${BG}"/>
+  <rect width="72" height="72" rx="6" fill="${C_RED}" opacity="0.2"/>
+  <text x="36" y="22" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="18" fill="${C_RED}" text-anchor="middle">⚠</text>
+  <text x="36" y="36" font-family="DejaVu Sans,sans-serif" font-weight="bold" font-size="8" fill="${C_RED}" text-anchor="middle">JIRA ERROR</text>
+  ${titleSvg}
+</svg>`;
+}
+
+let lastError: string | null = null;
+
 async function fetchFromJira(): Promise<JiraIssue[] | null> {
   if (!JIRA_URL || !JIRA_USERNAME || !JIRA_API_TOKEN) {
+    lastError = "No credentials";
     console.error("Missing JIRA credentials (JIRA_URL, JIRA_USERNAME, JIRA_API_TOKEN)");
     return null;
   }
@@ -172,9 +190,15 @@ async function fetchFromJira(): Promise<JiraIssue[] | null> {
     });
 
     if (!response.ok) {
+      if (response.status === 401 || response.status === 403) {
+        lastError = "Token expired";
+      } else {
+        lastError = `HTTP ${response.status}`;
+      }
       console.error(`Jira API error: ${response.status} ${response.statusText}`);
       return null;
     }
+    lastError = null;
 
     const data = await response.json() as {
       issues: Array<{
@@ -209,6 +233,7 @@ async function fetchFromJira(): Promise<JiraIssue[] | null> {
         return oa - ob;
       });
   } catch (e) {
+    lastError = "Network error";
     console.error("Error fetching from Jira:", e);
     return null;
   }
@@ -250,6 +275,8 @@ async function getIssues(): Promise<JiraIssue[]> {
 
     const issues = await fetchFromJira();
     if (issues === null) {
+      // Render error icons so the deck shows the problem
+      if (lastError) await renderError(lastError);
       try { return (JSON.parse(await readFile(CACHE_FILE, "utf8")) as CacheData).issues; }
       catch { return []; }
     }
@@ -448,6 +475,19 @@ async function renderAll(issues: JiraIssue[]): Promise<void> {
   jobs.push(sharp(Buffer.from(makeHeaderSvg(issues))).png().toFile(`${OUT_DIR}/header.png`));
   jobs.push(sharp(Buffer.from(makeBadgeSvg(issues))).png().toFile(`${OUT_DIR}/badge.png`));
   jobs.push(sharp(Buffer.from(makePageSvg(page, totalPages))).png().toFile(`${OUT_DIR}/page.png`));
+  await Promise.all(jobs);
+}
+
+/** Render error state — header+badge show error, issue slots show empty */
+async function renderError(msg: string): Promise<void> {
+  await mkdir(OUT_DIR, { recursive: true });
+  const errSvg = makeErrorSvg(msg);
+  const jobs: Promise<unknown>[] = [];
+  jobs.push(sharp(Buffer.from(errSvg)).png().toFile(`${OUT_DIR}/header.png`));
+  jobs.push(sharp(Buffer.from(errSvg)).png().toFile(`${OUT_DIR}/badge.png`));
+  for (let i = 0; i < MAX_ISSUE_SLOTS; i++) {
+    jobs.push(sharp(Buffer.from(makeEmptySvg())).png().toFile(`${OUT_DIR}/issue-${i}.png`));
+  }
   await Promise.all(jobs);
 }
 
