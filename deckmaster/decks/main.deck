@@ -20,9 +20,11 @@
 [[keys]]
   index = 2
   [keys.widget]
-    id = "button"
+    id = "command"
+    interval = 5000
     [keys.widget.config]
-      icon = "ha/assets/ha.png"
+      icon_command = "uv run decks/ha/ha.py icon-mower-badge sensor.mr_gata_error"
+      command = ""
   [keys.action]
     deck = "ha/ha.deck"
 

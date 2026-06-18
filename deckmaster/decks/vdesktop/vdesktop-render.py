@@ -219,33 +219,138 @@ def cached_icon(wm_class, size):
 
 
 # ---------------------------------------------------------------------------
-# Session type detection
+# Window Manager & Session detection
 # ---------------------------------------------------------------------------
 
 WM_JSON = "/tmp/streamdeck-wm.json"
 INSTALL_ICON = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "install-ext.png")
 
-
-def _is_wayland():
-    """Detect if session is Wayland."""
-    return os.environ.get("XDG_SESSION_TYPE") == "wayland"
+_wm_detected = None
 
 
-def _extension_installed():
-    """Check if the GNOME Shell extension is installed and producing data."""
-    if not _is_wayland():
-        return True  # Not needed on X11
-    # Check if the JSON file exists and was updated in the last 10 seconds
-    try:
-        age = time.time() - os.path.getmtime(WM_JSON)
-        return age < 10
-    except OSError:
-        return False
+def get_window_manager():
+    """Detect the current window manager.
+    Returns: 'hyprland', 'gnome_wayland', or 'x11'.
+    """
+    global _wm_detected
+    if _wm_detected is not None:
+        return _wm_detected
+
+    # 1. Check if HYPRLAND_INSTANCE_SIGNATURE is set and working
+    if os.environ.get("HYPRLAND_INSTANCE_SIGNATURE"):
+        try:
+            out = subprocess.check_output(
+                "hyprctl activeworkspace -j", shell=True, stderr=subprocess.DEVNULL, timeout=2
+            )
+            if out:
+                _wm_detected = "hyprland"
+                return "hyprland"
+        except Exception:
+            pass
+
+    # 2. Try to auto-discover active Hyprland signature
+    uid = os.getuid()
+    hypr_dir = f"/run/user/{uid}/hypr"
+    if os.path.exists(hypr_dir):
+        for entry in os.scandir(hypr_dir):
+            if entry.is_dir():
+                lock_path = os.path.join(entry.path, "hyprland.lock")
+                if os.path.exists(lock_path):
+                    try:
+                        with open(lock_path) as f:
+                            pid_str = f.readline().strip()
+                        if pid_str.isdigit():
+                            pid = int(pid_str)
+                            if os.path.exists(f"/proc/{pid}"):
+                                with open(f"/proc/{pid}/comm") as cf:
+                                    comm = cf.read().strip()
+                                if "Hyprland" in comm:
+                                    os.environ["HYPRLAND_INSTANCE_SIGNATURE"] = entry.name
+                                    out = subprocess.check_output(
+                                        "hyprctl activeworkspace -j", shell=True, stderr=subprocess.DEVNULL, timeout=2
+                                    )
+                                    if out:
+                                        _wm_detected = "hyprland"
+                                        return "hyprland"
+                    except Exception:
+                        pass
+
+    # 3. Check GNOME Wayland
+    desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").lower()
+    session_type = os.environ.get("XDG_SESSION_TYPE", "").lower()
+    if "gnome" in desktop and session_type == "wayland":
+        _wm_detected = "gnome_wayland"
+        return "gnome_wayland"
+
+    # 4. Fallback to X11
+    _wm_detected = "x11"
+    return "x11"
+
+
+def check_extension_needed():
+    """Return True if extension is needed but missing/not running."""
+    wm = get_window_manager()
+    if wm == "gnome_wayland":
+        try:
+            age = time.time() - os.path.getmtime(WM_JSON)
+            return age >= 10
+        except OSError:
+            return True
+    return False
 
 
 # ---------------------------------------------------------------------------
 # Window / desktop info
 # ---------------------------------------------------------------------------
+
+def get_windows_hyprland():
+    """Read workspace/window data from hyprctl clients -j."""
+    desktops = {}
+    try:
+        out = run("hyprctl clients -j")
+        if out:
+            clients = json.loads(out)
+            for client in clients:
+                if not client.get("mapped", False):
+                    continue
+                ws_id = client.get("workspace", {}).get("id")
+                if ws_id is None:
+                    continue
+                # Map 1-based workspace ID to 0-based index
+                desk = ws_id - 1
+                # Standard display is 5 slots, so only process desks 0..4
+                if 0 <= desk < 5:
+                    cls = client.get("class", "").lower().strip()
+                    if not cls:
+                        continue
+                    if desk not in desktops:
+                        desktops[desk] = []
+                    if cls not in desktops[desk]:
+                        desktops[desk].append(cls)
+    except Exception:
+        pass
+    return desktops
+
+
+def get_current_desktop_hyprland():
+    """Get 0-indexed active workspace ID on Hyprland."""
+    try:
+        out = run("hyprctl activeworkspace -j")
+        if out:
+            data = json.loads(out)
+            # Map 1-based workspace ID to 0-based index
+            return int(data.get("id", 1)) - 1
+    except Exception:
+        pass
+    return 0
+
+
+def get_num_desktops_hyprland():
+    """Return number of desktops on Hyprland. Since the Stream Deck always
+    displays 5 workspace slots (indices 0 to 4), we always return 5.
+    """
+    return 5
+
 
 def get_windows_wayland():
     """Read workspace/window data from GNOME Shell extension JSON."""
@@ -313,15 +418,33 @@ def get_num_desktops_x11():
 
 # Unified interface
 def get_windows():
-    return get_windows_wayland() if _is_wayland() else get_windows_x11()
+    wm = get_window_manager()
+    if wm == "hyprland":
+        return get_windows_hyprland()
+    elif wm == "gnome_wayland":
+        return get_windows_wayland()
+    else:
+        return get_windows_x11()
 
 
 def get_current_desktop():
-    return get_current_desktop_wayland() if _is_wayland() else get_current_desktop_x11()
+    wm = get_window_manager()
+    if wm == "hyprland":
+        return get_current_desktop_hyprland()
+    elif wm == "gnome_wayland":
+        return get_current_desktop_wayland()
+    else:
+        return get_current_desktop_x11()
 
 
 def get_num_desktops():
-    return get_num_desktops_wayland() if _is_wayland() else get_num_desktops_x11()
+    wm = get_window_manager()
+    if wm == "hyprland":
+        return get_num_desktops_hyprland()
+    elif wm == "gnome_wayland":
+        return get_num_desktops_wayland()
+    else:
+        return get_num_desktops_x11()
 
 
 # ---------------------------------------------------------------------------
@@ -378,12 +501,17 @@ def main():
     if cmd == "switch":
         # Switch to virtual desktop N
         n = sys.argv[2] if len(sys.argv) > 2 else "0"
-        if _is_wayland() and not _extension_installed():
+        wm = get_window_manager()
+        if wm == "gnome_wayland" and check_extension_needed():
             # Extension not installed — run installer
             install_script = os.path.join(os.path.dirname(os.path.abspath(__file__)), "install-extension.sh")
             subprocess.run(["bash", install_script])
             return
-        if _is_wayland():
+        if wm == "hyprland":
+            # Hyprland workspaces are 1-based, switch to workspace n+1
+            workspace_num = int(n) + 1
+            run(f"hyprctl dispatch 'hl.dsp.focus({{workspace={workspace_num}}})'")
+        elif wm == "gnome_wayland":
             # Use gdbus to switch workspace on GNOME Wayland
             run(f"gdbus call --session --dest org.gnome.Shell "
                 f"--object-path /org/gnome/Shell/Extensions/DeckblasterWM "
@@ -408,8 +536,8 @@ def main():
 
 
 def _render_all():
-    # On Wayland, show install icon if extension is not running
-    if _is_wayland() and not _extension_installed():
+    # On GNOME Wayland, show install icon if extension is not running
+    if check_extension_needed():
         # Copy install icon to desk-0 slot so it shows on the deck
         out_path = f"{OUT_DIR}/desk-0.png"
         shutil.copy2(INSTALL_ICON, out_path)

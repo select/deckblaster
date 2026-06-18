@@ -13,6 +13,7 @@ Usage:
   ha.py icon-camera  <entity> <cache_name> <label>  — render camera snapshot button, print path
   ha.py toggle-switch <entity>                      — toggle HA switch via REST
   ha.py toggle-light  <entity>                      — toggle HA light via REST
+  ha.py icon-mower-badge <entity>                   — render HA icon with red mower badge on error
   ha.py poll-doors                                  — daemon: push alert on door open
 
 Config (from environment, set by start.sh loading ~/.config/streamdeck.env):
@@ -373,6 +374,98 @@ def cmd_icon_camera(entity, cache_name, label):
     print(out)
 
 
+def cmd_icon_mower_badge(entity):
+    """Render the HA icon; overlay a red lawnmower badge when <entity> reports an error.
+
+    Healthy states: no_error / unavailable / unknown / ? / "" / rain_delay → plain ha.png.
+    (rain_delay is informational — mower postponed due to rain — not a fault.)
+    Any other value → error → red circular badge with a mower glyph (persists until cleared).
+    """
+    from PIL import Image, ImageDraw
+
+    base_src = ASSETS / "ha.png"
+    out = CACHE / "ha-mower.png"
+
+    state = (get_state(entity) or "").strip().lower()
+    # rain_delay is informational (mower postponed due to rain), not a fault → no badge.
+    healthy = state in {"no_error", "unavailable", "unknown", "", "?", "rain_delay"}
+
+    try:
+        img = Image.open(base_src).convert("RGBA")
+    except Exception:
+        print(base_src)
+        return
+
+    if healthy:
+        # No error → emit the plain icon (no badge).
+        try:
+            img.save(out)
+            print(out)
+        except Exception:
+            print(base_src)
+        return
+
+    # Error → draw a red badge in the bottom-right corner with a mower glyph.
+    W, H = img.size
+    r = max(12, W // 4)              # badge radius scales with icon size
+    cx, cy = W - r - 1, H - r - 1    # bottom-right
+    draw = ImageDraw.Draw(img)
+    # white outline ring for contrast, then solid red fill
+    draw.ellipse([cx - r - 2, cy - r - 2, cx + r + 2, cy + r + 2], fill=(255, 255, 255, 255))
+    draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=(220, 38, 38, 255))
+
+    # Mower glyph (MDI robot-mower, inline) tinted white, centered in the badge.
+    g = _render_mower_glyph(int(r * 1.7))
+    if g is not None:
+        gx = cx - g.width // 2
+        gy = cy - g.height // 2
+        img.alpha_composite(g, (gx, gy))
+    else:
+        # Fallback: white exclamation mark if rendering failed.
+        draw.text((cx, cy), "!", fill=(255, 255, 255, 255), anchor="mm")
+
+    try:
+        img.save(out)
+        print(out)
+    except Exception:
+        print(base_src)
+
+
+# Inline MDI robot-mower path (avoids network fetch which iconify now 403s).
+_MOWER_PATH = (
+    "M1 14C1 16.76 3.24 19 6 19C7.64 19 9.09 18.21 10 17H15.17C15.58 18.17 16.7 19 18 "
+    "19C19.31 19 20.42 18.17 20.83 17H23V15C23 9.5 18.5 5 13 5H1V14M21 15H10.9C10.97 "
+    "14.68 11 14.34 11 14C11 11.24 8.76 9 6 9C4.87 9 3.84 9.37 3 10V7H12.5C15.1 7 17.42 "
+    "8.16 19 10H15V12H20.25C20.67 12.92 20.92 13.94 21 15M6 11C7.66 11 9 12.34 9 14C9 "
+    "15.66 7.66 17 6 17C4.34 17 3 15.66 3 14C3 12.34 4.34 11 6 11Z"
+)
+
+
+def _render_mower_glyph(size: int, color: str = "#ffffff"):
+    """Render the inline lawnmower SVG to a PIL RGBA image at the given size."""
+    try:
+        from PIL import Image
+        svg = (
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
+            f'viewBox="0 0 24 24"><path fill="{color}" d="{_MOWER_PATH}"/></svg>'
+        )
+        with tempfile.NamedTemporaryFile(suffix=".svg", mode="w", delete=False) as f:
+            f.write(svg)
+            tmp_svg = f.name
+        tmp_png = tmp_svg.replace(".svg", ".png")
+        subprocess.run(
+            ["convert", "-background", "none",
+             "-resize", f"{size}x{size}", f"svg:{tmp_svg}", tmp_png],
+            capture_output=True,
+        )
+        img = Image.open(tmp_png).convert("RGBA")
+        os.unlink(tmp_svg)
+        os.unlink(tmp_png)
+        return img
+    except Exception:
+        return None
+
+
 def cmd_poll_doors():
     prev = {}
     while True:
@@ -403,6 +496,8 @@ def main():
         cmd_icon_camera(args[0], args[1], " ".join(args[2:]))
     elif cmd == "toggle-light" and len(args) >= 1:
         cmd_toggle("light", args[0])
+    elif cmd == "icon-mower-badge" and len(args) >= 1:
+        cmd_icon_mower_badge(args[0])
     elif cmd == "poll-doors":
         cmd_poll_doors()
     else:
