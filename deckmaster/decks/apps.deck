@@ -57,9 +57,13 @@ parent = "main.deck"
 [[keys]]
   index = 5
   [keys.widget]
-    id = "button"
+    id = "command"
+    interval = 2000
     [keys.widget.config]
-      icon = "assets/empty.png"
+      icon_command = "bun decks/ambilight/ambilight-toggle.ts icon"
+      command = ""
+  [keys.action]
+    exec = "bun decks/ambilight/ambilight-toggle.ts"
 
 [[keys]]
   index = 6
