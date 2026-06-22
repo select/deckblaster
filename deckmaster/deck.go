@@ -282,12 +282,30 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 	}
 }
 
-// forceUpdateWidgets resets the update timer on all widgets and then updates them.
+// forceUpdateWidgets resets the update timer on all widgets and then updates them with a heavy physical stagger to prevent power sags.
 func (d *Deck) forceUpdateWidgets() {
+	now := time.Now()
+	var wg sync.WaitGroup
 	for _, w := range d.Widgets {
 		w.ResetUpdate()
+
+		// Skip keys locked by an API override (e.g. an alert flash).
+		if until, ok := keyLocks.Load(w.Key()); ok && now.Before(until.(time.Time)) {
+			continue
+		}
+
+		wg.Add(1)
+		go func(widget Widget) {
+			defer wg.Done()
+			if err := widget.Update(); err != nil {
+				fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", widget.Key(), err)
+			}
+		}(w)
+
+		// Stagger the physical draws by 100ms to completely smooth out current draw and make the refresh visually staggered!
+		time.Sleep(100 * time.Millisecond)
 	}
-	d.updateWidgets()
+	wg.Wait()
 }
 
 // updateWidgets updates/repaints all the widgets concurrently.
