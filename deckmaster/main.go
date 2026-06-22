@@ -395,6 +395,65 @@ func startAPI(dev *streamdeck.Device, addr string) (chan struct{}, error) {
 	return reloadCh, nil
 }
 
+func reconnectDevice(dev *streamdeck.Device) (chan streamdeck.Key, error) {
+	_ = dev.Close() // Clean up old handle
+
+	backoff := 100 * time.Millisecond
+	for {
+		time.Sleep(backoff)
+		
+		// Scan the USB bus for active devices
+		devices, scanErr := streamdeck.Devices()
+		if scanErr == nil && len(devices) > 0 {
+			// Find the matching device
+			var targetDevice *streamdeck.Device
+			for _, d := range devices {
+				if *device == "" || d.Serial == *device {
+					targetDevice = &d
+					break
+				}
+			}
+			
+			if targetDevice != nil {
+				var openErr error
+				if openErr = targetDevice.Open(); openErr == nil {
+					verbosef("Stream Deck reconnected and opened successfully.")
+					
+					// Copy the new device struct to the pointer dev
+					*dev = *targetDevice
+					
+					_ = dev.Reset()
+					_ = dev.SetBrightness(uint8(*brightness))
+					dev.SetSleepFadeDuration(fadeDuration)
+					if len(*sleep) > 0 {
+						if timeout, openErr := time.ParseDuration(*sleep); openErr == nil {
+							dev.SetSleepTimeout(timeout)
+						}
+					}
+					
+					kch, openErr := dev.ReadKeys()
+					if openErr == nil {
+						InvalidateKeyImagesCache()
+						deck.forceUpdateWidgets()
+						return kch, nil
+					}
+				}
+				verbosef("Failed to open Stream Deck: %v", openErr)
+			} else {
+				verbosef("Stream Deck with target serial not found on USB bus")
+			}
+		} else if scanErr != nil {
+			verbosef("No Stream Deck devices detected on USB bus: %v", scanErr)
+		} else {
+			verbosef("No Stream Deck devices detected on USB bus")
+		}
+
+		if backoff < 3*time.Second {
+			backoff += 500 * time.Millisecond
+		}
+	}
+}
+
 func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
@@ -431,6 +490,8 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 	var keyStates sync.Map
 	keyTimestamps := make(map[uint8]time.Time)
 
+	ticks := 0
+
 	kch, err := dev.ReadKeys()
 	if err != nil {
 		return err
@@ -440,61 +501,33 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 		case <-time.After(100 * time.Millisecond):
 			deck.updateWidgets()
 
+			ticks++
+			if ticks >= 30 { // Every 3 seconds
+				ticks = 0
+				// Heartbeat: Check if the device is still physically present on the USB bus
+				devices, scanErr := streamdeck.Devices()
+				if scanErr == nil {
+					present := false
+					for _, d := range devices {
+						if d.Serial == dev.Serial {
+							present = true
+							break
+						}
+					}
+					if !present {
+						verbosef("Heartbeat: Stream Deck with serial %s is no longer present on USB bus. Triggering reconnect...", dev.Serial)
+						if newKch, err := reconnectDevice(dev); err == nil {
+							kch = newKch
+						}
+					}
+				}
+			}
+
 		case k, ok := <-kch:
 			if !ok {
 				verbosef("Key channel closed, attempting to reconnect Stream Deck...")
-				_ = dev.Close() // Clean up old handle
-
-				backoff := 100 * time.Millisecond
-				for {
-					time.Sleep(backoff)
-					
-					// Scan the USB bus for active devices
-					devices, scanErr := streamdeck.Devices()
-					if scanErr == nil && len(devices) > 0 {
-						// Find the matching device
-						var targetDevice *streamdeck.Device
-						for _, d := range devices {
-							if *device == "" || d.Serial == *device {
-								targetDevice = &d
-								break
-							}
-						}
-						
-						if targetDevice != nil {
-							var openErr error
-							if openErr = targetDevice.Open(); openErr == nil {
-								verbosef("Stream Deck reconnected and opened successfully.")
-								
-								// Copy the new device struct to the pointer dev
-								*dev = *targetDevice
-								
-								_ = dev.Reset()
-								_ = dev.SetBrightness(uint8(*brightness))
-								dev.SetSleepFadeDuration(fadeDuration)
-								if len(*sleep) > 0 {
-									if timeout, openErr := time.ParseDuration(*sleep); openErr == nil {
-										dev.SetSleepTimeout(timeout)
-									}
-								}
-								if kch, openErr = dev.ReadKeys(); openErr == nil {
-									InvalidateKeyImagesCache()
-									deck.forceUpdateWidgets()
-									break
-								}
-							}
-							verbosef("Failed to open Stream Deck: %v", openErr)
-						} else {
-							verbosef("Stream Deck with target serial not found on USB bus")
-						}
-					} else {
-						verbosef("No Stream Deck devices detected on USB bus: %v", scanErr)
-					}
-					
-					backoff *= 2
-					if backoff > 3*time.Second {
-						backoff = 3 * time.Second
-					}
+				if newKch, err := reconnectDevice(dev); err == nil {
+					kch = newKch
 				}
 				continue
 			}
