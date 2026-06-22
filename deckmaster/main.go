@@ -112,7 +112,7 @@ func reloadDeck(dev *streamdeck.Device) {
 
 	InvalidateKeyImagesCache()
 	deck = nd
-	deck.updateWidgets()
+	deck.forceUpdateWidgets()
 }
 
 // startFileWatcher watches the deck file for changes and sends on the channel.
@@ -480,7 +480,7 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 								}
 								if kch, openErr = dev.ReadKeys(); openErr == nil {
 									InvalidateKeyImagesCache()
-									deck.updateWidgets()
+									deck.forceUpdateWidgets()
 									break
 								}
 							}
@@ -677,7 +677,7 @@ func run() error {
 	if err != nil {
 		return fmt.Errorf("Can't load deck: %s", err)
 	}
-	deck.updateWidgets()
+	deck.forceUpdateWidgets()
 
 	return eventLoop(dev, tch)
 }

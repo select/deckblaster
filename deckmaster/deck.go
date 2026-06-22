@@ -243,7 +243,7 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 			time.Sleep(50 * time.Millisecond) // Give low-power microcontroller a moment to clear buffers
 			InvalidateKeyImagesCache()
 			deck = d
-			deck.updateWidgets()
+			deck.forceUpdateWidgets()
 		}
 		if a.Keycode != "" {
 			emulateKeyPresses(a.Keycode)
@@ -280,6 +280,14 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 			}
 		}
 	}
+}
+
+// forceUpdateWidgets resets the update timer on all widgets and then updates them.
+func (d *Deck) forceUpdateWidgets() {
+	for _, w := range d.Widgets {
+		w.ResetUpdate()
+	}
+	d.updateWidgets()
 }
 
 // updateWidgets updates/repaints all the widgets concurrently.

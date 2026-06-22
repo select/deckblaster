@@ -197,8 +197,19 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 	}
 
 	renderMu.Lock()
-	defer renderMu.Unlock()
-	return dev.SetImage(w.key, img)
+	err := dev.SetImage(w.key, img)
+	renderMu.Unlock()
+
+	if err != nil {
+		if int(w.key) < len(keyImages) {
+			keyImagesMu.Lock()
+			keyImagesValid[w.key] = false
+			keyImagesMu.Unlock()
+		}
+		return err
+	}
+
+	return nil
 }
 
 // ResetUpdate clears the last-update timestamp so the widget is repainted
