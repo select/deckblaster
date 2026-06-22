@@ -110,7 +110,6 @@ func reloadDeck(dev *streamdeck.Device) {
 		return
 	}
 
-	InvalidateKeyImagesCache()
 	deck = nd
 	deck.forceUpdateWidgets()
 }
