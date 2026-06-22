@@ -240,6 +240,7 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 				return
 			}
 
+			InvalidateKeyImagesCache()
 			deck = d
 			deck.updateWidgets()
 		}

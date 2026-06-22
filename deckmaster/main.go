@@ -110,6 +110,7 @@ func reloadDeck(dev *streamdeck.Device) {
 		return
 	}
 
+	InvalidateKeyImagesCache()
 	deck = nd
 	deck.updateWidgets()
 }
@@ -442,8 +443,32 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 
 		case k, ok := <-kch:
 			if !ok {
-				if err = dev.Open(); err != nil {
-					return err
+				verbosef("Key channel closed, attempting to reconnect Stream Deck...")
+				backoff := 100 * time.Millisecond
+				for {
+					time.Sleep(backoff)
+					var openErr error
+					if openErr = dev.Open(); openErr == nil {
+						verbosef("Stream Deck reconnected successfully.")
+						_ = dev.Reset()
+						_ = dev.SetBrightness(uint8(*brightness))
+						dev.SetSleepFadeDuration(fadeDuration)
+						if len(*sleep) > 0 {
+							if timeout, openErr := time.ParseDuration(*sleep); openErr == nil {
+								dev.SetSleepTimeout(timeout)
+							}
+						}
+						if kch, openErr = dev.ReadKeys(); openErr == nil {
+							InvalidateKeyImagesCache()
+							deck.updateWidgets()
+							break
+						}
+					}
+					verbosef("Reconnect failed: %v. Retrying in %v...", openErr, backoff)
+					backoff *= 2
+					if backoff > 3*time.Second {
+						backoff = 3 * time.Second
+					}
 				}
 				continue
 			}

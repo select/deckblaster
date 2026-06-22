@@ -21,7 +21,7 @@
   index = 2
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 30000
     [keys.widget.config]
       icon_command = "uv run decks/ha/ha.py icon-mower-badge sensor.mr_gata_error"
       command = ""
@@ -74,7 +74,7 @@
   index = 7
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 15000
     [keys.widget.config]
       icon_command = "bun decks/docker/docker-render.js badge"
       command = ""
@@ -85,7 +85,7 @@
   index = 8
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 15000
     [keys.widget.config]
       icon_command = "bun decks/ports/ports-render.js badge"
       command = ""
@@ -96,7 +96,7 @@
   index = 9
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 15000
     [keys.widget.config]
       icon_command = "bun decks/calendar/next-event.js icon"
       command = ""
@@ -109,7 +109,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "echo /tmp/streamdeck-vdesktop/desk-0.png"
+      icon = "/tmp/streamdeck-vdesktop/desk-0.png"
       command = ""
   [keys.action]
     exec = "python3 decks/vdesktop/vdesktop-render.py switch 0"
@@ -120,7 +120,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "echo /tmp/streamdeck-vdesktop/desk-1.png"
+      icon = "/tmp/streamdeck-vdesktop/desk-1.png"
       command = ""
   [keys.action]
     exec = "python3 decks/vdesktop/vdesktop-render.py switch 1"
@@ -131,7 +131,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "echo /tmp/streamdeck-vdesktop/desk-2.png"
+      icon = "/tmp/streamdeck-vdesktop/desk-2.png"
       command = ""
   [keys.action]
     exec = "python3 decks/vdesktop/vdesktop-render.py switch 2"
@@ -142,7 +142,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "echo /tmp/streamdeck-vdesktop/desk-3.png"
+      icon = "/tmp/streamdeck-vdesktop/desk-3.png"
       command = ""
   [keys.action]
     exec = "python3 decks/vdesktop/vdesktop-render.py switch 3"
@@ -153,7 +153,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "echo /tmp/streamdeck-vdesktop/desk-4.png"
+      icon = "/tmp/streamdeck-vdesktop/desk-4.png"
       command = ""
   [keys.action]
     exec = "python3 decks/vdesktop/vdesktop-render.py switch 4"

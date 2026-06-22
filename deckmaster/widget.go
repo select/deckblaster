@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
@@ -137,7 +138,28 @@ var renderMu sync.Mutex
 
 // keyImages caches the last rendered image for each key (for screenshots).
 var keyImages [15]*image.RGBA
+var keyImagesValid [15]bool
 var keyImagesMu sync.RWMutex
+
+// imagesEqual returns true if two RGBA images are pixel-for-pixel identical.
+func imagesEqual(img1, img2 *image.RGBA) bool {
+	if img1 == nil || img2 == nil {
+		return false
+	}
+	if !img1.Bounds().Eq(img2.Bounds()) {
+		return false
+	}
+	return bytes.Equal(img1.Pix, img2.Pix)
+}
+
+// InvalidateKeyImagesCache invalidates the key image cache so that the next render is forced to send images to the Stream Deck.
+func InvalidateKeyImagesCache() {
+	keyImagesMu.Lock()
+	for i := range keyImagesValid {
+		keyImagesValid[i] = false
+	}
+	keyImagesMu.Unlock()
+}
 
 // keyPressedAt tracks when each key was last pressed (for recording press effects).
 var keyPressedAt [15]time.Time
@@ -156,11 +178,22 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 		draw.Draw(img, img.Bounds(), fg, image.Point{}, draw.Over)
 	}
 
-	// Cache for screenshot
+	// Cache for screenshot and comparison
+	var skipSetImage bool
 	if int(w.key) < len(keyImages) {
 		keyImagesMu.Lock()
-		keyImages[w.key] = img
+		oldImg := keyImages[w.key]
+		if keyImagesValid[w.key] && imagesEqual(oldImg, img) {
+			skipSetImage = true
+		} else {
+			keyImages[w.key] = img
+			keyImagesValid[w.key] = true
+		}
 		keyImagesMu.Unlock()
+	}
+
+	if skipSetImage {
+		return nil
 	}
 
 	renderMu.Lock()

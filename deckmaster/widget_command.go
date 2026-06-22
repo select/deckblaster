@@ -183,6 +183,20 @@ func (w *CommandWidget) Update() error {
 }
 
 func runCommand(command string) (string, error) {
+	trimmed := strings.TrimSpace(command)
+	if strings.HasPrefix(trimmed, "echo ") {
+		arg := strings.TrimSpace(strings.TrimPrefix(trimmed, "echo"))
+		// Strip wrapping double or single quotes if present
+		if (strings.HasPrefix(arg, "\"") && strings.HasSuffix(arg, "\"")) ||
+			(strings.HasPrefix(arg, "'") && strings.HasSuffix(arg, "'")) {
+			arg = arg[1 : len(arg)-1]
+		}
+		// If there are no shell metacharacters, we can safely return the string directly!
+		if !strings.ContainsAny(arg, "|$&;><`\\*?()!") {
+			return arg, nil
+		}
+	}
+
 	output, err := exec.Command("sh", "-c", command).Output()
 	if err != nil {
 		return "", err
