@@ -198,6 +198,10 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 
 	renderMu.Lock()
 	err := dev.SetImage(w.key, img)
+	if err == nil {
+		// Pacing sleep: smooths out electrical current spikes and prevents USB receiver buffer congestion
+		time.Sleep(15 * time.Millisecond)
+	}
 	renderMu.Unlock()
 
 	if err != nil {

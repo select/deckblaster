@@ -494,6 +494,64 @@ async function renderError(msg: string): Promise<void> {
 // ── main ───────────────────────────────────────────────────────────────────────
 const [,, cmd, arg] = process.argv;
 
+if (cmd === "update-cache-bg") {
+  await withLock(async () => {
+    const issues = await fetchFromJira();
+    if (issues !== null) {
+      await writeFile(CACHE_FILE, JSON.stringify({ ts: Date.now(), issues }));
+      await renderAll(issues);
+    } else if (lastError) {
+      await renderError(lastError);
+    }
+  });
+  process.exit(0);
+}
+
+if (cmd === "badge" || cmd === "header" || cmd === "icon" || cmd === "page-icon") {
+  let path = "";
+  if (cmd === "badge") {
+    path = `${OUT_DIR}/badge.png`;
+  } else if (cmd === "header") {
+    path = `${OUT_DIR}/header.png`;
+  } else if (cmd === "page-icon") {
+    path = `${OUT_DIR}/page.png`;
+  } else {
+    const n = parseInt(arg, 10);
+    path = `${OUT_DIR}/issue-${n}.png`;
+  }
+
+  // Print the path to stdout immediately so deckmaster gets it without delay
+  console.log(path);
+
+  // Check if cache has expired or if the image doesn't exist
+  let shouldFetch = false;
+  if (!existsSync(path)) {
+    shouldFetch = true;
+  } else {
+    try {
+      const cached = JSON.parse(readFileSync(CACHE_FILE, "utf8"));
+      let ts = cached.ts ?? 0;
+      if (ts < 1e12) ts *= 1000;
+      if (Date.now() - ts >= TTL_MS) {
+        shouldFetch = true;
+      }
+    } catch {
+      shouldFetch = true;
+    }
+  }
+
+  if (shouldFetch) {
+    // Spawn background process to fetch and update everything if not already locked
+    if (!existsSync(LOCK_FILE)) {
+      spawn("bun", [process.argv[1], "update-cache-bg"], {
+        detached: true,
+        stdio: "ignore",
+      }).unref();
+    }
+  }
+  process.exit(0);
+}
+
 let issues: JiraIssue[];
 try { issues = await getIssues(); }
 catch (e) { console.error("error fetching issues:", e); issues = []; }
@@ -507,30 +565,7 @@ try {
 
 await mkdir(OUT_DIR, { recursive: true });
 
-if (cmd === "badge") {
-  const path = `${OUT_DIR}/badge.png`;
-  if (!existsSync(path) || statSync(path).mtimeMs < cacheTs)
-    await sharp(Buffer.from(makeBadgeSvg(issues))).png().toFile(path);
-  console.log(path);
-
-} else if (cmd === "header") {
-  const path = `${OUT_DIR}/header.png`;
-  if (!existsSync(path) || statSync(path).mtimeMs < cacheTs)
-    await sharp(Buffer.from(makeHeaderSvg(issues))).png().toFile(path);
-  console.log(path);
-
-} else if (cmd === "icon") {
-  const n    = parseInt(arg, 10);
-  const page = getPage();
-  const pageIssues = getPageIssues(issues, page);
-  const path = `${OUT_DIR}/issue-${n}.png`;
-  // Re-render if missing or stale
-  if (!existsSync(path) || statSync(path).mtimeMs < cacheTs) {
-    await renderAll(issues);
-  }
-  console.log(path);
-
-} else if (cmd === "url") {
+if (cmd === "url") {
   const n = parseInt(arg, 10);
   const page = getPage();
   try {

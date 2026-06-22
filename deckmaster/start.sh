@@ -44,4 +44,4 @@ python3 decks/calendar/calendar-fetch.py poll &
 
 # Deckmaster — foreground, this is what systemd tracks
 # Calendar alerts are handled inside next-event.js on each 5s widget poll
-exec ./deckmaster -deck decks/main.deck -brightness 45 -watch -api :9990
+exec ./deckmaster -deck decks/main.deck -brightness 38 -watch -api :9990
