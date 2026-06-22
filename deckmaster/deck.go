@@ -311,6 +311,8 @@ func (d *Deck) updateWidgets() {
 				fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", widget.Key(), err)
 			}
 		}(w)
+
+		time.Sleep(15 * time.Millisecond) // Pacify CPU and physical electrical spikes by staggering the update goroutines
 	}
 	wg.Wait()
 }
