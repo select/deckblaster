@@ -240,6 +240,7 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 				return
 			}
 
+			time.Sleep(50 * time.Millisecond) // Give low-power microcontroller a moment to clear buffers
 			InvalidateKeyImagesCache()
 			deck = d
 			deck.updateWidgets()

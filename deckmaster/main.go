@@ -444,27 +444,54 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 		case k, ok := <-kch:
 			if !ok {
 				verbosef("Key channel closed, attempting to reconnect Stream Deck...")
+				_ = dev.Close() // Clean up old handle
+
 				backoff := 100 * time.Millisecond
 				for {
 					time.Sleep(backoff)
-					var openErr error
-					if openErr = dev.Open(); openErr == nil {
-						verbosef("Stream Deck reconnected successfully.")
-						_ = dev.Reset()
-						_ = dev.SetBrightness(uint8(*brightness))
-						dev.SetSleepFadeDuration(fadeDuration)
-						if len(*sleep) > 0 {
-							if timeout, openErr := time.ParseDuration(*sleep); openErr == nil {
-								dev.SetSleepTimeout(timeout)
+					
+					// Scan the USB bus for active devices
+					devices, scanErr := streamdeck.Devices()
+					if scanErr == nil && len(devices) > 0 {
+						// Find the matching device
+						var targetDevice *streamdeck.Device
+						for _, d := range devices {
+							if *device == "" || d.Serial == *device {
+								targetDevice = &d
+								break
 							}
 						}
-						if kch, openErr = dev.ReadKeys(); openErr == nil {
-							InvalidateKeyImagesCache()
-							deck.updateWidgets()
-							break
+						
+						if targetDevice != nil {
+							var openErr error
+							if openErr = targetDevice.Open(); openErr == nil {
+								verbosef("Stream Deck reconnected and opened successfully.")
+								
+								// Copy the new device struct to the pointer dev
+								*dev = *targetDevice
+								
+								_ = dev.Reset()
+								_ = dev.SetBrightness(uint8(*brightness))
+								dev.SetSleepFadeDuration(fadeDuration)
+								if len(*sleep) > 0 {
+									if timeout, openErr := time.ParseDuration(*sleep); openErr == nil {
+										dev.SetSleepTimeout(timeout)
+									}
+								}
+								if kch, openErr = dev.ReadKeys(); openErr == nil {
+									InvalidateKeyImagesCache()
+									deck.updateWidgets()
+									break
+								}
+							}
+							verbosef("Failed to open Stream Deck: %v", openErr)
+						} else {
+							verbosef("Stream Deck with target serial not found on USB bus")
 						}
+					} else {
+						verbosef("No Stream Deck devices detected on USB bus: %v", scanErr)
 					}
-					verbosef("Reconnect failed: %v. Retrying in %v...", openErr, backoff)
+					
 					backoff *= 2
 					if backoff > 3*time.Second {
 						backoff = 3 * time.Second
