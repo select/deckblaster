@@ -28,6 +28,7 @@ import { spawn } from "child_process";
 // ── paths ──────────────────────────────────────────────────────────────────────
 const CACHE_FILE = "/tmp/streamdeck-jira-issues.json";
 const LOCK_FILE  = "/tmp/streamdeck-jira.lock";
+const SPAWN_LOCK = LOCK_FILE + ".spawn";
 const PAGE_FILE  = "/tmp/streamdeck-jira-page.json";
 const OUT_DIR    = "/tmp/streamdeck-jira";
 
@@ -495,15 +496,22 @@ async function renderError(msg: string): Promise<void> {
 const [,, cmd, arg] = process.argv;
 
 if (cmd === "update-cache-bg") {
-  await withLock(async () => {
-    const issues = await fetchFromJira();
-    if (issues !== null) {
-      await writeFile(CACHE_FILE, JSON.stringify({ ts: Date.now(), issues }));
-      await renderAll(issues);
-    } else if (lastError) {
-      await renderError(lastError);
-    }
-  });
+  try {
+    await withLock(async () => {
+      const issues = await fetchFromJira();
+      if (issues !== null) {
+        await writeFile(CACHE_FILE, JSON.stringify({ ts: Date.now(), issues }));
+        await renderAll(issues);
+        
+        // Trigger immediate deck reload so cards update without waiting for poll
+        try { await fetch("http://localhost:9990/reload", { method: "POST" }); } catch {}
+      } else if (lastError) {
+        await renderError(lastError);
+      }
+    });
+  } finally {
+    try { unlinkSync(SPAWN_LOCK); } catch {}
+  }
   process.exit(0);
 }
 
@@ -542,7 +550,8 @@ if (cmd === "badge" || cmd === "header" || cmd === "icon" || cmd === "page-icon"
 
   if (shouldFetch) {
     // Spawn background process to fetch and update everything if not already locked
-    if (!existsSync(LOCK_FILE)) {
+    if (!existsSync(SPAWN_LOCK) && !existsSync(LOCK_FILE)) {
+      try { closeSync(openSync(SPAWN_LOCK, "wx")); } catch {}
       spawn("bun", [process.argv[1], "update-cache-bg"], {
         detached: true,
         stdio: "ignore",

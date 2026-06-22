@@ -29,6 +29,7 @@ import { spawnSync, spawn } from "child_process";
 // ── paths ──────────────────────────────────────────────────────────────────────
 const CACHE_FILE      = "/tmp/streamdeck-github-prs.json";
 const LOCK_FILE       = "/tmp/streamdeck-github.lock";
+const SPAWN_LOCK      = LOCK_FILE + ".spawn";
 const SNOOZE_FILE     = "/tmp/streamdeck-github-snoozed";
 const CI_HISTORY_FILE = "/tmp/streamdeck-github-ci-history.json";
 const OUT_DIR         = "/tmp/streamdeck-github";
@@ -494,14 +495,21 @@ async function renderAll(prs) {
 const [,, cmd, arg] = process.argv;
 
 if (cmd === "update-cache-bg") {
-  await withLock(async () => {
-    const prs = fetchFromGitHub();
-    if (prs !== null) {
-      const hasPending = prs.some(p => p.ciState === "pending");
-      await writeFile(CACHE_FILE, JSON.stringify({ ts: Date.now(), prs, has_pending_ci: hasPending }));
-      await renderAll(prs);
-    }
-  });
+  try {
+    await withLock(async () => {
+      const prs = fetchFromGitHub();
+      if (prs !== null) {
+        const hasPending = prs.some(p => p.ciState === "pending");
+        await writeFile(CACHE_FILE, JSON.stringify({ ts: Date.now(), prs, has_pending_ci: hasPending }));
+        await renderAll(prs);
+        
+        // Trigger immediate deck reload so cards update without waiting for poll
+        try { await fetch("http://localhost:9990/reload", { method: "POST" }); } catch {}
+      }
+    });
+  } finally {
+    try { unlinkSync(SPAWN_LOCK); } catch {}
+  }
   process.exit(0);
 }
 
@@ -540,7 +548,8 @@ if (cmd === "badge" || cmd === "header" || cmd === "icon") {
 
   if (shouldFetch) {
     // Spawn background process to fetch and update everything if not already locked
-    if (!existsSync(LOCK_FILE)) {
+    if (!existsSync(SPAWN_LOCK) && !existsSync(LOCK_FILE)) {
+      try { closeSync(openSync(SPAWN_LOCK, "wx")); } catch {}
       spawn("bun", [process.argv[1], "update-cache-bg"], {
         detached: true,
         stdio: "ignore",
