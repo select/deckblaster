@@ -109,10 +109,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon = "/tmp/streamdeck-vdesktop/desk-0.png"
+      icon_command = "python3 decks/zoom/mainrow.py icon 0"
       command = ""
   [keys.action]
-    exec = "python3 decks/vdesktop/vdesktop-render.py switch 0"
+    exec = "python3 decks/zoom/mainrow.py press 0"
 
 [[keys]]
   index = 11
@@ -120,10 +120,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon = "/tmp/streamdeck-vdesktop/desk-1.png"
+      icon_command = "python3 decks/zoom/mainrow.py icon 1"
       command = ""
   [keys.action]
-    exec = "python3 decks/vdesktop/vdesktop-render.py switch 1"
+    exec = "python3 decks/zoom/mainrow.py press 1"
 
 [[keys]]
   index = 12
@@ -131,10 +131,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon = "/tmp/streamdeck-vdesktop/desk-2.png"
+      icon_command = "python3 decks/zoom/mainrow.py icon 2"
       command = ""
   [keys.action]
-    exec = "python3 decks/vdesktop/vdesktop-render.py switch 2"
+    exec = "python3 decks/zoom/mainrow.py press 2"
 
 [[keys]]
   index = 13
@@ -142,10 +142,10 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon = "/tmp/streamdeck-vdesktop/desk-3.png"
+      icon_command = "python3 decks/zoom/mainrow.py icon 3"
       command = ""
   [keys.action]
-    exec = "python3 decks/vdesktop/vdesktop-render.py switch 3"
+    exec = "python3 decks/zoom/mainrow.py press 3"
 
 [[keys]]
   index = 14
@@ -153,7 +153,7 @@
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon = "/tmp/streamdeck-vdesktop/desk-4.png"
+      icon_command = "python3 decks/zoom/mainrow.py icon 4"
       command = ""
   [keys.action]
-    exec = "python3 decks/vdesktop/vdesktop-render.py switch 4"
+    exec = "python3 decks/zoom/mainrow.py press 4"

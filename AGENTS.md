@@ -84,7 +84,7 @@ HA_TOKEN=<long-lived Home Assistant access token>
 | 7 | `command` | Docker badge — → navigates to `docker.deck` |
 | 8 | `command` | Ports badge — → navigates to `ports.deck` |
 | 9 | `command` | Next calendar event — countdown + title, refreshes every 30s |
-| 10–14 | `command` | Virtual desktop row (bottom row) — app icons, refreshes every 3s |
+| 10–14 | `command` | Bottom row — virtual desktop switcher, becomes Zoom controls during a meeting |
 
 ### HA lights page (`decks/ha.deck`)
 
@@ -216,12 +216,48 @@ Parent: `test.deck` (back button returns here)
 | 0 | Mute / Unmute | `Alt+A` |
 | 1 | Start / Stop video | `Alt+V` |
 | 2 | Raise / Lower hand | `Alt+Y` |
-| 4 | Leave meeting | `Alt+Q` |
+| 4 | Leave meeting | `Alt+Q` (`Alt+S` first if sharing) |
 | 14 | Back | navigates to `test.deck` |
 
 Buttons use `icon_command` polling every 3s. Icons are green/red/grey based on local state file
 `/tmp/streamdeck-zoom-state`. State resets automatically when the Zoom meeting window disappears.
 No meeting → all buttons show grey icon.
+
+**Hyprland only**: Wayland delivers keyboard input to the focused client, and Zoom ignores
+synthetic shortcuts while unfocused (hyprwm/Hyprland#6576). `zoom.py` therefore briefly focuses
+the Zoom meeting window with `hl.dsp.focus`, sends the key via `hl.dsp.send_shortcut`, then
+restores the previous focus. On a shared workspace this is seamless; if Zoom is on another
+workspace the workspace flips across and back. The meeting window is found by enumerating
+`hyprctl clients` for class `Zoom`, skipping the main client hub window.
+
+**State is tracked locally** — Zoom exposes no readable live state (no MPRIS, D-Bus controls,
+AT-SPI registration, or PipeWire mute reflection). The state file also stores the meeting window
+address so toggles reset for each new meeting; it is cleared when the meeting window disappears.
+
+**Leave while sharing**: during screen share Zoom replaces the meeting window with the floating
+controls toolbar (title `as_toolbar`), which ignores `Alt+Q`. `zoom.py leave` therefore sends
+`Alt+S` to stop the share, waits for the real meeting window to return, then sends `Alt+Q`.
+
+### Main-row integration (`decks/zoom/mainrow.py`)
+
+While an **active meeting** exists (the hub window alone does not count), the main deck's bottom
+row (keys 10–14 / slots 0–4) becomes Zoom controls instead of the virtual desktop switcher:
+
+| Slot | Key | Action | Token |
+|---|---|---|---|
+| 0 | 10 | Mute / Unmute | `Alt+A` |
+| 1 | 11 | Start / Stop video | `Alt+V` |
+| 2 | 12 | Raise / Lower hand | `Alt+Y` |
+| 3 | 13 | Start / Stop sharing | `Alt+S` |
+| 4 | 14 | Leave meeting | `Alt+Q` (stops share first) |
+
+`main.deck` keys 10–14 use `icon_command = python3 decks/zoom/mainrow.py icon <slot>` and
+`exec = python3 decks/zoom/mainrow.py press <slot>`. Both decide per poll/press: in a meeting they
+show/run the Zoom control, otherwise they fall through to the virtual desktop switcher. No HTTP
+API is used, so the key bindings stay intact.
+
+The share icons (`share-start.png` / `share-stop.png` / `no-meeting-share.png`) are generated from
+Material Design Icons (MDI) by `zoom-generate-assets.py` (`uv run`), matching the rest of the set.
 
 ---
 
@@ -234,7 +270,7 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 | Plugin folder | Contents |
 |---|---|
 | `ha/` | `ha.deck`, HA toggle/indicator/icon/door/moisture scripts, room assets |
-| `zoom/` | `zoom.deck`, mic/video/hand/leave icon + action scripts, zoom icon assets |
+| `zoom/` | `zoom.deck`, `zoom.py` (icon/toggle/leave), `mainrow.py` (main-deck bottom row), `zoom-generate-assets.py`, zoom icon assets |
 | `slots/` | `slots.deck`, `slots-game.py`, bet/spin/generate scripts, all slot symbol assets |
 | `jira/` | `jira.deck`, `jira-issues.ts`, Jira SVG asset |
 | `github/` | `github.deck`, `github-prs.js`, assets/ |
@@ -256,7 +292,8 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 | `ha/ha-switch-toggle.sh <entity>` | HA | Toggles a HA switch entity via REST API |
 | `ha/ha-door-poll.sh` | HA | Background daemon: pushes 20s red alert when any door opens |
 | `ha/ha-moisture-icon.sh` | HA | Renders soil moisture level icon (orange/green/blue) |
-| `zoom/zoom-send-key.sh <key>` | Zoom | Focuses Zoom window, sends keystroke, restores focus |
+| `zoom/zoom.py` | Zoom | Hyprland-only: detects the meeting window and sends shortcuts straight to it |
+| `zoom/mainrow.py` | Zoom | Swaps the main deck's bottom row between Zoom controls and desktops based on meeting state |
 | `vdesktop/vdesktop-render.py` | VDesktop | Renders desktop button images to `/tmp/streamdeck-vdesktop/desk-N.png` |
 | `vdesktop/vdesktop-poll.sh` | VDesktop | Background daemon: re-renders all desktop images every 3s |
 | `calc/calc-game.py` | Calc | Calculator engine — digit/op/equals/clear, pushes display to API key 0 |
