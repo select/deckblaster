@@ -18,12 +18,24 @@
  * Images: ~/.local/share/deckblaster/calendar-day/
  */
 
-import sharp from "sharp";
-import { mkdir, writeFile, readFile, stat } from "fs/promises";
+import { mkdir, writeFile, readFile, stat, rename } from "fs/promises";
 import { existsSync } from "fs";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
 import { homedir } from "os";
+
+let _sharp;
+async function getSharp() {
+  if (!_sharp) _sharp = (await import("sharp")).default;
+  return _sharp;
+}
+
+async function renderSvgToPng(svg, outPath) {
+  const sharp = await getSharp();
+  const tmpPath = `${outPath}.tmp.${process.pid}.png`;
+  await sharp(Buffer.from(svg)).png().toFile(tmpPath);
+  await rename(tmpPath, outPath);
+}
 
 // ── config ────────────────────────────────────────────────────────────────────
 
@@ -111,14 +123,24 @@ function dateStr(off) {
 
 // ── cache helpers ────────────────────────────────────────────────────────────
 
-/** Returns true if path doesn't exist or was last modified on a different calendar day. */
+/** Returns true if path doesn't exist, is older than 60s, on a different day, or older than events/state files. */
 async function isStale(filePath) {
   if (!existsSync(filePath)) return true;
   try {
     const { mtimeMs } = await stat(filePath);
+    if (Date.now() - mtimeMs > 60_000) return true;
     const fileDay  = new Date(mtimeMs).toDateString();
     const todayDay = new Date().toDateString();
-    return fileDay !== todayDay;
+    if (fileDay !== todayDay) return true;
+    if (existsSync(EVENTS_FILE)) {
+      const evStat = await stat(EVENTS_FILE);
+      if (evStat.mtimeMs > mtimeMs) return true;
+    }
+    if (existsSync(STATE_FILE)) {
+      const stStat = await stat(STATE_FILE);
+      if (stStat.mtimeMs > mtimeMs) return true;
+    }
+    return false;
   } catch {
     return true;
   }
@@ -198,14 +220,14 @@ async function renderAll(state, eventsData) {
   const events = getDayEvents(eventsData, off);
   const renders = [];
 
-  renders.push(sharp(Buffer.from(headerSvg(off, events.length))).png().toFile(join(IMG_DIR, "header.png")));
+  renders.push(renderSvgToPng(headerSvg(off, events.length), join(IMG_DIR, "header.png")));
 
   for (let i = 0; i < SLOTS; i++) {
     let svg;
     if (!events.length && i === 0) svg = noEventsSvg();
     else if (i < events.length) svg = eventSvg(events[i]);
     else svg = emptySvg();
-    renders.push(sharp(Buffer.from(svg)).png().toFile(join(IMG_DIR, `key-${i}.png`)));
+    renders.push(renderSvgToPng(svg, join(IMG_DIR, `key-${i}.png`)));
   }
 
   await Promise.all(renders);
@@ -233,7 +255,7 @@ async function generateAssets() {
   };
   await Promise.all(
     Object.entries(assets).map(([name, svg]) =>
-      sharp(Buffer.from(svg)).png().toFile(join(ASSETS_DIR, name))
+      renderSvgToPng(svg, join(ASSETS_DIR, name))
     )
   );
 }

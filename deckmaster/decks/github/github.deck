@@ -30,9 +30,9 @@ parent = "../main.deck"
   index = 1
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 0"
+      icon_command = "echo /tmp/streamdeck-github/pr-0.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 0"
@@ -41,9 +41,9 @@ parent = "../main.deck"
   index = 2
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 1"
+      icon_command = "echo /tmp/streamdeck-github/pr-1.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 1"
@@ -52,9 +52,9 @@ parent = "../main.deck"
   index = 3
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 2"
+      icon_command = "echo /tmp/streamdeck-github/pr-2.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 2"
@@ -63,9 +63,9 @@ parent = "../main.deck"
   index = 4
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 3"
+      icon_command = "echo /tmp/streamdeck-github/pr-3.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 3"
@@ -74,9 +74,9 @@ parent = "../main.deck"
   index = 5
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 4"
+      icon_command = "echo /tmp/streamdeck-github/pr-4.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 4"
@@ -85,9 +85,9 @@ parent = "../main.deck"
   index = 6
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 5"
+      icon_command = "echo /tmp/streamdeck-github/pr-5.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 5"
@@ -96,9 +96,9 @@ parent = "../main.deck"
   index = 7
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 6"
+      icon_command = "echo /tmp/streamdeck-github/pr-6.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 6"
@@ -107,9 +107,9 @@ parent = "../main.deck"
   index = 8
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 7"
+      icon_command = "echo /tmp/streamdeck-github/pr-7.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 7"
@@ -118,9 +118,9 @@ parent = "../main.deck"
   index = 9
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 8"
+      icon_command = "echo /tmp/streamdeck-github/pr-8.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 8"
@@ -129,9 +129,9 @@ parent = "../main.deck"
   index = 10
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 9"
+      icon_command = "echo /tmp/streamdeck-github/pr-9.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 9"
@@ -140,9 +140,9 @@ parent = "../main.deck"
   index = 11
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 10"
+      icon_command = "echo /tmp/streamdeck-github/pr-10.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 10"
@@ -151,9 +151,9 @@ parent = "../main.deck"
   index = 12
   [keys.widget]
     id = "command"
-    interval = 30000
+    interval = 2000
     [keys.widget.config]
-      icon_command = "bun decks/github/github-prs.js icon 11"
+      icon_command = "echo /tmp/streamdeck-github/pr-11.png"
       command = ""
   [keys.action]
     exec = "bun decks/github/github-prs.js url 11"

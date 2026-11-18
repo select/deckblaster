@@ -7,10 +7,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/zoom.py icon mic"
+      icon_command = "./deckctl zoom icon mic"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/zoom.py toggle mute"
+    exec = "./deckctl zoom toggle mute"
 
 # 1 — Start / Stop video
 [[keys]]
@@ -19,10 +19,10 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/zoom.py icon video"
+      icon_command = "./deckctl zoom icon video"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/zoom.py toggle video"
+    exec = "./deckctl zoom toggle video"
 
 # 2 — Raise / Lower hand
 [[keys]]
@@ -31,16 +31,18 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/zoom.py icon hand"
+      icon_command = "./deckctl zoom icon hand"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/zoom.py toggle hand"
+    exec = "./deckctl zoom toggle hand"
 
 # 3 — empty
 [[keys]]
   index = 3
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 # 4 — Leave meeting
 [[keys]]
@@ -49,56 +51,74 @@ parent = "../apps.deck"
     id = "command"
     interval = 3000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/zoom.py icon leave"
+      icon_command = "./deckctl zoom icon leave"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/zoom.py leave"
+    exec = "./deckctl zoom leave"
 
 # 5–13 — empty
 [[keys]]
   index = 5
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 6
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 7
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 8
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 9
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 10
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 11
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 12
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 [[keys]]
   index = 13
   [keys.widget]
     id = "button"
+    [keys.widget.config]
+      icon = "../assets/empty.png"
 
 # 14 — Back
 [[keys]]

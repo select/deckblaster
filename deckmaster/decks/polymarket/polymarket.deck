@@ -57,7 +57,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/reload.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py reload"
+    exec = "./deckctl polymarket reload"
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
 
@@ -69,7 +69,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/prev.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py prev"
+    exec = "./deckctl polymarket prev"
 
 # Text 1 — icon_command renders, action cycles text frame
 [[keys]]
@@ -78,10 +78,10 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "uv run decks/polymarket/polymarket-render-text.py 0"
+      icon_command = "echo /tmp/streamdeck-polymarket/text-0.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py more 0"
+    exec = "./deckctl polymarket more 0"
 
 # Text 2
 [[keys]]
@@ -90,10 +90,10 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "uv run decks/polymarket/polymarket-render-text.py 1"
+      icon_command = "echo /tmp/streamdeck-polymarket/text-1.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py more 1"
+    exec = "./deckctl polymarket more 1"
 
 # Text 3
 [[keys]]
@@ -102,10 +102,10 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "uv run decks/polymarket/polymarket-render-text.py 2"
+      icon_command = "echo /tmp/streamdeck-polymarket/text-2.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py more 2"
+    exec = "./deckctl polymarket more 2"
 
 # Next (right)
 [[keys]]
@@ -115,7 +115,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/next.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py next"
+    exec = "./deckctl polymarket next"
 
 # ── Row 2 ──────────────────────────────────────────────────────────────────────
 
@@ -163,5 +163,5 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/category.png"
   [keys.action]
-    exec = "python3 -c \"import json,os; p=os.path.expanduser('~/.local/share/streamdeck-polymarket/state.json'); s=json.load(open(p)); s['cat_page']=0; json.dump(s,open(p,'w'))\""
+    exec = "./deckctl polymarket reset-cat-page"
     deck = "polymarket-cats.deck"

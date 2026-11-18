@@ -7,7 +7,7 @@ It is intended for AI agents and humans picking up this project.
 
 ## Hardware
 
-- **Device**: Elgato Stream Deck MK.2 (15 buttons, 5×3 grid, serial `A00SA4122IRDY3`)
+- **Device**: Elgato Stream Deck MK.2 (15 buttons, 5×3 grid, serial `<device-serial>`)
 - **udev rule**: `/etc/udev/rules.d/99-streamdeck.rules` — creates `/dev/streamdeck` symlink, grants access to `plugdev` group
 
 ---
@@ -17,6 +17,7 @@ It is intended for AI agents and humans picking up this project.
 | Component | Location |
 |---|---|
 | **deckmaster** (forked) | `deckmaster/` |
+| **deckctl** (Go plugin CLI) | `deckmaster/cmd/deckctl` |
 | **start.sh** (wrapper) | `deckmaster/start.sh` |
 | Deck configs + scripts + assets | `deckmaster/decks/<plugin>/` |
 | Shared assets (back, empty, …) | `deckmaster/decks/assets/` |
@@ -341,7 +342,7 @@ curl localhost:9990/health
 
 ## Calendar Integration
 
-- Source: GNOME Evolution Data Server (EDS) — syncs Outlook/O365 calendar (`Apheris` source)
+- Source: GNOME Evolution Data Server (EDS) — syncs Outlook/O365 calendar
 - Python lib: `gir1.2-ecal-2.0` + `gir1.2-edataserver-1.2`
 - Cache TTL: 2 minutes (`/tmp/streamdeck-next-event.json`)
 - Countdown format: `15m` / `2h05m` / `1d3h` / `now`
@@ -374,7 +375,7 @@ curl localhost:9990/health
 
 ```bash
 cd /path/to/streamdeck/deckmaster
-go build ./...
+go build -o deckmaster . && go build -o deckctl ./cmd/deckctl
 systemctl --user restart deckblaster.service
 ```
 

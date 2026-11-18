@@ -27,11 +27,14 @@ if [ -z "$XAUTHORITY" ]; then
     fi
 fi
 
-# Virtual desktop icon poller (renders desk-N.png every 3s)
-python3 decks/vdesktop/vdesktop-render.py poll &
+# Pre-render /tmp/streamdeck-vdesktop/slot-0..4.png synchronously before starting deckmaster
+./deckctl vdesktop render >/dev/null 2>&1 || true
+
+# Virtual desktop icon poller (renders desk-N.png & slot-N.png every 3s)
+./deckctl vdesktop poll &
 
 # Door sensor poller (fires 20s HTTP API alert on key 7 when a door opens)
-uv run decks/ha/ha.py poll-doors &
+./deckctl ha poll-doors &
 
 # Pre-generate GitHub badge so key 6 isn't blank on startup
 bun decks/github/github-prs.js badge &
@@ -40,7 +43,7 @@ bun decks/github/github-prs.js badge &
 bun decks/jira/jira-issues.ts badge &
 
 # Calendar event fetcher (refreshes 7 days of events every 5 min)
-python3 decks/calendar/calendar-fetch.py poll &
+./deckctl calendar-fetch poll &
 
 # Deckmaster — foreground, this is what systemd tracks
 # Calendar alerts are handled inside next-event.js on each 5s widget poll

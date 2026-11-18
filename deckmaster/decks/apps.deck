@@ -32,10 +32,10 @@ parent = "main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "decks/recorder/deck-record-icon.sh"
+      icon_command = "./deckctl recorder icon"
       command = ""
   [keys.action]
-    exec = "python3 decks/recorder/deck-record-toggle.py"
+    exec = "./deckctl recorder toggle"
 
 [[keys]]
   index = 3

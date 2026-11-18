@@ -14,12 +14,24 @@
  * Alerts: /tmp/streamdeck-next-event-alerts.json
  */
 
-import sharp from "sharp";
-import { mkdir, writeFile, readFile } from "fs/promises";
-import { existsSync } from "fs";
+import { mkdir, writeFile, readFile, rename } from "fs/promises";
+import { existsSync, readFileSync } from "fs";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
 import { homedir } from "os";
+
+let _sharp;
+async function getSharp() {
+  if (!_sharp) _sharp = (await import("sharp")).default;
+  return _sharp;
+}
+
+async function renderSvgToPng(svg, outPath) {
+  const sharp = await getSharp();
+  const tmpPath = `${outPath}.tmp.${process.pid}.png`;
+  await sharp(Buffer.from(svg)).png().toFile(tmpPath);
+  await rename(tmpPath, outPath);
+}
 
 // ── config ────────────────────────────────────────────────────────────────────
 
@@ -232,7 +244,17 @@ if (mode === "open") {
   await checkAlerts(evt);
 
   const svg = renderSvg(evt);
-  await mkdir(IMG_DIR, { recursive: true });
-  await sharp(Buffer.from(svg)).png().toFile(IMG_PATH);
+  const lastSvgPath = join(IMG_DIR, "last.svg");
+  let skipRender = false;
+  if (existsSync(IMG_PATH)) {
+    try {
+      if (readFileSync(lastSvgPath, "utf8") === svg) skipRender = true;
+    } catch {}
+  }
+  if (!skipRender) {
+    await mkdir(IMG_DIR, { recursive: true });
+    await renderSvgToPng(svg, IMG_PATH);
+    await writeFile(lastSvgPath, svg);
+  }
   console.log(IMG_PATH);
 }

@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -103,15 +104,23 @@ func expandPath(base, path string) (string, error) {
 func reloadDeck(dev *streamdeck.Device) {
 	verbosef("Reloading configuration...")
 
-	nd, err := LoadDeck(dev, ".", deck.File)
+	curDeck := getActiveDeck()
+	if curDeck == nil {
+		return
+	}
+
+	deckSwitchMu.Lock()
+	defer deckSwitchMu.Unlock()
+
+	nd, err := LoadDeck(dev, ".", curDeck.File)
 	if err != nil {
 		verbosef("The new configuration is not valid, keeping the current one.")
 		fmt.Fprintf(os.Stderr, "Configuration Error: %s\n", err)
 		return
 	}
 
-	deck = nd
-	deck.forceUpdateWidgets()
+	activateDeck(nd)
+	nd.forceUpdateWidgets()
 }
 
 // startFileWatcher watches the deck file for changes and sends on the channel.
@@ -329,18 +338,29 @@ func startAPI(dev *streamdeck.Device, addr string) (chan struct{}, error) {
 			return
 		}
 
+		curDeck := getActiveDeck()
+		var gen uint64
+		if curDeck != nil {
+			gen = curDeck.gen
+		}
+		btn.setDeckGen(gen)
+
 		if err := btn.Update(); err != nil {
 			http.Error(w, "render error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
 
 		// Replace widget in current deck
-		for i, widget := range deck.Widgets {
-			if widget.Key() == uint8(idx) {
-				deck.Widgets[i] = btn
-				break
+		deckMu.Lock()
+		if deck != nil && deck.gen == gen {
+			for i, widget := range deck.Widgets {
+				if widget.Key() == uint8(idx) {
+					deck.Widgets[i] = btn
+					break
+				}
 			}
 		}
+		deckMu.Unlock()
 
 		// Auto-revert after duration
 		if req.Duration != "" {
@@ -434,7 +454,9 @@ func reconnectDevice(dev *streamdeck.Device) (chan streamdeck.Key, error) {
 					kch, openErr := dev.ReadKeys()
 					if openErr == nil {
 						InvalidateKeyImagesCache()
-						deck.forceUpdateWidgets()
+						if curDeck := getActiveDeck(); curDeck != nil {
+							curDeck.forceUpdateWidgets()
+						}
 						return kch, nil
 					}
 				}
@@ -465,7 +487,7 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 	var fileChanged chan struct{}
 	if *watch {
 		var err error
-		fileChanged, err = startFileWatcher(deck.File)
+		fileChanged, err = startFileWatcher(getActiveDeck().File)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "File watcher failed: %s (falling back to SIGHUP only)\n", err)
 		}
@@ -489,6 +511,13 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 
 	var keyStates sync.Map
 	keyTimestamps := make(map[uint8]time.Time)
+	firedOnPress := make(map[uint8]bool)
+
+	var usbScanInFlight atomic.Bool
+	usbDisconnectCh := make(chan struct{}, 1)
+
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
 
 	ticks := 0
 
@@ -498,29 +527,42 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 	}
 	for {
 		select {
-		case <-time.After(100 * time.Millisecond):
-			deck.updateWidgets()
+		case <-ticker.C:
+			if d := getActiveDeck(); d != nil {
+				d.updateWidgets()
+			}
 
 			ticks++
 			if ticks >= 30 { // Every 3 seconds
 				ticks = 0
-				// Heartbeat: Check if the device is still physically present on the USB bus
-				devices, scanErr := streamdeck.Devices()
-				if scanErr == nil {
-					present := false
-					for _, d := range devices {
-						if d.Serial == dev.Serial {
-							present = true
-							break
+				// Heartbeat: asynchronously check if the device is still physically present on the USB bus
+				if usbScanInFlight.CompareAndSwap(false, true) {
+					go func(serial string) {
+						defer usbScanInFlight.Store(false)
+						devices, scanErr := streamdeck.Devices()
+						if scanErr == nil {
+							present := false
+							for _, d := range devices {
+								if d.Serial == serial {
+									present = true
+									break
+								}
+							}
+							if !present {
+								select {
+								case usbDisconnectCh <- struct{}{}:
+								default:
+								}
+							}
 						}
-					}
-					if !present {
-						verbosef("Heartbeat: Stream Deck with serial %s is no longer present on USB bus. Triggering reconnect...", dev.Serial)
-						if newKch, err := reconnectDevice(dev); err == nil {
-							kch = newKch
-						}
-					}
+					}(dev.Serial)
 				}
+			}
+
+		case <-usbDisconnectCh:
+			verbosef("Heartbeat: Stream Deck with serial %s is no longer present on USB bus. Triggering reconnect...", dev.Serial)
+			if newKch, err := reconnectDevice(dev); err == nil {
+				kch = newKch
 			}
 
 		case k, ok := <-kch:
@@ -546,23 +588,37 @@ func eventLoop(dev *streamdeck.Device, tch chan interface{}) error {
 
 			if state && !k.Pressed {
 				// key was released
-				if time.Since(keyTimestamps[k.Index]) < longPressDuration {
+				if firedOnPress[k.Index] {
+					firedOnPress[k.Index] = false
+				} else if time.Since(keyTimestamps[k.Index]) < longPressDuration {
 					verbosef("Triggering short action for key %d", k.Index)
-					deck.triggerAction(dev, k.Index, false)
+					if d := getActiveDeck(); d != nil {
+						go d.triggerAction(dev, k.Index, false)
+					}
 				}
 			}
 			if !state && k.Pressed {
 				// key was pressed
-				go func() {
-					// launch timer to observe keystate
-					time.Sleep(longPressDuration)
+				d := getActiveDeck()
+				if d != nil && !d.keyHasHoldAction(k.Index) {
+					firedOnPress[k.Index] = true
+					verbosef("Triggering instant short action for key %d", k.Index)
+					go d.triggerAction(dev, k.Index, false)
+				} else {
+					firedOnPress[k.Index] = false
+					go func(idx uint8, curDeck *Deck) {
+						// launch timer to observe keystate
+						time.Sleep(longPressDuration)
 
-					if state, ok := keyStates.Load(k.Index); ok && state.(bool) {
-						// key still pressed
-						verbosef("Triggering long action for key %d", k.Index)
-						deck.triggerAction(dev, k.Index, true)
-					}
-				}()
+						if st, ok := keyStates.Load(idx); ok && st.(bool) {
+							// key still pressed
+							verbosef("Triggering long action for key %d", idx)
+							if curDeck != nil {
+								curDeck.triggerAction(dev, idx, true)
+							}
+						}
+					}(k.Index, d)
+				}
 			}
 			keyTimestamps[k.Index] = time.Now()
 
@@ -705,11 +761,12 @@ func run() error {
 	}
 
 	// load deck
-	deck, err = LoadDeck(dev, ".", *deckFile)
+	nd, err := LoadDeck(dev, ".", *deckFile)
 	if err != nil {
 		return fmt.Errorf("Can't load deck: %s", err)
 	}
-	deck.forceUpdateWidgets()
+	activateDeck(nd)
+	nd.forceUpdateWidgets()
 
 	return eventLoop(dev, tch)
 }

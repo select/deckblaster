@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/golang/freetype"
@@ -31,18 +32,23 @@ type Widget interface {
 	Action() *ActionConfig
 	ActionHold() *ActionConfig
 	TriggerAction(hold bool)
+	tryStartUpdate() bool
+	finishUpdate()
+	setDeckGen(gen uint64)
 }
 
 // BaseWidget provides common functionality required by all widgets.
 type BaseWidget struct {
-	base       string
-	key        uint8
-	action     *ActionConfig
-	actionHold *ActionConfig
-	dev        *streamdeck.Device
-	background image.Image
-	lastUpdate time.Time
-	interval   time.Duration
+	base           string
+	key            uint8
+	action         *ActionConfig
+	actionHold     *ActionConfig
+	dev            *streamdeck.Device
+	background     image.Image
+	lastUpdateUnix atomic.Int64
+	updating       atomic.Bool
+	deckGen        atomic.Uint64
+	interval       time.Duration
 }
 
 // Key returns the key a widget is mapped to.
@@ -67,13 +73,29 @@ func (w *BaseWidget) TriggerAction(_ bool) {
 
 // RequiresUpdate returns true when the widget wants to be repainted.
 func (w *BaseWidget) RequiresUpdate() bool {
-	if !w.lastUpdate.IsZero() && // initial paint done
+	if w.updating.Load() {
+		return false
+	}
+	lu := w.lastUpdateUnix.Load()
+	if lu != 0 && // initial paint done
 		(w.interval == 0 || // never to be repainted
-			time.Since(w.lastUpdate) < w.interval) {
+			time.Since(time.Unix(0, lu)) < w.interval) {
 		return false
 	}
 
 	return true
+}
+
+func (w *BaseWidget) tryStartUpdate() bool {
+	return w.updating.CompareAndSwap(false, true)
+}
+
+func (w *BaseWidget) finishUpdate() {
+	w.updating.Store(false)
+}
+
+func (w *BaseWidget) setDeckGen(gen uint64) {
+	w.deckGen.Store(gen)
 }
 
 // Update renders the widget.
@@ -165,9 +187,17 @@ func InvalidateKeyImagesCache() {
 var keyPressedAt [15]time.Time
 var keyPressedMu sync.RWMutex
 
+// currentDeckGen tracks the active deck generation so stale background updates
+// from a previous deck never overwrite keyImages or paint onto the new deck.
+var currentDeckGen atomic.Uint64
+
 // renders the widget including its background image.
 func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
-	w.lastUpdate = time.Now()
+	if gen := w.deckGen.Load(); gen != 0 && gen != currentDeckGen.Load() {
+		return nil
+	}
+
+	w.lastUpdateUnix.Store(time.Now().UnixNano())
 
 	pixels := int(dev.Pixels)
 	img := image.NewRGBA(image.Rect(0, 0, pixels, pixels))
@@ -176,6 +206,10 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 	}
 	if fg != nil {
 		draw.Draw(img, img.Bounds(), fg, image.Point{}, draw.Over)
+	}
+
+	if gen := w.deckGen.Load(); gen != 0 && gen != currentDeckGen.Load() {
+		return nil
 	}
 
 	// Cache for screenshot and comparison
@@ -197,11 +231,11 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 	}
 
 	renderMu.Lock()
-	err := dev.SetImage(w.key, img)
-	if err == nil {
-		// Pacing sleep: smooths out electrical current spikes and prevents USB receiver buffer congestion
-		time.Sleep(50 * time.Millisecond)
+	if gen := w.deckGen.Load(); gen != 0 && gen != currentDeckGen.Load() {
+		renderMu.Unlock()
+		return nil
 	}
+	err := dev.SetImage(w.key, img)
 	renderMu.Unlock()
 
 	if err != nil {
@@ -219,7 +253,7 @@ func (w *BaseWidget) render(dev *streamdeck.Device, fg image.Image) error {
 // ResetUpdate clears the last-update timestamp so the widget is repainted
 // on the very next updateWidgets tick.
 func (w *BaseWidget) ResetUpdate() {
-	w.lastUpdate = time.Time{}
+	w.lastUpdateUnix.Store(0)
 }
 
 // change the interval a widget gets rendered in.
@@ -281,9 +315,11 @@ func drawImage(img *image.RGBA, icon image.Image, size int, pt image.Point) erro
 		pt = image.Pt(pt.X, int(ycenter))
 	}
 
-	icon = resize.Resize(uint(size), uint(size), icon, resize.Bilinear)
+	if bounds := icon.Bounds(); bounds.Dx() != size || bounds.Dy() != size {
+		icon = resize.Resize(uint(size), uint(size), icon, resize.Bilinear)
+	}
 	rect := image.Rect(pt.X, pt.Y, pt.X+size, pt.Y+size)
-	draw.Draw(img, rect, icon, image.Point{0, 0}, draw.Src)
+	draw.Draw(img, rect, icon, icon.Bounds().Min, draw.Src)
 
 	return nil
 }

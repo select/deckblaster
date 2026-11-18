@@ -32,7 +32,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-0.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 0"
+    exec = "./deckctl polymarket select-cat 0"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -44,7 +44,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-1.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 1"
+    exec = "./deckctl polymarket select-cat 1"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -56,7 +56,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-2.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 2"
+    exec = "./deckctl polymarket select-cat 2"
     deck = "polymarket.deck"
 
 # Cat init — runs once on deck load
@@ -66,7 +66,7 @@ parent = "polymarket.deck"
     id = "command"
     interval = 0
     [keys.widget.config]
-      icon_command = "uv run decks/polymarket/polymarket.py cat-init >/dev/null 2>&1; echo decks/assets/empty.png"
+      icon_command = "./deckctl polymarket cat-init >/dev/null 2>&1; echo decks/assets/empty.png"
       command = ""
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
@@ -79,7 +79,7 @@ parent = "polymarket.deck"
     [keys.widget.config]
       icon = "assets/prev.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py cat-prev"
+    exec = "./deckctl polymarket cat-prev"
 
 [[keys]]
   index = 6
@@ -90,7 +90,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-3.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 3"
+    exec = "./deckctl polymarket select-cat 3"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -102,7 +102,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-4.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 4"
+    exec = "./deckctl polymarket select-cat 4"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -114,7 +114,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-5.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 5"
+    exec = "./deckctl polymarket select-cat 5"
     deck = "polymarket.deck"
 
 # Next (right)
@@ -125,7 +125,7 @@ parent = "polymarket.deck"
     [keys.widget.config]
       icon = "assets/next.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py cat-next"
+    exec = "./deckctl polymarket cat-next"
 
 # ── Row 2 ──────────────────────────────────────────────────────────────────────
 
@@ -136,7 +136,7 @@ parent = "polymarket.deck"
     [keys.widget.config]
       icon = "assets/home.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py cat-home"
+    exec = "./deckctl polymarket cat-home"
 
 [[keys]]
   index = 11
@@ -147,7 +147,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-6.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 6"
+    exec = "./deckctl polymarket select-cat 6"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -159,7 +159,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-7.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 7"
+    exec = "./deckctl polymarket select-cat 7"
     deck = "polymarket.deck"
 
 [[keys]]
@@ -171,7 +171,7 @@ parent = "polymarket.deck"
       icon_command = "echo /tmp/streamdeck-polymarket/cat-8.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py select-cat 8"
+    exec = "./deckctl polymarket select-cat 8"
     deck = "polymarket.deck"
 
 # Back (bottom-right)
@@ -182,5 +182,5 @@ parent = "polymarket.deck"
     [keys.widget.config]
       icon = "assets/exit.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py init"
+    exec = "./deckctl polymarket init"
     deck = "polymarket.deck"

@@ -5,6 +5,7 @@ streamdeck.env
 
 # Go build output
 deckmaster/deckmaster
+deckmaster/deckctl
 
 # Python cache
 __pycache__/

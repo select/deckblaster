@@ -5,7 +5,7 @@
     [keys.widget.config]
       icon = "polymarket/assets/polymarket-icon.png"
   [keys.action]
-    exec = "uv run decks/polymarket/polymarket.py init"
+    exec = "./deckctl polymarket init"
     deck = "polymarket/polymarket.deck"
 
 [[keys]]
@@ -23,7 +23,7 @@
     id = "command"
     interval = 30000
     [keys.widget.config]
-      icon_command = "uv run decks/ha/ha.py icon-mower-badge sensor.mr_gata_error"
+      icon_command = "./deckctl ha icon-mower-badge sensor.mr_gata_error"
       command = ""
   [keys.action]
     deck = "ha/ha.deck"
@@ -107,53 +107,53 @@
   index = 10
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/mainrow.py icon 0"
+      icon_command = "echo /tmp/streamdeck-vdesktop/slot-0.png"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/mainrow.py press 0"
+    exec = "./deckctl mainrow press 0"
 
 [[keys]]
   index = 11
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/mainrow.py icon 1"
+      icon_command = "echo /tmp/streamdeck-vdesktop/slot-1.png"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/mainrow.py press 1"
+    exec = "./deckctl mainrow press 1"
 
 [[keys]]
   index = 12
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/mainrow.py icon 2"
+      icon_command = "echo /tmp/streamdeck-vdesktop/slot-2.png"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/mainrow.py press 2"
+    exec = "./deckctl mainrow press 2"
 
 [[keys]]
   index = 13
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/mainrow.py icon 3"
+      icon_command = "echo /tmp/streamdeck-vdesktop/slot-3.png"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/mainrow.py press 3"
+    exec = "./deckctl mainrow press 3"
 
 [[keys]]
   index = 14
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "python3 decks/zoom/mainrow.py icon 4"
+      icon_command = "echo /tmp/streamdeck-vdesktop/slot-4.png"
       command = ""
   [keys.action]
-    exec = "python3 decks/zoom/mainrow.py press 4"
+    exec = "./deckctl mainrow press 4"

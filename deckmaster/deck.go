@@ -23,6 +23,39 @@ type Deck struct {
 	File       string
 	Background image.Image
 	Widgets    []Widget
+	gen        uint64
+}
+
+var (
+	deckMu       sync.RWMutex
+	deckSwitchMu sync.Mutex
+)
+
+func getActiveDeck() *Deck {
+	deckMu.RLock()
+	d := deck
+	deckMu.RUnlock()
+	return d
+}
+
+func activateDeck(d *Deck) {
+	newGen := currentDeckGen.Add(1)
+	d.gen = newGen
+	for _, w := range d.Widgets {
+		w.setDeckGen(newGen)
+	}
+	deckMu.Lock()
+	deck = d
+	deckMu.Unlock()
+}
+
+func (d *Deck) keyHasHoldAction(index uint8) bool {
+	for _, w := range d.Widgets {
+		if w.Key() == index {
+			return w.ActionHold() != nil
+		}
+	}
+	return false
 }
 
 // LoadDeck loads a deck configuration.
@@ -183,15 +216,31 @@ func executeDBusMethod(object, path, method, args string) {
 	}
 }
 
+func buildExecCommand(cmd string) *exec.Cmd {
+	trimmed := strings.TrimSpace(cmd)
+	if trimmed == "" {
+		return nil
+	}
+	if strings.ContainsAny(trimmed, ";|&><\"'$`") {
+		return exec.Command("sh", "-c", trimmed) //nolint:gosec
+	}
+	exp, err := expandPath("", trimmed)
+	if err == nil {
+		trimmed = exp
+	}
+	fields := strings.Fields(trimmed)
+	if len(fields) == 0 {
+		return nil
+	}
+	return exec.Command(fields[0], fields[1:]...) //nolint:gosec
+}
+
 // executes a command.
 func executeCommand(cmd string) {
-	exp, err := expandPath("", cmd)
-	if err == nil {
-		cmd = exp
+	c := buildExecCommand(cmd)
+	if c == nil {
+		return
 	}
-	args := strings.Split(cmd, " ")
-
-	c := exec.Command(args[0], args[1:]...) //nolint:gosec
 	if *verbose {
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
@@ -230,20 +279,24 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 			executeCommand(a.Exec)
 		}
 		if a.Deck != "" {
-			d, err := LoadDeck(dev, filepath.Dir(d.File), a.Deck)
+			deckSwitchMu.Lock()
+			nd, err := LoadDeck(dev, filepath.Dir(d.File), a.Deck)
 			if err != nil {
+				deckSwitchMu.Unlock()
 				fmt.Fprintln(os.Stderr, "Can't load deck:", err)
 				return
 			}
 			if err := dev.Clear(); err != nil {
+				deckSwitchMu.Unlock()
 				fatal(err)
 				return
 			}
 
-			time.Sleep(50 * time.Millisecond) // Give low-power microcontroller a moment to clear buffers
+			time.Sleep(5 * time.Millisecond) // Give microcontroller a brief moment to clear buffers
 			InvalidateKeyImagesCache()
-			deck = d
-			deck.forceUpdateWidgets()
+			activateDeck(nd)
+			nd.forceUpdateWidgets()
+			deckSwitchMu.Unlock()
 		}
 		if a.Keycode != "" {
 			emulateKeyPresses(a.Keycode)
@@ -256,13 +309,34 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 		}
 		if a.Exec != "" && a.Deck == "" {
 			currentWidget := w
+			deckGen := d.gen
 			go func() {
 				executeCommand(a.Exec)
-				// Give HA / the OS a moment to process, then force-refresh
-				// this widget so the icon reflects the new state immediately.
-				time.Sleep(600 * time.Millisecond)
-				currentWidget.ResetUpdate()
-				_ = currentWidget.Update()
+				if currentDeckGen.Load() != deckGen {
+					return
+				}
+				if currentWidget.tryStartUpdate() {
+					currentWidget.ResetUpdate()
+					if err := currentWidget.Update(); err != nil {
+						fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", currentWidget.Key(), err)
+					}
+					currentWidget.finishUpdate()
+				}
+
+				// Follow-up refresh for eventual-consistency backends (e.g. Home Assistant).
+				go func() {
+					time.Sleep(500 * time.Millisecond)
+					if currentDeckGen.Load() != deckGen {
+						return
+					}
+					if currentWidget.tryStartUpdate() {
+						currentWidget.ResetUpdate()
+						if err := currentWidget.Update(); err != nil {
+							fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", currentWidget.Key(), err)
+						}
+						currentWidget.finishUpdate()
+					}
+				}()
 			}()
 		}
 		if a.Device != "" {
@@ -282,10 +356,9 @@ func (d *Deck) triggerAction(dev *streamdeck.Device, index uint8, hold bool) {
 	}
 }
 
-// forceUpdateWidgets resets the update timer on all widgets and then updates them with a heavy physical stagger to prevent power sags.
+// forceUpdateWidgets resets the update timer on all widgets and launches non-blocking updates.
 func (d *Deck) forceUpdateWidgets() {
 	now := time.Now()
-	var wg sync.WaitGroup
 	for _, w := range d.Widgets {
 		w.ResetUpdate()
 
@@ -294,45 +367,39 @@ func (d *Deck) forceUpdateWidgets() {
 			continue
 		}
 
-		wg.Add(1)
+		if !w.tryStartUpdate() {
+			continue
+		}
+
 		go func(widget Widget) {
-			defer wg.Done()
+			defer widget.finishUpdate()
 			if err := widget.Update(); err != nil {
 				fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", widget.Key(), err)
 			}
 		}(w)
-
-		// Stagger the physical draws by 100ms to completely smooth out current draw and make the refresh visually staggered!
-		time.Sleep(100 * time.Millisecond)
 	}
-	wg.Wait()
 }
 
-// updateWidgets updates/repaints all the widgets concurrently.
+// updateWidgets updates/repaints all widgets that require an update without blocking the caller.
 func (d *Deck) updateWidgets() {
 	now := time.Now()
-	var wg sync.WaitGroup
 	for _, w := range d.Widgets {
 		// Skip keys locked by an API override (e.g. an alert flash).
 		if until, ok := keyLocks.Load(w.Key()); ok && now.Before(until.(time.Time)) {
 			continue
 		}
 
-		if !w.RequiresUpdate() {
+		if !w.RequiresUpdate() || !w.tryStartUpdate() {
 			continue
 		}
 
-		wg.Add(1)
 		go func(widget Widget) {
-			defer wg.Done()
+			defer widget.finishUpdate()
 			if err := widget.Update(); err != nil {
 				fmt.Fprintf(os.Stderr, "widget %d update error: %v\n", widget.Key(), err)
 			}
 		}(w)
-
-		time.Sleep(15 * time.Millisecond) // Pacify CPU and physical electrical spikes by staggering the update goroutines
 	}
-	wg.Wait()
 }
 
 // adjustBrightness adjusts the brightness.

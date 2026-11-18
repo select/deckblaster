@@ -27,9 +27,9 @@ parent = "../main.deck"
   index = 1
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 0"
+      icon_command = "echo /tmp/streamdeck-jira/issue-0.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 0"
@@ -38,9 +38,9 @@ parent = "../main.deck"
   index = 2
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 1"
+      icon_command = "echo /tmp/streamdeck-jira/issue-1.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 1"
@@ -49,9 +49,9 @@ parent = "../main.deck"
   index = 3
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 2"
+      icon_command = "echo /tmp/streamdeck-jira/issue-2.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 2"
@@ -60,9 +60,9 @@ parent = "../main.deck"
   index = 4
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 3"
+      icon_command = "echo /tmp/streamdeck-jira/issue-3.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 3"
@@ -71,9 +71,9 @@ parent = "../main.deck"
   index = 5
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 4"
+      icon_command = "echo /tmp/streamdeck-jira/issue-4.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 4"
@@ -82,9 +82,9 @@ parent = "../main.deck"
   index = 6
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 5"
+      icon_command = "echo /tmp/streamdeck-jira/issue-5.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 5"
@@ -93,9 +93,9 @@ parent = "../main.deck"
   index = 7
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 6"
+      icon_command = "echo /tmp/streamdeck-jira/issue-6.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 6"
@@ -104,9 +104,9 @@ parent = "../main.deck"
   index = 8
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 7"
+      icon_command = "echo /tmp/streamdeck-jira/issue-7.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 7"
@@ -115,9 +115,9 @@ parent = "../main.deck"
   index = 9
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 8"
+      icon_command = "echo /tmp/streamdeck-jira/issue-8.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 8"
@@ -126,9 +126,9 @@ parent = "../main.deck"
   index = 10
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 9"
+      icon_command = "echo /tmp/streamdeck-jira/issue-9.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 9"
@@ -137,9 +137,9 @@ parent = "../main.deck"
   index = 11
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 10"
+      icon_command = "echo /tmp/streamdeck-jira/issue-10.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 10"
@@ -148,9 +148,9 @@ parent = "../main.deck"
   index = 12
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts icon 11"
+      icon_command = "echo /tmp/streamdeck-jira/issue-11.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts url 11"
@@ -161,9 +161,9 @@ parent = "../main.deck"
   index = 13
   [keys.widget]
     id = "command"
-    interval = 60000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/jira/jira-issues.ts page-icon"
+      icon_command = "echo /tmp/streamdeck-jira/page.png"
       command = ""
   [keys.action]
     exec = "bun decks/jira/jira-issues.ts page-next"

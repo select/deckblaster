@@ -20,7 +20,7 @@ parent = "../main.deck"
   index = 0
   [keys.widget]
     id = "command"
-    interval = 1000
+    interval = 5000
     [keys.widget.config]
       icon_command = "bun decks/calendar/calendar-day.js header"
 
@@ -77,7 +77,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 0"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-0.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 0"
@@ -88,7 +88,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 1"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-1.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 1"
@@ -99,7 +99,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 2"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-2.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 2"
@@ -110,7 +110,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 3"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-3.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 3"
@@ -121,7 +121,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 4"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-4.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 4"
@@ -132,7 +132,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 5"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-5.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 5"
@@ -143,7 +143,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 6"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-6.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 6"
@@ -154,7 +154,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 7"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-7.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 7"
@@ -165,7 +165,7 @@ parent = "../main.deck"
     id = "command"
     interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/calendar/calendar-day.js slot 8"
+      icon_command = "echo ~/.local/share/deckblaster/calendar-day/key-8.png"
       command = ""
   [keys.action]
     exec = "bun decks/calendar/calendar-day.js open 8"

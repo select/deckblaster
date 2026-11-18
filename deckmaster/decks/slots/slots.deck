@@ -20,7 +20,7 @@ parent = "../main.deck"
     id = "command"
     interval = 0
     [keys.widget.config]
-      icon_command = "uv run decks/slots/slots-game.py init >/dev/null 2>&1; echo decks/slots/assets/credits-bg.png"
+      icon_command = "./deckctl slots init >/dev/null 2>&1; echo decks/slots/assets/credits-bg.png"
       command = ""
 
 # Reel top row (driven by API during spin)
@@ -56,12 +56,12 @@ parent = "../main.deck"
   index = 4
   [keys.widget]
     id = "command"
-    interval = 3000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "decks/slots/slots-bet-icon.sh"
+      icon_command = "echo /tmp/streamdeck-slots/bet-display.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/slots/slots-game.py bet-up"
+    exec = "./deckctl slots bet-up"
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
 
@@ -73,7 +73,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/spin-btn.png"
   [keys.action]
-    exec = "uv run decks/slots/slots-game.py spin"
+    exec = "./deckctl slots spin"
 
 # Reel middle row
 [[keys]]
@@ -113,7 +113,7 @@ parent = "../main.deck"
       fontsize = 10
       color = "#ff9955"
   [keys.action]
-    exec = "uv run decks/slots/slots-game.py bet-down"
+    exec = "./deckctl slots bet-down"
 
 # ── Row 2 ──────────────────────────────────────────────────────────────────────
 

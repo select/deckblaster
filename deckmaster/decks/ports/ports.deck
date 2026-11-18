@@ -80,70 +80,70 @@ parent = "../apps.deck"
   index = 6
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 1"
+      icon_command = "echo /tmp/streamdeck-ports/key-1.png"
       command = ""
 
 [[keys]]
   index = 11
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 2"
+      icon_command = "echo /tmp/streamdeck-ports/key-2.png"
       command = ""
 
 [[keys]]
   index = 2
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 3"
+      icon_command = "echo /tmp/streamdeck-ports/key-3.png"
       command = ""
 
 [[keys]]
   index = 7
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 4"
+      icon_command = "echo /tmp/streamdeck-ports/key-4.png"
       command = ""
 
 [[keys]]
   index = 12
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 5"
+      icon_command = "echo /tmp/streamdeck-ports/key-5.png"
       command = ""
 
 [[keys]]
   index = 3
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 6"
+      icon_command = "echo /tmp/streamdeck-ports/key-6.png"
       command = ""
 
 [[keys]]
   index = 8
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 7"
+      icon_command = "echo /tmp/streamdeck-ports/key-7.png"
       command = ""
 
 [[keys]]
   index = 13
   [keys.widget]
     id = "command"
-    interval = 5000
+    interval = 1000
     [keys.widget.config]
-      icon_command = "bun decks/ports/ports-render.js 8"
+      icon_command = "echo /tmp/streamdeck-ports/key-8.png"
       command = ""

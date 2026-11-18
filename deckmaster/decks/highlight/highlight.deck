@@ -19,7 +19,7 @@ parent = "../main.deck"
     id = "command"
     interval = 0
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-ctrl.py init >/dev/null 2>&1; echo decks/highlight/assets/status-init.png"
+      icon_command = "./deckctl highlight init >/dev/null 2>&1; echo decks/highlight/assets/status-init.png"
       command = ""
 
 # Size UP — large dot preview
@@ -29,10 +29,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py size-up"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-size-up.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py size-up"
+    exec = "./deckctl highlight size-up"
 
 # Color cycle — prev/current/next stacked, press=next hold=prev
 [[keys]]
@@ -41,10 +41,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py color-next"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-color-next.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py color-next"
+    exec = "./deckctl highlight color-next"
 
 # Alpha UP — brighter dot + percentage
 [[keys]]
@@ -53,10 +53,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py alpha-up"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-alpha-up.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py opacity-up"
+    exec = "./deckctl highlight opacity-up"
 
 # Mode toggle — ring+click vs click-only
 [[keys]]
@@ -65,10 +65,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py mode"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-mode.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py mode"
+    exec = "./deckctl highlight mode"
 
 # ── Row 1 ──────────────────────────────────────────────────────────────────────
 
@@ -79,7 +79,7 @@ parent = "../main.deck"
     [keys.widget.config]
       icon = "assets/toggle.png"
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py toggle"
+    exec = "./deckctl highlight toggle"
 
 # Size DOWN — small dot preview
 [[keys]]
@@ -88,10 +88,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py size-down"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-size-down.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py size-down"
+    exec = "./deckctl highlight size-down"
 
 [[keys]]
   index = 7
@@ -99,10 +99,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py color-prev"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-color-prev.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py color-prev"
+    exec = "./deckctl highlight color-prev"
 
 # Alpha DOWN — fainter dot + percentage
 [[keys]]
@@ -111,10 +111,10 @@ parent = "../main.deck"
     id = "command"
     interval = 2000
     [keys.widget.config]
-      icon_command = "uv run decks/highlight/highlight-btn-icon.py alpha-down"
+      icon_command = "echo /tmp/streamdeck-highlight/btn-alpha-down.png"
       command = ""
   [keys.action]
-    exec = "uv run decks/highlight/highlight-ctrl.py opacity-down"
+    exec = "./deckctl highlight opacity-down"
 
 [[keys]]
   index = 9

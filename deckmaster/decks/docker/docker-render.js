@@ -13,10 +13,22 @@
  * Images: /tmp/streamdeck-docker/key-N.png
  */
 
-import sharp from "sharp";
-import { mkdir, writeFile, readFile } from "fs/promises";
-import { existsSync } from "fs";
+import { mkdir, writeFile, readFile, rename } from "fs/promises";
+import { existsSync, readFileSync } from "fs";
 import { execSync, spawnSync } from "child_process";
+
+let _sharp;
+async function getSharp() {
+  if (!_sharp) _sharp = (await import("sharp")).default;
+  return _sharp;
+}
+
+async function renderSvgToPng(svg, outPath) {
+  const sharp = await getSharp();
+  const tmpPath = `${outPath}.tmp.${process.pid}.png`;
+  await sharp(Buffer.from(svg)).png().toFile(tmpPath);
+  await rename(tmpPath, outPath);
+}
 
 // ── config ────────────────────────────────────────────────────────────────────
 
@@ -67,7 +79,7 @@ function esc(s) {
 
 /** Short image name: strip registry + org prefix, strip tag */
 function shortImage(image) {
-  // quay.io/apheris/hub-apps:0.49.1 → hub-apps
+  // ghcr.io/example/web-api:1.2.0 → web-api
   // postgres:15-alpine → postgres
   const noTag  = image.split(":")[0];
   const parts  = noTag.split("/");
@@ -228,8 +240,28 @@ async function saveState(state) {
 
 // ── render ────────────────────────────────────────────────────────────────────
 
-async function renderAll(state) {
+function getRenderKey(state) {
+  const containers = state.containers ?? [];
+  const totalPages = Math.max(1, Math.ceil(containers.length / SLOTS));
+  const page       = Math.min(state.page ?? 0, totalPages - 1);
+  return JSON.stringify({
+    page,
+    containers: containers.map(c => ({
+      id: c.ID, state: c.State, status: c.Status, image: c.Image, names: c.Names, ports: c.Ports,
+    })),
+  });
+}
+
+async function renderAll(state, force = false) {
   await mkdir(IMG_DIR, { recursive: true });
+  const renderKeyFile = `${IMG_DIR}/render.key`;
+  const renderKey = getRenderKey(state);
+  if (!force && existsSync(`${IMG_DIR}/key-0.png`)) {
+    try {
+      if (readFileSync(renderKeyFile, "utf8") === renderKey) return;
+    } catch {}
+  }
+
   const containers = state.containers ?? [];
   const totalPages = Math.max(1, Math.ceil(containers.length / SLOTS));
   const page       = Math.min(state.page ?? 0, totalPages - 1);
@@ -246,11 +278,10 @@ async function renderAll(state) {
     } else {
       svg = makeEmptySvg();
     }
-    renders.push(
-      sharp(Buffer.from(svg)).png().toFile(`${IMG_DIR}/key-${slot}.png`)
-    );
+    renders.push(renderSvgToPng(svg, `${IMG_DIR}/key-${slot}.png`));
   }
   await Promise.all(renders);
+  await writeFile(renderKeyFile, renderKey);
 }
 
 // ── main icon with badge ──────────────────────────────────────────────────────
@@ -284,8 +315,15 @@ async function generateBadgeIcon(runningCount) {
 </svg>`;
 
   const outPath = `${IMG_DIR}/main-icon.png`;
+  const countFile = `${IMG_DIR}/badge.count`;
+  if (existsSync(outPath)) {
+    try {
+      if (readFileSync(countFile, "utf8") === String(runningCount)) return outPath;
+    } catch {}
+  }
   await mkdir(IMG_DIR, { recursive: true });
-  await sharp(Buffer.from(svg)).png().toFile(outPath);
+  await renderSvgToPng(svg, outPath);
+  await writeFile(countFile, String(runningCount));
   return outPath;
 }
 
@@ -306,9 +344,9 @@ async function generateAssets() {
 </svg>`;
 
   await Promise.all([
-    sharp(Buffer.from(navSvg("PREV", "◀"))).png().toFile(`${ASSETS_DIR}/prev.png`),
-    sharp(Buffer.from(navSvg("NEXT", "▶"))).png().toFile(`${ASSETS_DIR}/next.png`),
-    sharp(Buffer.from(exitSvg)).png().toFile(`${ASSETS_DIR}/exit.png`),
+    renderSvgToPng(navSvg("PREV", "◀"), `${ASSETS_DIR}/prev.png`),
+    renderSvgToPng(navSvg("NEXT", "▶"), `${ASSETS_DIR}/next.png`),
+    renderSvgToPng(exitSvg, `${ASSETS_DIR}/exit.png`),
   ]);
   console.error("Docker assets generated.");
 }
@@ -325,9 +363,10 @@ async function toggleContainer(slot) {
 
   const cmd = entry.State === "running" ? "stop" : "start";
   spawnSync("docker", [cmd, entry.ID], { stdio: "ignore" });
-  // Bust cache so next poll fetches fresh data
-  state.fetched = 0;
+  state.containers = fetchContainers();
+  state.fetched = Date.now();
   await saveState(state);
+  await renderAll(state);
 }
 
 // ── main ──────────────────────────────────────────────────────────────────────
@@ -354,6 +393,7 @@ if (arg === "generate-assets") {
   state.page  = ((state.page ?? 0) + dir + total) % total;
   state.fetched = 0;
   await saveState(state);
+  await renderAll(state);
 
 } else if (arg === "toggle") {
   const slot = parseInt(arg2, 10);

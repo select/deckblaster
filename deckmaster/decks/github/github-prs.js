@@ -18,13 +18,25 @@
  * Images      : /tmp/streamdeck-github/
  */
 
-import sharp from "sharp";
 import {
   readFileSync, writeFileSync, statSync,
   openSync, closeSync, unlinkSync, existsSync,
 } from "fs";
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile, mkdir, rename } from "fs/promises";
 import { spawnSync, spawn } from "child_process";
+
+let _sharp;
+async function getSharp() {
+  if (!_sharp) _sharp = (await import("sharp")).default;
+  return _sharp;
+}
+
+async function renderSvgToPng(svg, outPath) {
+  const sharp = await getSharp();
+  const tmpPath = `${outPath}.tmp.${process.pid}.png`;
+  await sharp(Buffer.from(svg)).png().toFile(tmpPath);
+  await rename(tmpPath, outPath);
+}
 
 // ── paths ──────────────────────────────────────────────────────────────────────
 const CACHE_FILE      = "/tmp/streamdeck-github-prs.json";
@@ -484,10 +496,10 @@ async function renderAll(prs) {
   const jobs = [];
   for (let i = 0; i < MAX_PR_SLOTS; i++) {
     const svg = i < prs.length ? makePrSvg(prs[i], i) : makeEmptySvg();
-    jobs.push(sharp(Buffer.from(svg)).png().toFile(`${OUT_DIR}/pr-${i}.png`));
+    jobs.push(renderSvgToPng(svg, `${OUT_DIR}/pr-${i}.png`));
   }
-  jobs.push(sharp(Buffer.from(makeHeaderSvg(prs))).png().toFile(`${OUT_DIR}/header.png`));
-  jobs.push(sharp(Buffer.from(makeBadgeSvg(prs))).png().toFile(`${OUT_DIR}/badge.png`));
+  jobs.push(renderSvgToPng(makeHeaderSvg(prs), `${OUT_DIR}/header.png`));
+  jobs.push(renderSvgToPng(makeBadgeSvg(prs), `${OUT_DIR}/badge.png`));
   await Promise.all(jobs);
 }
 
@@ -524,36 +536,77 @@ if (cmd === "badge" || cmd === "header" || cmd === "icon") {
     path = `${OUT_DIR}/pr-${n}.png`;
   }
 
-  // Print the path to stdout immediately so deckmaster gets it without delay
-  console.log(path);
-
-  // Check if cache has expired or if the image doesn't exist
+  // Check if cache has expired or if required images don't exist
   let shouldFetch = false;
-  if (!existsSync(path)) {
-    shouldFetch = true;
-  } else {
-    try {
-      const cached = JSON.parse(readFileSync(CACHE_FILE, "utf8"));
-      const hasPending = cached.has_pending_ci ?? false;
-      const ttl = hasPending ? TTL_FAST : isSnoozed() ? TTL_SNOOZED : TTL_SLOW;
-      let ts = cached.ts ?? 0;
-      if (ts < 1e12) ts *= 1000;
-      if (Date.now() - ts >= ttl) {
-        shouldFetch = true;
-      }
-    } catch {
+  let cachedPrs = null;
+  let cacheFresh = false;
+  try {
+    const cached = JSON.parse(readFileSync(CACHE_FILE, "utf8"));
+    const hasPending = cached.has_pending_ci ?? false;
+    const ttl = hasPending ? TTL_FAST : isSnoozed() ? TTL_SNOOZED : TTL_SLOW;
+    let ts = cached.ts ?? 0;
+    if (ts < 1e12) ts *= 1000;
+    if (Date.now() - ts < ttl && Array.isArray(cached.prs)) {
+      cacheFresh = true;
+      cachedPrs = cached.prs;
+    } else {
       shouldFetch = true;
+    }
+  } catch {
+    shouldFetch = true;
+  }
+
+  let missingImg = !existsSync(path);
+  if (!missingImg && cmd === "header") {
+    for (let i = 0; i < MAX_PR_SLOTS; i++) {
+      if (!existsSync(`${OUT_DIR}/pr-${i}.png`)) {
+        missingImg = true;
+        break;
+      }
     }
   }
 
+  if (cacheFresh && missingImg) {
+    await renderAll(cachedPrs);
+  } else if (missingImg) {
+    shouldFetch = true;
+  }
+
+  // Print the path to stdout so deckmaster gets it without delay
+  console.log(path);
+
   if (shouldFetch) {
+    // Clean up stale locks (>30s) so a crashed/killed background job can't wedge updates
+    const isLocked = (p) => {
+      if (!existsSync(p)) return false;
+      try {
+        if (Date.now() - statSync(p).mtimeMs > 30_000) {
+          unlinkSync(p);
+          return false;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     // Spawn background process to fetch and update everything if not already locked
-    if (!existsSync(SPAWN_LOCK) && !existsSync(LOCK_FILE)) {
-      try { closeSync(openSync(SPAWN_LOCK, "wx")); } catch {}
-      spawn("bun", [process.argv[1], "update-cache-bg"], {
-        detached: true,
-        stdio: "ignore",
-      }).unref();
+    if (!isLocked(SPAWN_LOCK) && !isLocked(LOCK_FILE)) {
+      let acquired = false;
+      try {
+        closeSync(openSync(SPAWN_LOCK, "wx"));
+        acquired = true;
+      } catch {}
+      if (acquired) {
+        try {
+          spawn("bun", [process.argv[1], "update-cache-bg"], {
+            detached: true,
+            stdio: "ignore",
+          }).unref();
+        } catch {
+          try { unlinkSync(SPAWN_LOCK); } catch {}
+        }
+      }
     }
   }
   process.exit(0);

@@ -17,13 +17,25 @@
  * Lock        : /tmp/streamdeck-jira.lock
  */
 
-import sharp from "sharp";
 import {
   readFileSync, writeFileSync, statSync,
   openSync, closeSync, unlinkSync, existsSync,
 } from "fs";
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile, mkdir, rename } from "fs/promises";
 import { spawn } from "child_process";
+
+let _sharp: typeof import("sharp") | undefined;
+async function getSharp() {
+  if (!_sharp) _sharp = (await import("sharp")).default;
+  return _sharp;
+}
+
+async function renderSvgToPng(svg: string, outPath: string): Promise<void> {
+  const sharp = await getSharp();
+  const tmpPath = `${outPath}.tmp.${process.pid}.png`;
+  await sharp(Buffer.from(svg)).png().toFile(tmpPath);
+  await rename(tmpPath, outPath);
+}
 
 // ── paths ──────────────────────────────────────────────────────────────────────
 const CACHE_FILE = "/tmp/streamdeck-jira-issues.json";
@@ -471,11 +483,11 @@ async function renderAll(issues: JiraIssue[]): Promise<void> {
   const jobs: Promise<unknown>[] = [];
   for (let i = 0; i < MAX_ISSUE_SLOTS; i++) {
     const svg = i < pageIssues.length ? makeIssueSvg(pageIssues[i], i) : makeEmptySvg();
-    jobs.push(sharp(Buffer.from(svg)).png().toFile(`${OUT_DIR}/issue-${i}.png`));
+    jobs.push(renderSvgToPng(svg, `${OUT_DIR}/issue-${i}.png`));
   }
-  jobs.push(sharp(Buffer.from(makeHeaderSvg(issues))).png().toFile(`${OUT_DIR}/header.png`));
-  jobs.push(sharp(Buffer.from(makeBadgeSvg(issues))).png().toFile(`${OUT_DIR}/badge.png`));
-  jobs.push(sharp(Buffer.from(makePageSvg(page, totalPages))).png().toFile(`${OUT_DIR}/page.png`));
+  jobs.push(renderSvgToPng(makeHeaderSvg(issues), `${OUT_DIR}/header.png`));
+  jobs.push(renderSvgToPng(makeBadgeSvg(issues), `${OUT_DIR}/badge.png`));
+  jobs.push(renderSvgToPng(makePageSvg(page, totalPages), `${OUT_DIR}/page.png`));
   await Promise.all(jobs);
 }
 
@@ -484,10 +496,11 @@ async function renderError(msg: string): Promise<void> {
   await mkdir(OUT_DIR, { recursive: true });
   const errSvg = makeErrorSvg(msg);
   const jobs: Promise<unknown>[] = [];
-  jobs.push(sharp(Buffer.from(errSvg)).png().toFile(`${OUT_DIR}/header.png`));
-  jobs.push(sharp(Buffer.from(errSvg)).png().toFile(`${OUT_DIR}/badge.png`));
+  jobs.push(renderSvgToPng(errSvg, `${OUT_DIR}/header.png`));
+  jobs.push(renderSvgToPng(errSvg, `${OUT_DIR}/badge.png`));
+  jobs.push(renderSvgToPng(makePageSvg(0, 1), `${OUT_DIR}/page.png`));
   for (let i = 0; i < MAX_ISSUE_SLOTS; i++) {
-    jobs.push(sharp(Buffer.from(makeEmptySvg())).png().toFile(`${OUT_DIR}/issue-${i}.png`));
+    jobs.push(renderSvgToPng(makeEmptySvg(), `${OUT_DIR}/issue-${i}.png`));
   }
   await Promise.all(jobs);
 }
@@ -528,34 +541,79 @@ if (cmd === "badge" || cmd === "header" || cmd === "icon" || cmd === "page-icon"
     path = `${OUT_DIR}/issue-${n}.png`;
   }
 
-  // Print the path to stdout immediately so deckmaster gets it without delay
-  console.log(path);
-
-  // Check if cache has expired or if the image doesn't exist
+  // Check if cache has expired or if required images don't exist
   let shouldFetch = false;
-  if (!existsSync(path)) {
-    shouldFetch = true;
-  } else {
-    try {
-      const cached = JSON.parse(readFileSync(CACHE_FILE, "utf8"));
-      let ts = cached.ts ?? 0;
-      if (ts < 1e12) ts *= 1000;
-      if (Date.now() - ts >= TTL_MS) {
-        shouldFetch = true;
-      }
-    } catch {
+  let cachedIssues: JiraIssue[] | null = null;
+  let cacheFresh = false;
+  try {
+    const cached = JSON.parse(readFileSync(CACHE_FILE, "utf8")) as CacheData;
+    let ts = cached.ts ?? 0;
+    if (ts < 1e12) ts *= 1000;
+    if (Date.now() - ts < TTL_MS && Array.isArray(cached.issues)) {
+      cacheFresh = true;
+      cachedIssues = cached.issues;
+    } else {
       shouldFetch = true;
+    }
+  } catch {
+    shouldFetch = true;
+  }
+
+  let missingImg = !existsSync(path);
+  if (!missingImg && cmd === "header") {
+    if (!existsSync(`${OUT_DIR}/page.png`)) {
+      missingImg = true;
+    } else {
+      for (let i = 0; i < MAX_ISSUE_SLOTS; i++) {
+        if (!existsSync(`${OUT_DIR}/issue-${i}.png`)) {
+          missingImg = true;
+          break;
+        }
+      }
     }
   }
 
+  if (cacheFresh && missingImg && cachedIssues) {
+    await renderAll(cachedIssues);
+  } else if (missingImg) {
+    shouldFetch = true;
+  }
+
+  // Print the path to stdout so deckmaster gets it without delay
+  console.log(path);
+
   if (shouldFetch) {
+    // Clean up stale locks (>30s) so a crashed/killed background job can't wedge updates
+    const isLocked = (p: string) => {
+      if (!existsSync(p)) return false;
+      try {
+        if (Date.now() - statSync(p).mtimeMs > 30_000) {
+          unlinkSync(p);
+          return false;
+        }
+        return true;
+      } catch {
+        return false;
+      }
+    };
+
     // Spawn background process to fetch and update everything if not already locked
-    if (!existsSync(SPAWN_LOCK) && !existsSync(LOCK_FILE)) {
-      try { closeSync(openSync(SPAWN_LOCK, "wx")); } catch {}
-      spawn("bun", [process.argv[1], "update-cache-bg"], {
-        detached: true,
-        stdio: "ignore",
-      }).unref();
+    if (!isLocked(SPAWN_LOCK) && !isLocked(LOCK_FILE)) {
+      let acquired = false;
+      try {
+        closeSync(openSync(SPAWN_LOCK, "wx"));
+        acquired = true;
+      } catch {}
+      if (acquired) {
+        try {
+          spawn("bun", [process.argv[1], "update-cache-bg"], {
+            detached: true,
+            stdio: "ignore",
+          }).unref();
+        } catch {
+          try { unlinkSync(SPAWN_LOCK); } catch {}
+        }
+      }
     }
   }
   process.exit(0);
@@ -601,15 +659,6 @@ if (cmd === "url") {
   // Trigger immediate deck reload so cards update without waiting for poll
   try { await fetch("http://localhost:9990/reload", { method: "POST" }); } catch {}
   console.log(`${OUT_DIR}/page.png`);
-
-} else if (cmd === "page-icon") {
-  const path = `${OUT_DIR}/page.png`;
-  if (!existsSync(path) || statSync(path).mtimeMs < cacheTs) {
-    const page = getPage();
-    const totalPages = getTotalPages(issues);
-    await sharp(Buffer.from(makePageSvg(page, totalPages))).png().toFile(path);
-  }
-  console.log(path);
 
 } else {
   console.error("unknown command:", cmd);
