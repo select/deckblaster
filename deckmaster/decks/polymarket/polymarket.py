@@ -140,7 +140,7 @@ def fetch_markets(force=False, query=None, tag_id=None):
     try:
         if tag_id:
             # Best method: filter events by tag_id, extract markets
-            url = f"{GAMMA_API}/events?active=true&closed=false&tag_id={tag_id}&limit={TOTAL_FETCH}&order=volume_24hr&ascending=false"
+            url = f"{GAMMA_API}/events?active=true&closed=false&tag_id={tag_id}&limit={TOTAL_FETCH}&order=volume24hr&ascending=false"
             req = urllib.request.Request(url, headers={"User-Agent": "StreamDeck/1.0"})
             resp = urllib.request.urlopen(req, timeout=10)
             events = json.loads(resp.read().decode())
@@ -160,7 +160,7 @@ def fetch_markets(force=False, query=None, tag_id=None):
                 for m in event.get("markets", []):
                     raw_markets.append(m)
         else:
-            url = f"{GAMMA_API}/markets?active=true&closed=false&limit={TOTAL_FETCH}&order=volume_24hr&ascending=false"
+            url = f"{GAMMA_API}/markets?active=true&closed=false&limit={TOTAL_FETCH}&order=volume24hr&ascending=false"
             req = urllib.request.Request(url, headers={"User-Agent": "StreamDeck/1.0"})
             resp = urllib.request.urlopen(req, timeout=10)
             raw_markets = json.loads(resp.read().decode())
@@ -439,7 +439,7 @@ def build_categories(state, force=False):
     try:
         tag_data = {}  # label -> {id, count, vol24h}
         for offset in range(0, 1000, 200):
-            url = f"{GAMMA_API}/events?active=true&closed=false&limit=200&offset={offset}&order=volume_24hr&ascending=false"
+            url = f"{GAMMA_API}/events?active=true&closed=false&limit=200&offset={offset}&order=volume24hr&ascending=false"
             req = urllib.request.Request(url, headers={"User-Agent": "StreamDeck/1.0"})
             resp = urllib.request.urlopen(req, timeout=15)
             events = json.loads(resp.read().decode())

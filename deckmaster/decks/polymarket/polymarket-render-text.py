@@ -147,21 +147,21 @@ for line in visible:
     draw.text((x_offset, y), line, fill=(220, 220, 240), font=FONT)
     y += CHAR_H
 
-# Page dots
+# Compact page lines below the question text.
 if total_steps > 1:
-    dot_y = SIZE - 11
-    dot_r = 3  # radius
-    dot_spacing = 10
-    total_dot_w = (total_steps - 1) * dot_spacing
-    dot_cx_start = (SIZE - total_dot_w) // 2
+    line_width = 5
+    line_gap = 2
+    while total_steps * line_width + (total_steps - 1) * line_gap > 56 and line_width > 1:
+        line_width -= 1
+    while total_steps * line_width + (total_steps - 1) * line_gap > 56 and line_gap > 1:
+        line_gap -= 1
+    indicator_width = total_steps * line_width + (total_steps - 1) * line_gap
+    start_x = (SIZE - indicator_width) // 2
+    indicator_y = SIZE - 5
     for i in range(total_steps):
-        cx = dot_cx_start + i * dot_spacing
-        if i == current_step:
-            draw.ellipse([cx - dot_r, dot_y - dot_r, cx + dot_r, dot_y + dot_r],
-                         fill=(100, 160, 255))
-        else:
-            draw.ellipse([cx - dot_r, dot_y - dot_r, cx + dot_r, dot_y + dot_r],
-                         outline=(150, 180, 220), width=1)
+        color = (100, 160, 255) if i == current_step else (65, 72, 95)
+        x = start_x + i * (line_width + line_gap)
+        draw.rectangle([x, indicator_y, x + line_width - 1, indicator_y + 1], fill=color)
 
 path = os.path.join(TMP, f"text-{slot}.png")
 img.save(path)

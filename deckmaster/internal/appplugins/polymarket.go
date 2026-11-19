@@ -254,7 +254,7 @@ func fetchMarkets(force bool, query, tagID *string) []marketItem {
 	var fetchErr error
 
 	if tagID != nil && *tagID != "" {
-		u := fmt.Sprintf("%s/events?active=true&closed=false&tag_id=%s&limit=%d&order=volume_24hr&ascending=false",
+		u := fmt.Sprintf("%s/events?active=true&closed=false&tag_id=%s&limit=%d&order=volume24hr&ascending=false",
 			gammaAPIBase, url.QueryEscape(*tagID), totalFetch)
 		var events []struct {
 			Markets []map[string]any `json:"markets"`
@@ -278,7 +278,7 @@ func fetchMarkets(force bool, query, tagID *string) []marketItem {
 			}
 		}
 	} else {
-		u := fmt.Sprintf("%s/markets?active=true&closed=false&limit=%d&order=volume_24hr&ascending=false",
+		u := fmt.Sprintf("%s/markets?active=true&closed=false&limit=%d&order=volume24hr&ascending=false",
 			gammaAPIBase, totalFetch)
 		fetchErr = fetchJSON(u, &rawMarkets)
 	}
@@ -491,17 +491,28 @@ func renderPolymarketTextSlot(m *marketItem, slot, frame int) string {
 	}
 
 	if totalSteps > 1 {
-		dotY := keySize - 11
-		dotR := 3
-		dotSpacing := 10
-		totalDotW := (totalSteps - 1) * dotSpacing
-		dotCXStart := (keySize - totalDotW) / 2
+		// Keep page indicators compact and below the text so they never obscure it.
+		lineWidth := 5
+		lineGap := 2
+		for totalSteps*lineWidth+(totalSteps-1)*lineGap > 56 && lineWidth > 1 {
+			lineWidth--
+		}
+		for totalSteps*lineWidth+(totalSteps-1)*lineGap > 56 && lineGap > 1 {
+			lineGap--
+		}
+		indicatorWidth := totalSteps*lineWidth + (totalSteps-1)*lineGap
+		startX := (keySize - indicatorWidth) / 2
+		indicatorY := keySize - 5
 		for i := 0; i < totalSteps; i++ {
-			cx := dotCXStart + i*dotSpacing
+			c := color.RGBA{R: 65, G: 72, B: 95, A: 255}
 			if i == currentStep {
-				fillCircle(img, cx, dotY, dotR, color.RGBA{R: 100, G: 160, B: 255, A: 255})
-			} else {
-				strokeCircle(img, cx, dotY, dotR, 1, color.RGBA{R: 150, G: 180, B: 220, A: 255})
+				c = color.RGBA{R: 100, G: 160, B: 255, A: 255}
+			}
+			x := startX + i*(lineWidth+lineGap)
+			for py := indicatorY; py < indicatorY+2; py++ {
+				for px := x; px < x+lineWidth; px++ {
+					blendPixel(img, px, py, c)
+				}
 			}
 		}
 	}
@@ -599,7 +610,7 @@ func buildCategories(s polymarketState, force bool) []categoryItem {
 	tagData := map[string]*tagStat{}
 
 	for offset := 0; offset < 1000; offset += 200 {
-		u := fmt.Sprintf("%s/events?active=true&closed=false&limit=200&offset=%d&order=volume_24hr&ascending=false",
+		u := fmt.Sprintf("%s/events?active=true&closed=false&limit=200&offset=%d&order=volume24hr&ascending=false",
 			gammaAPIBase, offset)
 		var events []struct {
 			Volume24hr any `json:"volume24hr"`
