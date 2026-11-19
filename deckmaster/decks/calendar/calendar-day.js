@@ -3,7 +3,7 @@
  * calendar-day.js — Stream Deck calendar day-view renderer
  *
  * Pure renderer: reads events from calendar-day-events.json (written by
- * calendar-fetch.py poll daemon) and renders SVG→PNG icons.
+ * deckctl calendar-fetch poll daemon) and renders SVG→PNG icons.
  *
  * Usage:
  *   bun calendar-day.js <slot>       → print path to key-<slot>.png (render if needed)

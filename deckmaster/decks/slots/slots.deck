@@ -7,7 +7,7 @@ parent = "../main.deck"
 #   [ SPIN ] [reel ] [reel ] [reel ] [BET↓ ]
 #   [ EXIT ] [reel ] [reel ] [reel ] [LINES]
 #
-# On entry, slots-game.py init pushes reel + info key images via HTTP API.
+# On entry, deckctl slots init pre-renders reel + info key images.
 # IMPORTANT: action keys (SPIN=5, EXIT=10, BET=4,9) must NEVER be updated
 # via the HTTP API — that replaces the widget and destroys the action binding.
 

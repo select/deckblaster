@@ -51,7 +51,7 @@ func loadLocationCached(name string) (*time.Location, error) {
 	return loc, nil
 }
 
-// Event matches the JSON schema emitted by calendar-fetch.py.
+// Event is the JSON schema consumed by the calendar widgets.
 type Event struct {
 	Dt       string `json:"dt"`
 	EndDt    string `json:"end_dt"`
@@ -181,7 +181,7 @@ func writeEvents(days map[string][]Event) error {
 	return writeEventsToPath(eventsFilePath(), days, time.Now())
 }
 
-// RunCalFetch is the CLI entrypoint replacing calendar-fetch.py.
+// RunCalFetch is the calendar event fetching CLI entrypoint.
 func RunCalFetch(args []string) int {
 	cmd := "once"
 	if len(args) > 0 {

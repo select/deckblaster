@@ -135,10 +135,10 @@ Parent: `test.deck` (exit button returns here)
 
 | Index | Widget | Description |
 |---|---|---|
-| 0 | `command` | Credits display — also triggers `slots-game.py init` on deck load |
+| 0 | `command` | Credits display — initializes the game through `deckctl slots init` |
 | 1,2,3 | `command` | Reel top row (driven by HTTP API) |
 | 4 | `button` | Bet Up (cycles 1→2→5→10→25) |
-| 5 | `button` | SPIN — runs `slots-game.py spin` |
+| 5 | `button` | SPIN — runs `deckctl slots spin` |
 | 6,7,8 | `command` | Reel middle row |
 | 9 | `button` | Bet Down |
 | 10 | `button` | EXIT → navigates to `test.deck` |
@@ -170,15 +170,12 @@ Parent: `test.deck` (exit button returns here)
 | 10 | EXIT | → navigates to `test.deck` |
 | 11–14 | (empty) | |
 
-All 6 parameter buttons use `icon_command` polling (2s) via `highlight-btn-icon.py` to show
-live previews of the *next* value — circle size, color swatch, or opacity level — using the
-current highlight color.
+All parameter buttons use pre-rendered previews updated synchronously by `deckctl highlight`.
 
 **Binary**: `scripts/highlight-pointer` (built from [swillner/highlight-pointer](https://github.com/swillner/highlight-pointer), X11-only)
 **Wayland**: [hati](https://github.com/szymonwilczek/hati) GNOME Shell extension (controlled via gsettings)
 **Backend auto-detection**: `XDG_SESSION_TYPE` → X11 uses `highlight-pointer` binary, Wayland uses hati
-**Controller**: `scripts/highlight-ctrl.py` — manages process lifecycle (X11) or gsettings (Wayland), renders status display
-**Button icons**: `scripts/highlight-btn-icon.py` — renders dynamic preview icons per button type
+**Controller**: `deckctl highlight` — manages process lifecycle (X11) or gsettings (Wayland), renders status and dynamic preview images
 **State**: `~/.local/share/streamdeck-highlight.json`
 **PID file**: `/tmp/streamdeck-highlight.pid` (X11 only)
 
@@ -225,7 +222,7 @@ Buttons use `icon_command` polling every 3s. Icons are green/red/grey based on l
 No meeting → all buttons show grey icon.
 
 **Hyprland only**: Wayland delivers keyboard input to the focused client, and Zoom ignores
-synthetic shortcuts while unfocused (hyprwm/Hyprland#6576). `zoom.py` therefore briefly focuses
+synthetic shortcuts while unfocused (hyprwm/Hyprland#6576). `deckctl zoom` therefore briefly focuses
 the Zoom meeting window with `hl.dsp.focus`, sends the key via `hl.dsp.send_shortcut`, then
 restores the previous focus. On a shared workspace this is seamless; if Zoom is on another
 workspace the workspace flips across and back. The meeting window is found by enumerating
@@ -236,10 +233,10 @@ AT-SPI registration, or PipeWire mute reflection). The state file also stores th
 address so toggles reset for each new meeting; it is cleared when the meeting window disappears.
 
 **Leave while sharing**: during screen share Zoom replaces the meeting window with the floating
-controls toolbar (title `as_toolbar`), which ignores `Alt+Q`. `zoom.py leave` therefore sends
+controls toolbar (title `as_toolbar`), which ignores `Alt+Q`. `deckctl zoom leave` therefore sends
 `Alt+S` to stop the share, waits for the real meeting window to return, then sends `Alt+Q`.
 
-### Main-row integration (`decks/zoom/mainrow.py`)
+### Main-row integration (`deckctl mainrow`)
 
 While an **active meeting** exists (the hub window alone does not count), the main deck's bottom
 row (keys 10–14 / slots 0–4) becomes Zoom controls instead of the virtual desktop switcher:
@@ -252,8 +249,8 @@ row (keys 10–14 / slots 0–4) becomes Zoom controls instead of the virtual de
 | 3 | 13 | Start / Stop sharing | `Alt+S` |
 | 4 | 14 | Leave meeting | `Alt+Q` (stops share first) |
 
-`main.deck` keys 10–14 use `icon_command = python3 decks/zoom/mainrow.py icon <slot>` and
-`exec = python3 decks/zoom/mainrow.py press <slot>`. Both decide per poll/press: in a meeting they
+`main.deck` keys 10–14 use `deckctl mainrow icon <slot>` and
+`deckctl mainrow press <slot>`. Both decide per poll/press: in a meeting they
 show/run the Zoom control, otherwise they fall through to the virtual desktop switcher. No HTTP
 API is used, so the key bindings stay intact.
 
@@ -270,38 +267,33 @@ its scripts, and an `assets/` subdirectory for its icons. Shared icons (back, em
 
 | Plugin folder | Contents |
 |---|---|
-| `ha/` | `ha.deck`, HA toggle/indicator/icon/door/moisture scripts, room assets |
-| `zoom/` | `zoom.deck`, `zoom.py` (icon/toggle/leave), `mainrow.py` (main-deck bottom row), `zoom-generate-assets.py`, zoom icon assets |
-| `slots/` | `slots.deck`, `slots-game.py`, bet/spin/generate scripts, all slot symbol assets |
+| `ha/` | `ha.deck`, room assets; runtime commands are provided by `deckctl ha` |
+| `zoom/` | `zoom.deck`, `zoom-generate-assets.py`, zoom icon assets; runtime commands are provided by `deckctl zoom/mainrow` |
+| `slots/` | `slots.deck`, asset generators, all slot symbol assets; runtime commands are provided by `deckctl slots` |
 | `jira/` | `jira.deck`, `jira-issues.ts`, Jira SVG asset |
 | `github/` | `github.deck`, `github-prs.js`, assets/ |
-| `calc/` | `calc.deck`, `calc-game.py`, `calc-generate-assets.py`, digit/op icon assets |
-| `highlight/` | `highlight.deck`, `highlight-ctrl.py`, `highlight-btn-icon.py`, binary, `wal_colors.py`, assets |
-| `polymarket/` | `polymarket.deck`, `polymarket-cats.deck`, all polymarket scripts, assets |
+| `calc/` | `calc.deck`, `calc-generate-assets.py`, digit/op icon assets; runtime commands are provided by `deckctl calc` |
+| `highlight/` | `highlight.deck`, binary, asset generator, assets; runtime commands are provided by `deckctl highlight` |
+| `polymarket/` | `polymarket.deck`, `polymarket-cats.deck`, asset generators, assets; runtime commands are provided by `deckctl polymarket` |
 | `docker/` | `docker.deck`, `docker-render.js`, action/icon shell scripts, assets |
 | `ports/` | `ports.deck`, `ports-render.js`, page/icon shell scripts, assets |
-| `vdesktop/` | `vdesktop-render.py`, `vdesktop-icon.sh`, `vdesktop-switch.sh`, `vdesktop-poll.sh`, `assets/app-*.png` |
-| `calendar/` | `next-event.py`, countdown/title/color/open shell scripts |
-| `recorder/` | `deck-record.py`, `deck-record-toggle.py`, icon script, recording assets |
+| `vdesktop/` | GNOME extension installer/source and assets; runtime commands are provided by `deckctl vdesktop` |
+| `calendar/` | JS widgets, asset generators, and support scripts; event fetching is provided by `deckctl calendar-fetch` |
+| `recorder/` | recording/compositing assets; runtime commands are provided by `deckctl recorder` |
 
 ### Key scripts
 
 | Script | Plugin | Purpose |
 |---|---|---|
-| `calendar/next-event.py` | Calendar | Fetches next calendar event from GNOME EDS; caches 2 min; fires HTTP API alert at −3/−2/−1 min |
-| `ha/ha-light-toggle.sh <entity>` | HA | Toggles a HA light entity via REST API |
-| `ha/ha-switch-toggle.sh <entity>` | HA | Toggles a HA switch entity via REST API |
-| `ha/ha-door-poll.sh` | HA | Background daemon: pushes 20s red alert when any door opens |
-| `ha/ha-moisture-icon.sh` | HA | Renders soil moisture level icon (orange/green/blue) |
-| `zoom/zoom.py` | Zoom | Hyprland-only: detects the meeting window and sends shortcuts straight to it |
-| `zoom/mainrow.py` | Zoom | Swaps the main deck's bottom row between Zoom controls and desktops based on meeting state |
-| `vdesktop/vdesktop-render.py` | VDesktop | Renders desktop button images to `/tmp/streamdeck-vdesktop/desk-N.png` |
-| `vdesktop/vdesktop-poll.sh` | VDesktop | Background daemon: re-renders all desktop images every 3s |
-| `calc/calc-game.py` | Calc | Calculator engine — digit/op/equals/clear, pushes display to API key 0 |
-| `highlight/highlight-ctrl.py` | Highlight | Controller — toggle/size/color/opacity, manages `highlight-pointer` process |
-| `highlight/highlight-btn-icon.py` | Highlight | Renders live preview icons per button type (size/color/alpha) |
+| `deckctl calendar-fetch` | Calendar | Fetches calendar events from GNOME EDS and caches them |
+| `deckctl ha` | HA | Toggles entities, renders icons, and runs the door-alert poller |
+| `deckctl zoom` | Zoom | Detects the meeting window and sends shortcuts to it |
+| `deckctl mainrow` | Zoom | Swaps the main deck bottom row between Zoom controls and desktops |
+| `deckctl vdesktop` | VDesktop | Renders and switches desktop buttons, including the background poller |
+| `deckctl calc` | Calc | Runs calculator operations and renders the display |
+| `deckctl highlight` | Highlight | Controls the backend and pre-renders status/preview images |
 | `highlight/highlight-pointer` | Highlight | Compiled binary — X11 cursor highlight overlay |
-| `slots/slots-game.py` | Slots | Slot machine engine — spin/bet/win logic, pushes reel images via API |
+| `deckctl slots` | Slots | Runs slot-machine state, animation, and rendering |
 | `jira/jira-issues.ts` | Jira | Fetches open issues from EN/AW boards, renders badge/header/card icons |
 | `docker/docker-render.js` | Docker | Renders container status keys (Bun/sharp); called by docker-*.sh |
 | `ports/ports-render.js` | Ports | Renders listening-port keys (Bun/sharp); called by ports-*.sh |
