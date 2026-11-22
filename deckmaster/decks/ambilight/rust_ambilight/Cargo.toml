@@ -5,13 +5,14 @@ edition = "2024"
 
 [dependencies]
 gl = "0.14.0"
-libwayshot = "0.8.0"
 r-egl = "0.7.1"
 r-egl-wayland = "0.7.1"
 wayland-client = "0.31.14"
+wayland-protocols = { version = "0.32.13", features = ["client", "staging", "unstable"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 gbm = "0.18.0"
+libc = "0.2"
 
 [profile.release]
 strip = true
